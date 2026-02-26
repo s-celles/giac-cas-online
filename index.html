@@ -12,6 +12,8 @@
 <script src="https://unpkg.com/@cortex-js/compute-engine"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css">
+<script src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
 
 <!-- ═══════════════════════════════════════════════════
   Giac/Xcas engine (asm.js) — HOST giac.js LOCALLY
@@ -141,6 +143,16 @@ var UI = {
   .spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle;margin-right:5px}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* ═══════ Plot ═══════ */
+  .plot-container{margin:.3rem 0;position:relative}
+  .plot-container canvas{max-width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:4px}
+  .plot-svg{overflow:hidden}
+  .plot-svg svg{max-width:100%;height:auto;display:block}
+  .plot-tooltip{position:absolute;background:rgba(0,0,0,.8);color:#fff;font-family:var(--mono);font-size:.65rem;padding:2px 6px;border-radius:3px;pointer-events:none;white-space:nowrap;z-index:5;display:none}
+  .plot-3d-msg{font-family:var(--mono);font-size:.78rem;color:var(--warning);padding:.4rem;background:#fffbeb;border:1px solid #fde68a;border-radius:4px}
+  .jxgbox-container{margin:.3rem 0}
+  .jxgbox-container .jxgbox{width:100%;aspect-ratio:4/3;max-width:600px;border-radius:4px}
+
   /* ═══════ Bottom bar ═══════ */
   .bottombar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:.4rem 1.5rem;font-family:var(--mono);font-size:.63rem;color:var(--text-muted);display:flex;gap:1.4rem;align-items:center;z-index:10}
   .bottombar kbd{background:#eeede8;padding:1px 5px;border-radius:3px;border:1px solid var(--border);font-size:.62rem}
@@ -229,6 +241,8 @@ const LOCALES = {
     invalidJson: 'Invalid JSON file',
     welcomeTitle: '# Welcome to the Xcas Notebook',
     welcomeBody: 'Type math visually (MathJSON) or use raw Xcas syntax.\nTick **Show MathJSON** at the bottom to inspect the conversion pipeline.',
+    plot3dNotSupported: '3D plots are not yet supported. Use 2D plot commands instead.',
+    plotCoordinates: 'Coordinates',
   },
   fr: {
     title: 'Notebook Xcas',
@@ -254,6 +268,8 @@ const LOCALES = {
     invalidJson: 'Fichier JSON invalide',
     welcomeTitle: '# Bienvenue dans le Notebook Xcas',
     welcomeBody: 'Saisissez des maths visuellement (MathJSON) ou en syntaxe Xcas brute.\nCochez **Afficher MathJSON** en bas pour inspecter la conversion.',
+    plot3dNotSupported: 'Les graphiques 3D ne sont pas encore pris en charge. Utilisez les commandes de tracé 2D.',
+    plotCoordinates: 'Coordonnées',
   },
   es: {
     title: 'Cuaderno Xcas',
@@ -279,6 +295,8 @@ const LOCALES = {
     invalidJson: 'Archivo JSON no válido',
     welcomeTitle: '# Bienvenido al Cuaderno Xcas',
     welcomeBody: 'Escribe matemáticas visualmente (MathJSON) o usa sintaxis Xcas directa.\nMarca **Mostrar MathJSON** abajo para inspeccionar la conversión.',
+    plot3dNotSupported: 'Los gráficos 3D aún no son compatibles. Usa comandos de gráficos 2D.',
+    plotCoordinates: 'Coordenadas',
   },
   de: {
     title: 'Xcas Notizbuch',
@@ -304,6 +322,8 @@ const LOCALES = {
     invalidJson: 'Ungültige JSON-Datei',
     welcomeTitle: '# Willkommen im Xcas Notizbuch',
     welcomeBody: 'Gib Mathematik visuell ein (MathJSON) oder nutze direkte Xcas-Syntax.\nAktiviere **MathJSON anzeigen** unten, um die Konvertierung zu prüfen.',
+    plot3dNotSupported: '3D-Grafiken werden noch nicht unterstützt. Verwenden Sie 2D-Plotbefehle.',
+    plotCoordinates: 'Koordinaten',
   },
 };
 
@@ -796,22 +816,58 @@ function runSingleCell(cellId) {
   setTimeout(() => {
     try {
       const raw = caseval(expr);
-      let latex = '';
-      try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+      const plotFmt = detectPlotFormat(raw);
 
+      // Clean up any previous JSXGraph boards in this output
+      cleanupJSXGraphInElement(out);
       out.innerHTML = '';
-      if (latex && typeof katex !== 'undefined') {
-        const d = document.createElement('div');
-        try {
-          katex.render(latex, d, { displayMode: true, throwOnError: false, trust: true });
-          out.appendChild(d);
-        } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>'; }
+
+      if (plotFmt === 'svg') {
+        var jsxDone = false;
+        if (jsxGraphAvailable()) {
+          try {
+            var plotData = parseSvgPlotData(stripQuotes(raw));
+            if (plotData && plotData.curves.length > 0) {
+              renderJSXGraphPlot(out, plotData);
+              jsxDone = true;
+            }
+          } catch(e) { /* JSXGraph parse failed, fall back to raw SVG */ }
+        }
+        if (!jsxDone) renderSvgPlot(out, stripQuotes(raw));
+      } else if (plotFmt === 'gr2d') {
+        var jsxDone = false;
+        if (jsxGraphAvailable()) {
+          try {
+            var plotData = parseGr2dLogoData(raw);
+            if (plotData && plotData.curves.length > 0) {
+              renderJSXGraphPlot(out, plotData);
+              jsxDone = true;
+            }
+          } catch(e) { console.warn('JSXGraph gr2d parse failed, falling back:', e); }
+        }
+        if (!jsxDone) renderGr2dPlot(out, raw);
+      } else if (plotFmt === 'gl3d') {
+        renderGl3dMessage(out);
       } else {
-        out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
+        // Text/LaTeX path (existing behavior)
+        let latex = '';
+        try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        if (latex && typeof katex !== 'undefined') {
+          const d = document.createElement('div');
+          try {
+            katex.render(latex, d, { displayMode: true, throwOnError: false, trust: true });
+            out.appendChild(d);
+          } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>'; }
+        } else {
+          out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
+        }
       }
-      const r = document.createElement('div');
-      r.className = 'raw-res'; r.textContent = '→ ' + raw;
-      out.appendChild(r);
+      // Show raw result beneath — but not for plot outputs (too verbose)
+      if (plotFmt === 'text') {
+        const r = document.createElement('div');
+        r.className = 'raw-res'; r.textContent = '→ ' + raw;
+        out.appendChild(r);
+      }
     } catch (err) {
       out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
     }
@@ -929,7 +985,619 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('math', '\\lim_{x \\to 0} \\frac{\\sin(x)}{x}');
   addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
   addCell('raw',  '', 'eigenvalues([[1,2],[3,4]])');
+  addCell('raw',  '', 'plot(sin(x))');
+  addCell('raw',  '', 'plotfunc([sin(x),cos(x)],x)');
+  addCell('raw',  '', 'plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)');
 });
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 13 — PLOT RENDERING
+//
+// Detects graphical output from Giac (SVG, gr2d, gl3d) and
+// renders plots inline in cell output areas.
+// Ported from giacsimple.js with adaptations for the notebook.
+// ─────────────────────────────────────────────────────────────
+
+const PLOT_COLORS = [
+  'black','red','green','yellow','blue','magenta','cyan','white',
+  'silver','gray','maroon','purple','fuchsia','lime','olive','navy',
+  'teal','aqua','antiquewhite','aquamarine','azure','beige','bisque',
+  'blanchedalmond','blueviolet','brown','burlywood','cadetblue',
+  'chartreuse','chocolate','coral','cornflowerblue','cornsilk','crimson',
+  'cyan','darkblue','darkcyan','darkgoldenrod','darkgray','darkgreen',
+  'darkgrey','darkkhaki','darkmagenta','darkolivegreen','darkorange',
+  'darkorchid','darkred','darksalmon','darkseagreen','darkslateblue',
+  'darkslategray','darkslategrey','darkturquoise','darkviolet','deeppink',
+  'deepskyblue','dimgray','dimgrey','dodgerblue','firebrick','floralwhite',
+  'forestgreen','gainsboro','ghostwhite','gold','goldenrod','greenyellow',
+  'grey','honeydew','hotpink','indianred','indigo','ivory','khaki',
+  'lavender','lavenderblush','lawngreen','lemonchiffon','lightblue',
+  'lightcoral','lightcyan','lightgoldenrodyellow','lightgray','lightgreen',
+  'lightgrey','lightpink','lightsalmon','lightseagreen','lightskyblue',
+  'lightslategray','lightslategrey','lightsteelblue','lightyellow',
+  'limegreen','linen','mediumaquamarine','mediumblue','mediumorchid',
+  'mediumpurple','mediumseagreen','mediumslateblue','mediumspringgreen',
+  'mediumturquoise','mediumvioletred','midnightblue','mintcream',
+  'mistyrose','moccasin','navajowhite','oldlace','olivedrab','orangered',
+  'orchid','palegoldenrod','palegreen','paleturquoise','palevioletred',
+  'papayawhip','peachpuff','peru','pink','plum','powderblue','rosybrown',
+  'royalblue','saddlebrown','salmon','sandybrown','seagreen','seashell',
+  'sienna','skyblue','slateblue','slategray','slategrey','snow',
+  'springgreen','steelblue','tan','thistle','tomato','turquoise','violet',
+  'wheat','whitesmoke','yellowgreen'
+];
+
+function plotRainbowColor(k) {
+  var r, g, b;
+  k += 21;
+  k %= 126;
+  if (k < 0) k += 126;
+  if (k < 21) { r = 251; g = 0; b = 12 * k; }
+  if (k >= 21 && k < 42) { r = 251 - 12 * (k - 21); g = 0; b = 251; }
+  if (k >= 42 && k < 63) { r = 0; g = (k - 42) * 12; b = 251; }
+  if (k >= 63 && k < 84) { r = 0; g = 251; b = 251 - (k - 63) * 12; }
+  if (k >= 84 && k < 105) { r = (k - 84) * 12; g = 251; b = 0; }
+  if (k >= 105 && k < 126) { r = 251; g = 251 - (k - 105) * 12; b = 0; }
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function plotResolveColor(c) {
+  if (c >= 0x100) {
+    if (c < 0x17e) return plotRainbowColor(c);
+    var r = 8 * ((c >> 11) & 0x1f);
+    var g = 4 * ((c >> 5) & 0x3f);
+    var b = 8 * (c & 0x1f);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+  return PLOT_COLORS[c] || 'black';
+}
+
+function detectPlotFormat(raw) {
+  if (!raw || raw.length < 5) return 'text';
+  if (raw.substr(0, 4) === '<svg' || (raw.charAt(0) === '"' && raw.substr(1, 4) === '<svg')) return 'svg';
+  if (raw.substr(0, 5) === 'gr2d(') return 'gr2d';
+  if (raw.substr(0, 5) === 'gl3d ') return 'gl3d';
+  return 'text';
+}
+
+/** Strip surrounding quotes from Giac output if present */
+function stripQuotes(s) {
+  if (s.length >= 2 && s.charAt(0) === '"' && s.charAt(s.length - 1) === '"')
+    return s.substring(1, s.length - 1);
+  return s;
+}
+
+// T008: SVG plot renderer
+function renderSvgPlot(outputEl, svgString) {
+  var container = document.createElement('div');
+  container.className = 'plot-container plot-svg';
+  container.innerHTML = svgString;
+  outputEl.appendChild(container);
+}
+
+// T009: Pixon (pixel) renderer — ported from giacsimple.js
+function plotPixonDraw(canvas, dataString) {
+  var v;
+  try { v = JSON.parse(dataString); } catch(e) {
+    try { v = (0, eval)(dataString); } catch(e2) { return; }
+  }
+  if (!Array.isArray(v) || v.length < 2) return;
+  var l = v.length, w = 0, h = 0;
+  var scale = v[0];
+  for (var k = 1; k < l; k++) {
+    var cur = v[k];
+    var x = cur[0], y = cur[1];
+    if (cur.length === 3 && typeof cur[2] !== 'number') { x += 100; y += 16; }
+    if (cur.length === 4) {
+      var tmp = cur[3];
+      if (typeof tmp === 'number') { if (tmp > 0) y += tmp; else x -= tmp; }
+      else { x += 100; y += 16; }
+    }
+    if (x > w) w = x;
+    if (y > h) h = y;
+  }
+  w = (w + 1) * scale;
+  h = (h + 1) * scale;
+  canvas.width = w; canvas.height = h;
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  for (var k = 1; k < l; k++) {
+    var cur = v[k], cl;
+    if (!Array.isArray(cur) || (cl = cur.length) < 2) continue;
+    var x = cur[0] * scale, y = cur[1] * scale;
+    if (cl > 2 && typeof cur[2] === 'string') {
+      ctx.font = '16px serif'; ctx.fillStyle = 'black';
+      ctx.fillText(cur[2], x, y + 16, 100); continue;
+    }
+    ctx.fillStyle = (cl > 2) ? plotResolveColor(cur[2]) : 'black';
+    if (cl < 4) { ctx.fillRect(x, y, scale, scale); continue; }
+    if (typeof cur[3] === 'string') {
+      ctx.font = '16px serif'; ctx.fillText(cur[3], x, y + 16, 100); continue;
+    }
+    var ph = cur[3] * scale, pw = scale;
+    if (ph < 0) { pw = -ph; ph = scale; }
+    ctx.fillRect(x, y, pw, ph);
+  }
+}
+
+// T010: Logo (turtle) renderer — ported from giacsimple.js
+function plotLogoDraw(canvas, dataString, zoom, dx, dy) {
+  var v;
+  try { v = JSON.parse(dataString); } catch(e) {
+    try { v = (0, eval)(dataString); } catch(e2) { return; }
+  }
+  if (!Array.isArray(v) || v.length < 2) return;
+  var w = canvas.width, h = canvas.height;
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  var turtlezoom = zoom || 1, turtlex = dx || 0, turtley = dy || 0;
+
+  // Background
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, w, h);
+
+  // Dot grid
+  ctx.fillStyle = '#ddd';
+  var xdecal = Math.floor(turtlex / 10.0) * 10;
+  var ydecal = Math.floor(turtley / 10.0) * 10;
+  for (var i = xdecal; i < w / turtlezoom + xdecal; i += 10) {
+    for (var j = ydecal; j < h / turtlezoom + ydecal; j += 10) {
+      var X = Math.floor((i - turtlex) * turtlezoom + .5);
+      var Y = Math.floor((j - turtley) * turtlezoom + .5);
+      ctx.fillRect(X, h - Y, 1, 1);
+    }
+  }
+
+  var l = v.length;
+  // v[i]=[x,y,cap,status,r,chaine]
+  // color=status>>11, pen_down=status&1, visible=status&2
+  for (var k = 1; k < l; k++) {
+    var prec = v[k - 1], cur = v[k];
+    var preccouleur = prec[3] >> 11;
+    var curcouleur = cur[3] >> 11;
+    if (cur[5] && cur[5].length) {
+      ctx.font = cur[4] + 'px serif';
+      ctx.strokeStyle = ctx.fillStyle = plotResolveColor(curcouleur);
+      ctx.fillText(cur[5], turtlezoom * (cur[0] - turtlex), h - turtlezoom * (cur[1] - turtley));
+      continue;
+    }
+    var radius = cur[4], precradius = prec[4];
+    var x1 = Math.floor(turtlezoom * (prec[0] - turtlex) + .5),
+        y1 = Math.floor(turtlezoom * (prec[1] - turtley) + .5),
+        x2 = Math.floor(turtlezoom * (cur[0] - turtlex) + .5),
+        y2 = Math.floor(turtlezoom * (cur[1] - turtley) + .5);
+    if (radius > 0) {
+      var r = radius & 0x1ff;
+      var theta1 = prec[2] + ((radius >> 9) & 0x1ff);
+      var theta2 = prec[2] + ((radius >> 18) & 0x1ff);
+      var rempli = (radius >> 27) & 1;
+      var seg = (radius >> 28) & 1;
+      var R = Math.floor(turtlezoom * r + .5);
+      var angle1 = Math.PI / 180 * (theta1 - 90);
+      var angle2 = Math.PI / 180 * (theta2 - 90);
+      var cx = Math.floor(turtlezoom * (cur[0] - turtlex - r * Math.cos(angle2)) + .5);
+      var cy = Math.floor(turtlezoom * (cur[1] - turtley - r * Math.sin(angle2)) + .5);
+      ctx.beginPath();
+      if (seg) ctx.moveTo(x2, h - y2);
+      else { ctx.moveTo(cx, h - cy); ctx.lineTo(x2, h - y2); }
+      ctx.arc(cx, h - cy, R, -angle2, -angle1);
+      ctx.closePath();
+      ctx.strokeStyle = ctx.fillStyle = plotResolveColor(curcouleur);
+      if (rempli) ctx.fill(); else ctx.stroke();
+      continue;
+    }
+    if (prec[3] & 1) {
+      ctx.strokeStyle = ctx.fillStyle = plotResolveColor(preccouleur);
+      ctx.beginPath();
+      ctx.moveTo(x1, h - y1); ctx.lineTo(x2, h - y2);
+      ctx.closePath(); ctx.stroke();
+    }
+    if (radius < -1 && k + radius >= 0) {
+      ctx.strokeStyle = ctx.fillStyle = plotResolveColor(curcouleur);
+      ctx.beginPath();
+      ctx.moveTo(x2, h - y2);
+      for (var i = -1; i >= radius; i--) {
+        var pv = v[k + i];
+        ctx.lineTo(
+          Math.floor(turtlezoom * (pv[0] - turtlex) + .5),
+          h - Math.floor(turtlezoom * (pv[1] - turtley) + .5)
+        );
+      }
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  // Draw turtle icon if visible
+  var last = v[l - 1];
+  if (last[3] & 2) {
+    var tx = Math.floor(turtlezoom * (last[0] - turtlex) + .5);
+    var ty = Math.floor(turtlezoom * (last[1] - turtley) + .5);
+    var cost = Math.cos(last[2] * Math.PI / 180);
+    var sint = Math.sin(last[2] * Math.PI / 180);
+    var tlen = (last[3] >> 3) & 0xff;
+    var Dx = Math.floor(turtlezoom * tlen * cost / 2 + .5);
+    var Dy = Math.floor(turtlezoom * tlen * sint / 2 + .5);
+    ctx.strokeStyle = plotResolveColor(last[3] >> 11);
+    ctx.beginPath(); ctx.moveTo(tx + Dy, h - (ty - Dx)); ctx.lineTo(tx - Dy, h - (ty + Dx)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(tx + Dy, h - (ty - Dx)); ctx.lineTo(tx + 3 * Dx, h - (ty + 3 * Dy)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(tx - Dy, h - (ty + Dx)); ctx.lineTo(tx + 3 * Dx, h - (ty + 3 * Dy)); ctx.stroke();
+  }
+}
+
+// T011: gr2d dispatcher — creates canvas and routes to logo or pixon
+var plotCanvasCounter = 0;
+var plotCanvasStates = {};
+
+function renderGr2dPlot(outputEl, gr2dString) {
+  var inner = gr2dString.substr(5, gr2dString.length - 6); // strip "gr2d(" and ")"
+  var container = document.createElement('div');
+  container.className = 'plot-container';
+  var canvasId = 'plot-canvas-' + (++plotCanvasCounter);
+  var canvas = document.createElement('canvas');
+  canvas.id = canvasId;
+  canvas.width = 600; canvas.height = 400;
+  container.appendChild(canvas);
+  outputEl.appendChild(container);
+
+  if (inner.length > 6 && inner.substr(0, 6) === 'pixon(') {
+    plotPixonDraw(canvas, inner.substr(6, inner.length - 7));
+  } else if (inner.length > 5 && inner.substr(0, 5) === 'logo(') {
+    var logoData = inner.substr(5, inner.length - 6);
+    plotLogoDraw(canvas, logoData, 1, 0, 0);
+    plotCanvasStates[canvasId] = { rawData: logoData, zoom: 1, dx: 0, dy: 0 };
+    attachPlotInteractivity(canvas, canvasId);
+  }
+}
+
+// T016-T019: Interactive plot features (zoom, pan, coordinate hover)
+function attachPlotInteractivity(canvas, canvasId) {
+  var state = plotCanvasStates[canvasId];
+  if (!state) return;
+  var container = canvas.parentElement;
+
+  // Tooltip element
+  var tooltip = document.createElement('div');
+  tooltip.className = 'plot-tooltip';
+  container.appendChild(tooltip);
+
+  // T017: Zoom via mouse wheel
+  canvas.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var s = plotCanvasStates[canvasId];
+    if (!s) return;
+    var factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+    // Zoom toward mouse position
+    var rect = canvas.getBoundingClientRect();
+    var mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+    var my = (e.clientY - rect.top) * (canvas.height / rect.height);
+    var mathX = mx / s.zoom + s.dx;
+    var mathY = (canvas.height - my) / s.zoom + s.dy;
+    s.zoom *= factor;
+    s.dx = mathX - mx / s.zoom;
+    s.dy = mathY - (canvas.height - my) / s.zoom;
+    plotLogoDraw(canvas, s.rawData, s.zoom, s.dx, s.dy);
+  }, { passive: false });
+
+  // T018: Pan via mouse drag
+  var dragging = false, lastX = 0, lastY = 0;
+  canvas.addEventListener('mousedown', function(e) {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('mousemove', function(e) {
+    var s = plotCanvasStates[canvasId];
+    if (!s) return;
+    if (dragging) {
+      var rect = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width;
+      var scaleY = canvas.height / rect.height;
+      s.dx -= (e.clientX - lastX) * scaleX / s.zoom;
+      s.dy += (e.clientY - lastY) * scaleY / s.zoom;
+      lastX = e.clientX; lastY = e.clientY;
+      plotLogoDraw(canvas, s.rawData, s.zoom, s.dx, s.dy);
+    }
+    // T019: Coordinate hover
+    var rect = canvas.getBoundingClientRect();
+    var px = (e.clientX - rect.left) * (canvas.width / rect.width);
+    var py = (e.clientY - rect.top) * (canvas.height / rect.height);
+    var mx = px / s.zoom + s.dx;
+    var my = (canvas.height - py) / s.zoom + s.dy;
+    tooltip.textContent = '(' + mx.toFixed(2) + ', ' + my.toFixed(2) + ')';
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
+    tooltip.style.top = (e.clientY - rect.top - 8) + 'px';
+  });
+  canvas.addEventListener('mouseup', function() { dragging = false; canvas.style.cursor = 'crosshair'; });
+  canvas.addEventListener('mouseleave', function() { dragging = false; canvas.style.cursor = 'crosshair'; tooltip.style.display = 'none'; });
+  canvas.style.cursor = 'crosshair';
+}
+
+// ── JSXGraph integration ──────────────────────────────────
+// Parses Giac SVG/gr2d output and renders interactive plots
+// using JSXGraph when available, with canvas/SVG fallback.
+
+function jsxGraphAvailable() {
+  return typeof JXG !== 'undefined' && JXG.JSXGraph;
+}
+
+var jsxGraphBoardCounter = 0;
+var jsxGraphBoards = {};
+
+function cleanupJSXGraphBoard(boardId) {
+  if (jsxGraphBoards[boardId]) {
+    try { JXG.JSXGraph.freeBoard(jsxGraphBoards[boardId]); } catch(e) {}
+    delete jsxGraphBoards[boardId];
+  }
+}
+
+function cleanupJSXGraphInElement(el) {
+  var boxes = el.querySelectorAll('.jxgbox');
+  boxes.forEach(function(box) { cleanupJSXGraphBoard(box.id); });
+}
+
+/** Parse Giac SVG output into curve data for JSXGraph */
+function parseSvgPlotData(svgString) {
+  var parser = new DOMParser();
+  // Use text/html (lenient) because Giac SVG may have malformed attributes (missing spaces)
+  var doc = parser.parseFromString(svgString, 'text/html');
+  var svg = doc.querySelector('svg');
+  if (!svg) return null;
+
+  // Giac SVG uses math coordinates directly in line/path elements.
+  // A <g transform="scale(1,-1)"> handles the y-flip for SVG rendering.
+  // We read the raw attribute values as math coordinates — no y-negation needed.
+
+  var curves = [];
+  var defaultColors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628'];
+  var colorIdx = 0;
+
+  // Group <line> elements by color+strokeWidth
+  var lineGroups = {};
+  var lines = svg.querySelectorAll('line');
+  lines.forEach(function(ln) {
+    var x1 = parseFloat(ln.getAttribute('x1')), y1 = parseFloat(ln.getAttribute('y1'));
+    var x2 = parseFloat(ln.getAttribute('x2')), y2 = parseFloat(ln.getAttribute('y2'));
+    if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2)) return;
+    var color = ln.getAttribute('stroke') || 'black';
+    var sw = parseFloat(ln.getAttribute('stroke-width')) || 1;
+    var key = color + '|' + sw;
+    if (!lineGroups[key]) lineGroups[key] = { color: color, strokeWidth: sw, segments: [] };
+    lineGroups[key].segments.push({ x1: x1, y1: y1, x2: x2, y2: y2 });
+  });
+
+  // Build curves from line groups — need many segments (skip axes/borders)
+  Object.keys(lineGroups).forEach(function(key) {
+    var group = lineGroups[key];
+    // Plot curves have many segments (50+), axis/border lines have few (<10)
+    if (group.segments.length < 10) return;
+    var segs = group.segments;
+    var xs = [segs[0].x1], ys = [segs[0].y1];
+    for (var i = 0; i < segs.length; i++) {
+      xs.push(segs[i].x2); ys.push(segs[i].y2);
+    }
+    if (xs.length > 1) {
+      curves.push({ xs: xs, ys: ys, color: group.color });
+    }
+  });
+
+  // Extract polyline elements
+  var polylines = svg.querySelectorAll('polyline');
+  polylines.forEach(function(pl) {
+    var pts = pl.getAttribute('points');
+    if (!pts) return;
+    var pairs = pts.trim().split(/\s+/);
+    var xs = [], ys = [];
+    pairs.forEach(function(p) {
+      var xy = p.split(',');
+      if (xy.length === 2) {
+        xs.push(parseFloat(xy[0]));
+        ys.push(parseFloat(xy[1]));
+      }
+    });
+    if (xs.length > 1) {
+      var color = pl.getAttribute('stroke') || defaultColors[colorIdx++ % defaultColors.length];
+      curves.push({ xs: xs, ys: ys, color: color });
+    }
+  });
+
+  // Extract path elements
+  var paths = svg.querySelectorAll('path');
+  paths.forEach(function(path) {
+    var d = path.getAttribute('d');
+    if (!d) return;
+    var xs = [], ys = [];
+    var commands = d.match(/[MLCQZ][^MLCQZ]*/gi);
+    if (!commands) return;
+    commands.forEach(function(cmd) {
+      var type = cmd.charAt(0);
+      var nums = cmd.slice(1).trim().split(/[\s,]+/).map(Number);
+      if (type === 'M' || type === 'L') {
+        for (var i = 0; i + 1 < nums.length; i += 2) {
+          xs.push(nums[i]);
+          ys.push(nums[i + 1]);
+        }
+      } else if (type === 'C') {
+        for (var i = 0; i + 5 < nums.length; i += 6) {
+          var px = xs.length > 0 ? xs[xs.length - 1] : 0;
+          var py = ys.length > 0 ? ys[ys.length - 1] : 0;
+          var cp1x = nums[i], cp1y = nums[i+1];
+          var cp2x = nums[i+2], cp2y = nums[i+3];
+          var ex = nums[i+4], ey = nums[i+5];
+          for (var t = 1; t <= 20; t++) {
+            var u = t / 20, u2 = u*u, u3 = u2*u, inv = 1-u, inv2 = inv*inv, inv3 = inv2*inv;
+            xs.push(inv3*px + 3*inv2*u*cp1x + 3*inv*u2*cp2x + u3*ex);
+            ys.push(inv3*py + 3*inv2*u*cp1y + 3*inv*u2*cp2y + u3*ey);
+          }
+        }
+      } else if (type === 'Q') {
+        for (var i = 0; i + 3 < nums.length; i += 4) {
+          var px = xs.length > 0 ? xs[xs.length - 1] : 0;
+          var py = ys.length > 0 ? ys[ys.length - 1] : 0;
+          var cpx = nums[i], cpy = nums[i+1];
+          var ex = nums[i+2], ey = nums[i+3];
+          for (var t = 1; t <= 20; t++) {
+            var u = t / 20, inv = 1-u;
+            xs.push(inv*inv*px + 2*inv*u*cpx + u*u*ex);
+            ys.push(inv*inv*py + 2*inv*u*cpy + u*u*ey);
+          }
+        }
+      }
+    });
+    if (xs.length > 1) {
+      var color = path.getAttribute('stroke') || defaultColors[colorIdx++ % defaultColors.length];
+      curves.push({ xs: xs, ys: ys, color: color });
+    }
+  });
+
+  if (curves.length === 0) return null;
+
+  // Compute tight bounding box from actual curve data
+  var allXs = [], allYs = [];
+  curves.forEach(function(c) { allXs = allXs.concat(c.xs); allYs = allYs.concat(c.ys); });
+  var dataXmin = Math.min.apply(null, allXs), dataXmax = Math.max.apply(null, allXs);
+  var dataYmin = Math.min.apply(null, allYs), dataYmax = Math.max.apply(null, allYs);
+  var padX = (dataXmax - dataXmin) * 0.08 || 1;
+  var padY = (dataYmax - dataYmin) * 0.08 || 1;
+  var bbox = {
+    xmin: dataXmin - padX, xmax: dataXmax + padX,
+    ymin: dataYmin - padY, ymax: dataYmax + padY
+  };
+
+  return { curves: curves, bbox: bbox };
+}
+
+/** Parse gr2d(logo(...)) output into curve data for JSXGraph */
+function parseGr2dLogoData(gr2dString) {
+  var inner = gr2dString.substr(5, gr2dString.length - 6); // strip "gr2d(" and ")"
+  if (inner.length < 6 || inner.substr(0, 5) !== 'logo(') return null;
+  var logoData = inner.substr(5, inner.length - 6);
+  var v;
+  try { v = JSON.parse(logoData); } catch(e) {
+    try { v = (0, eval)(logoData); } catch(e2) { return null; }
+  }
+  if (!Array.isArray(v) || v.length < 2) return null;
+
+  // Group consecutive pen-down vertices by color into curve segments
+  var curves = [];
+  var currentXs = [], currentYs = [], currentColor = null;
+
+  for (var k = 1; k < v.length; k++) {
+    var prec = v[k - 1], cur = v[k];
+    // Skip text labels
+    if (cur[5] && cur[5].length) continue;
+    var penDown = prec[3] & 1;
+    var colorIdx = prec[3] >> 11;
+    var color = plotResolveColor(colorIdx);
+
+    if (penDown && cur[4] === 0) { // Normal line segment (not arc/polygon)
+      if (color !== currentColor) {
+        // Flush previous segment
+        if (currentXs.length > 1) {
+          curves.push({ xs: currentXs.slice(), ys: currentYs.slice(), color: currentColor });
+        }
+        currentXs = [prec[0]]; currentYs = [prec[1]];
+        currentColor = color;
+      } else if (currentXs.length === 0) {
+        currentXs.push(prec[0]); currentYs.push(prec[1]);
+      }
+      currentXs.push(cur[0]); currentYs.push(cur[1]);
+    } else {
+      // Flush on non-line segment
+      if (currentXs.length > 1) {
+        curves.push({ xs: currentXs.slice(), ys: currentYs.slice(), color: currentColor });
+      }
+      currentXs = []; currentYs = []; currentColor = null;
+
+      // Handle arcs: sample points along the arc
+      if (cur[4] > 0) {
+        var radius = cur[4];
+        var r = radius & 0x1ff;
+        var theta1 = prec[2] + ((radius >> 9) & 0x1ff);
+        var theta2 = prec[2] + ((radius >> 18) & 0x1ff);
+        var angle1 = theta1 * Math.PI / 180;
+        var angle2 = theta2 * Math.PI / 180;
+        var cx = cur[0] - r * Math.cos((theta2 - 90) * Math.PI / 180);
+        var cy = cur[1] - r * Math.sin((theta2 - 90) * Math.PI / 180);
+        var arcColor = plotResolveColor(cur[3] >> 11);
+        var arcXs = [], arcYs = [];
+        var steps = Math.max(40, Math.abs(theta2 - theta1));
+        for (var s = 0; s <= steps; s++) {
+          var a = ((theta1 - 90) + (theta2 - theta1 - 90 + 90) * s / steps) * Math.PI / 180;
+          // Simpler: linearly interpolate angle
+          var aa = angle1 + (angle2 - angle1) * s / steps;
+          arcXs.push(cx + r * Math.cos(aa));
+          arcYs.push(cy + r * Math.sin(aa));
+        }
+        if (arcXs.length > 1) {
+          curves.push({ xs: arcXs, ys: arcYs, color: arcColor });
+        }
+      }
+    }
+  }
+  // Flush final segment
+  if (currentXs.length > 1) {
+    curves.push({ xs: currentXs.slice(), ys: currentYs.slice(), color: currentColor });
+  }
+
+  if (curves.length === 0) return null;
+
+  // Compute bounding box
+  var allXs = [], allYs = [];
+  curves.forEach(function(c) { allXs = allXs.concat(c.xs); allYs = allYs.concat(c.ys); });
+  var xmin = Math.min.apply(null, allXs), xmax = Math.max.apply(null, allXs);
+  var ymin = Math.min.apply(null, allYs), ymax = Math.max.apply(null, allYs);
+  var padX = (xmax - xmin) * 0.08 || 1;
+  var padY = (ymax - ymin) * 0.08 || 1;
+
+  return {
+    curves: curves,
+    bbox: { xmin: xmin - padX, xmax: xmax + padX, ymin: ymin - padY, ymax: ymax + padY }
+  };
+}
+
+/** Render plot data using JSXGraph */
+function renderJSXGraphPlot(outputEl, plotData) {
+  var boardId = 'jsxgraph-' + (++jsxGraphBoardCounter);
+  var wrapper = document.createElement('div');
+  wrapper.className = 'jxgbox-container';
+  var box = document.createElement('div');
+  box.id = boardId;
+  box.className = 'jxgbox';
+  wrapper.appendChild(box);
+  outputEl.appendChild(wrapper);
+
+  var bb = plotData.bbox;
+  var board = JXG.JSXGraph.initBoard(boardId, {
+    boundingbox: [bb.xmin, bb.ymax, bb.xmax, bb.ymin],
+    axis: true,
+    showCopyright: false,
+    showNavigation: true,
+    pan: { enabled: true },
+    zoom: { enabled: true, wheel: true, pinch: true }
+  });
+
+  var defaultColors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628'];
+  plotData.curves.forEach(function(curve, idx) {
+    var color = curve.color || defaultColors[idx % defaultColors.length];
+    board.create('curve', [curve.xs, curve.ys], {
+      strokeColor: color,
+      strokeWidth: 2,
+      highlight: false
+    });
+  });
+
+  jsxGraphBoards[boardId] = board;
+  return board;
+}
+
+// T012: gl3d message
+function renderGl3dMessage(outputEl) {
+  var msg = document.createElement('div');
+  msg.className = 'plot-3d-msg';
+  msg.textContent = t('plot3dNotSupported');
+  outputEl.appendChild(msg);
+}
+
 </script>
 </body>
 </html>
