@@ -21,9 +21,11 @@
   We bypass giacsimple.js and define a minimal Module object
   so giac.js (Emscripten asm.js build) can initialize.
   ═══════════════════════════════════════════════════ -->
+<div style="position:absolute;left:-9999px;width:0;height:0;overflow:hidden"><canvas id="canvas" width="1" height="1"></canvas></div>
 <script>
 var Module = {
   ready: false,
+  canvas: document.getElementById('canvas'),
   preRun: [],
   postRun: [],
   print: function(text) { console.log('giac:', text); },
@@ -152,6 +154,9 @@ var UI = {
   .plot-3d-msg{font-family:var(--mono);font-size:.78rem;color:var(--warning);padding:.4rem;background:#fffbeb;border:1px solid #fde68a;border-radius:4px}
   .jxgbox-container{margin:.3rem 0}
   .jxgbox-container .jxgbox{width:100%;aspect-ratio:4/3;max-width:600px;border-radius:4px}
+  .gl3d-container{margin:.3rem 0;position:relative}
+  .gl3d-container canvas{max-width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:4px;cursor:grab}
+  .gl3d-container canvas:active{cursor:grabbing}
 
   /* ═══════ Bottom bar ═══════ */
   .bottombar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:.4rem 1.5rem;font-family:var(--mono);font-size:.63rem;color:var(--text-muted);display:flex;gap:1.4rem;align-items:center;z-index:10}
@@ -166,6 +171,7 @@ var UI = {
   <div class="header-left">
     <h1>📓 <span data-i18n="title">Xcas Notebook</span></h1>
     <p data-i18n="subtitle">Reactive CAS — MathJSON ↔ Giac via WebAssembly</p>
+    <a href="https://github.com/s-celles/giac-cas-online" target="_blank" rel="noopener" style="font-size:.85rem;opacity:.7;text-decoration:none;color:inherit"><svg height="16" width="16" viewBox="0 0 24 24" style="vertical-align:text-bottom;margin-right:.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Source code</a>
   </div>
   <div class="header-right">
     <select class="lang-select" id="lang-select" onchange="setLocale(this.value)">
@@ -815,58 +821,117 @@ function runSingleCell(cellId) {
 
   setTimeout(() => {
     try {
-      const raw = caseval(expr);
-      const plotFmt = detectPlotFormat(raw);
-
       // Clean up any previous JSXGraph boards in this output
       cleanupJSXGraphInElement(out);
       out.innerHTML = '';
 
-      if (plotFmt === 'svg') {
-        var jsxDone = false;
-        if (jsxGraphAvailable()) {
-          try {
-            var plotData = parseSvgPlotData(stripQuotes(raw));
-            if (plotData && plotData.curves.length > 0) {
-              renderJSXGraphPlot(out, plotData);
-              jsxDone = true;
-            }
-          } catch(e) { /* JSXGraph parse failed, fall back to raw SVG */ }
-        }
-        if (!jsxDone) renderSvgPlot(out, stripQuotes(raw));
-      } else if (plotFmt === 'gr2d') {
-        var jsxDone = false;
-        if (jsxGraphAvailable()) {
-          try {
-            var plotData = parseGr2dLogoData(raw);
-            if (plotData && plotData.curves.length > 0) {
-              renderJSXGraphPlot(out, plotData);
-              jsxDone = true;
-            }
-          } catch(e) { console.warn('JSXGraph gr2d parse failed, falling back:', e); }
-        }
-        if (!jsxDone) renderGr2dPlot(out, raw);
-      } else if (plotFmt === 'gl3d') {
-        renderGl3dMessage(out);
+      // Try direct JSXGraph rendering from the input expression (no SVG parsing)
+      if (jsxGraphAvailable() && tryDirectJSXGraph(expr, out)) {
+        // Successfully rendered directly — done
       } else {
-        // Text/LaTeX path (existing behavior)
-        let latex = '';
-        try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
-        if (latex && typeof katex !== 'undefined') {
-          const d = document.createElement('div');
-          try {
-            katex.render(latex, d, { displayMode: true, throwOnError: false, trust: true });
-            out.appendChild(d);
-          } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>'; }
-        } else {
-          out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
+        // For potential 3D commands, pre-create canvas so Emscripten's SDL
+        // initializes WebGL on the right canvas (not the hidden default)
+        var preGl3dCanvas = null, preGl3dContainer = null, savedModuleCanvas = null;
+        if (/\b(plotfunc|plotparam3d|plot3d)\s*\(/.test(expr)) {
+          if (webglAvailable() && getGiacRenderer()) {
+            preGl3dContainer = document.createElement('div');
+            preGl3dContainer.className = 'gl3d-container';
+            preGl3dCanvas = document.createElement('canvas');
+            preGl3dCanvas.id = 'gl3d_pre_' + Date.now();
+            var pcw = Math.min(out.clientWidth || 600, 600);
+            preGl3dCanvas.width = pcw;
+            preGl3dCanvas.height = Math.round(pcw * 2 / 3);
+            preGl3dContainer.appendChild(preGl3dCanvas);
+            out.appendChild(preGl3dContainer);
+            savedModuleCanvas = Module.canvas;
+            Module.canvas = preGl3dCanvas;
+          }
         }
-      }
-      // Show raw result beneath — but not for plot outputs (too verbose)
-      if (plotFmt === 'text') {
-        const r = document.createElement('div');
-        r.className = 'raw-res'; r.textContent = '→ ' + raw;
-        out.appendChild(r);
+
+        // Fall back to caseval + format-based pipeline
+        const raw = caseval(expr);
+        const plotFmt = detectPlotFormat(raw);
+
+        // Clean up pre-created gl3d canvas immediately if output is not gl3d
+        if (plotFmt !== 'gl3d' && preGl3dCanvas && preGl3dContainer) {
+          preGl3dContainer.remove();
+          if (savedModuleCanvas) Module.canvas = savedModuleCanvas;
+          preGl3dCanvas = null;
+        }
+
+        if (plotFmt === 'svg') {
+          renderSvgPlot(out, stripQuotes(raw));
+        } else if (plotFmt === 'gr2d') {
+          var jsxDone = false;
+          if (jsxGraphAvailable()) {
+            try {
+              var plotData = parseGr2dLogoData(raw);
+              if (plotData && plotData.curves.length > 0) {
+                renderJSXGraphPlot(out, plotData);
+                jsxDone = true;
+              }
+            } catch(e) { console.warn('JSXGraph gr2d parse failed, falling back:', e); }
+          }
+          if (!jsxDone) renderGr2dPlot(out, raw);
+        } else if (plotFmt === 'gl3d') {
+          var sceneId = raw.substr(5).trim();
+          if (preGl3dCanvas) {
+            // Use pre-created canvas (Module.canvas already set)
+            preGl3dCanvas.id = 'gl3d_' + sceneId;
+            var gr = getGiacRenderer();
+            try { gr(sceneId); } catch(e) {
+              preGl3dContainer.innerHTML = '<div class="plot-3d-msg">' + t('plot3dNotSupported') + '</div>';
+            }
+            // Mouse interaction
+            var pushed = false, lastX = 0, lastY = 0;
+            preGl3dCanvas.addEventListener('mousedown', function(e) { pushed = true; lastX = e.clientX; lastY = e.clientY; e.preventDefault(); });
+            preGl3dCanvas.addEventListener('mouseup', function() { pushed = false; });
+            preGl3dCanvas.addEventListener('mouseleave', function() { pushed = false; });
+            preGl3dCanvas.addEventListener('mousemove', function(e) {
+              if (!pushed) return;
+              var dx = e.clientX - lastX, dy = e.clientY - lastY;
+              if (Math.abs(dx) > 2) gr((dx > 0 ? 'r' : 'l') + sceneId);
+              if (Math.abs(dy) > 2) gr((dy > 0 ? 'd' : 'u') + sceneId);
+              lastX = e.clientX; lastY = e.clientY; e.preventDefault();
+            });
+            // Cleanup SDL listeners
+            try {
+              var kle = Module['keyboardListeningElement'] || document;
+              if (typeof SDL !== 'undefined' && SDL.receiveEvent) {
+                kle.removeEventListener('keydown', SDL.receiveEvent);
+                kle.removeEventListener('keyup', SDL.receiveEvent);
+                kle.removeEventListener('keypress', SDL.receiveEvent);
+              }
+            } catch(e) {}
+            preGl3dCanvas = null; // Mark as used
+          } else {
+            renderGl3dPlot(out, sceneId);
+          }
+        } else {
+          // Text/LaTeX path
+          let latex = '';
+          try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+          if (latex && typeof katex !== 'undefined') {
+            const d = document.createElement('div');
+            try {
+              katex.render(latex, d, { displayMode: true, throwOnError: false, trust: true });
+              out.appendChild(d);
+            } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>'; }
+          } else {
+            out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
+          }
+        }
+        // Show raw result beneath — but not for plot outputs (too verbose)
+        if (plotFmt === 'text') {
+          const r = document.createElement('div');
+          r.className = 'raw-res'; r.textContent = '→ ' + raw;
+          out.appendChild(r);
+        }
+        // Clean up pre-created gl3d canvas if it wasn't used
+        if (preGl3dCanvas && preGl3dContainer) {
+          preGl3dContainer.remove();
+          if (savedModuleCanvas) Module.canvas = savedModuleCanvas;
+        }
       }
     } catch (err) {
       out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
@@ -988,6 +1053,21 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('raw',  '', 'plot(sin(x))');
   addCell('raw',  '', 'plotfunc([sin(x),cos(x)],x)');
   addCell('raw',  '', 'plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)');
+
+  // Demo cells for all plot categories (pre-filled, not auto-executed)
+  addCell('raw',  '', 'plotfunc(x^2+y^2,[x,y])');
+  addCell('raw',  '', 'plotimplicit(x^2+y^2-1,x,y)');
+  addCell('raw',  '', 'plotfield(sin(x*y),[x,y])');
+  addCell('raw',  '', 'plotcontour(x^2+y^2,[x=-3..3,y=-3..3])');
+  addCell('raw',  '', 'plotode(sin(t*y),[t,y],[0,1])');
+  addCell('raw',  '', 'plotseq(cos(x),0.5,5)');
+  addCell('raw',  '', 'histogram(seq(rand(100),k,1,200))');
+  addCell('raw',  '', 'barplot([3,5,2,8,1])');
+  addCell('raw',  '', 'camembert([["A",30],["B",50],["C",20]])');
+  addCell('raw',  '', 'boxwhisker([1,2,3,4,5,6,7,8,9,10])');
+  addCell('raw',  '', 'scatterplot([1,2,3,4,5],[2,4,5,4,5])');
+  addCell('raw',  '', 'circle(0,2); segment([0,0],[2,0]); point(1,1)');
+  addCell('raw',  '', 'plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])');
 });
 
 
@@ -1312,9 +1392,757 @@ function attachPlotInteractivity(canvas, canvasId) {
   canvas.style.cursor = 'crosshair';
 }
 
-// ── JSXGraph integration ──────────────────────────────────
-// Parses Giac SVG/gr2d output and renders interactive plots
-// using JSXGraph when available, with canvas/SVG fallback.
+// ── Direct JSXGraph rendering ─────────────────────────────
+// Detects plot commands from the INPUT expression and renders
+// directly with JSXGraph — no SVG parsing needed.
+
+/** Parse a Giac list string "[3,5,2,8,1]" into an array of numbers */
+function parseGiacList(str) {
+  if (!str) return null;
+  str = str.replace(/^\[|\]$/g, '').trim();
+  if (!str) return null;
+  var nums = str.split(',').map(function(s) { return parseFloat(s.trim()); });
+  return nums.filter(function(n) { return !isNaN(n); });
+}
+
+/** Parse a Giac list of pairs "[[a,b],[c,d]]" or "[[\"A\",30],[\"B\",50]]" */
+function parseGiacPairList(str) {
+  if (!str) return null;
+  var pairs = [];
+  var re = /\[(?:"([^"]*)"|([\w.]+))\s*,\s*([\d.eE+-]+)\]/g;
+  var m;
+  while ((m = re.exec(str)) !== null) {
+    pairs.push({ label: m[1] || m[2], value: parseFloat(m[3]) });
+  }
+  return pairs.length > 0 ? pairs : null;
+}
+
+/** Generate sample points for a function using a single caseval call */
+function sampleFuncPoints(funcExpr, varName, xmin, xmax, nPoints) {
+  nPoints = nPoints || 500;
+  var step = (xmax - xmin) / nPoints;
+  var seqExpr = 'seq(evalf(subst(' + funcExpr + ',' + varName + ',' + xmin + '+k*' + step + ')),k,0,' + nPoints + ')';
+  var raw = caseval(seqExpr);
+  var ys = parseGiacList(raw);
+  if (!ys) return null;
+  var xs = [];
+  for (var i = 0; i < ys.length; i++) xs.push(xmin + i * step);
+  return { xs: xs, ys: ys };
+}
+
+/** Extract x range from expressions like "x=-3..3" */
+function parseRange(rangeExpr) {
+  var m = rangeExpr.match(/(\w+)\s*=\s*([-\w.*\/]+)\.\.([-\w.*\/]+)/);
+  if (!m) return null;
+  var lo = parseFloat(caseval('evalf(' + m[2] + ')'));
+  var hi = parseFloat(caseval('evalf(' + m[3] + ')'));
+  if (isNaN(lo) || isNaN(hi)) return null;
+  return { varName: m[1], min: lo, max: hi };
+}
+
+/** Convert a Giac math expression to a JavaScript function */
+function giacExprToJSFunc(expr, vars) {
+  try {
+    var js = expr;
+    // Replace math functions with Math.* equivalents (must come before constant/operator replacements)
+    js = js.replace(/\b(sin|cos|tan|asin|acos|atan|exp|sqrt|abs|sinh|cosh|tanh)\s*\(/g, 'Math.$1(');
+    js = js.replace(/\bln\s*\(/g, 'Math.log(');
+    js = js.replace(/\blog\s*\(/g, 'Math.log(');
+    // Replace constants (whole word)
+    js = js.replace(/\bpi\b/g, '(Math.PI)');
+    // Replace ^ with **
+    js = js.replace(/\^/g, '**');
+    // Implicit multiplication: digit followed by variable name
+    vars.forEach(function(v) {
+      var vre = v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      js = js.replace(new RegExp('(\\d)(' + vre + ')\\b', 'g'), '$1*$2');
+    });
+    var fn = new Function(vars.join(','), 'return ' + js + ';');
+    // Test evaluation to verify it works
+    var testArgs = vars.map(function() { return 0.7; });
+    var r = fn.apply(null, testArgs);
+    if (typeof r !== 'number') return null;
+    return fn;
+  } catch(e) { return null; }
+}
+
+/** Create a JSXGraph board in outputEl with given bounding box */
+function createJSXBoard(outputEl, bbox, opts) {
+  var boardId = 'jsxgraph-' + (++jsxGraphBoardCounter);
+  var wrapper = document.createElement('div');
+  wrapper.className = 'jxgbox-container';
+  var box = document.createElement('div');
+  box.id = boardId;
+  box.className = 'jxgbox';
+  wrapper.appendChild(box);
+  outputEl.appendChild(wrapper);
+  var config = {
+    boundingbox: [bbox.xmin, bbox.ymax, bbox.xmax, bbox.ymin],
+    axis: true, showCopyright: false, showNavigation: true,
+    pan: { enabled: true }, zoom: { enabled: true, wheel: true, pinch: true }
+  };
+  if (opts) for (var k in opts) config[k] = opts[k];
+  var board = JXG.JSXGraph.initBoard(boardId, config);
+  jsxGraphBoards[boardId] = board;
+  return board;
+}
+
+/** Parse "[x,y]" or "[x=-3..3,y=-3..3]" into {vars, ranges} */
+function parseVarList(str) {
+  str = str.trim();
+  if (str.charAt(0) === '[') str = str.slice(1, -1);
+  var parts = splitTopLevel(str);
+  var vars = [], ranges = [];
+  parts.forEach(function(p) {
+    p = p.trim();
+    var r = parseRange(p);
+    if (r) { vars.push(r.varName); ranges.push(r); }
+    else { vars.push(p); ranges.push(null); }
+  });
+  return { vars: vars, ranges: ranges };
+}
+
+/** Parse a Giac complex number to [x, y] coordinates */
+function parseComplexToPoint(str) {
+  str = str.trim();
+  try {
+    var re = parseFloat(caseval('evalf(re(' + str + '))'));
+    var im = parseFloat(caseval('evalf(im(' + str + '))'));
+    if (!isNaN(re) && !isNaN(im)) return [re, im];
+  } catch(e) {}
+  return null;
+}
+
+/**
+ * Try to render the expression directly with JSXGraph.
+ * Returns true if successful, false to fall back to caseval pipeline.
+ */
+function tryDirectJSXGraph(expr, outputEl) {
+  var m, data, plotData;
+
+  // ── Helper: parse a plot(...) or plotfunc(...) expression ──
+  // Uses splitTopLevel to properly handle nested parentheses.
+
+  // ── plot(expr) or plot(expr,x) or plot([exprs],x) ──
+  if (/^plot\(/.test(expr)) {
+    var inner = expr.slice(5, -1); // strip "plot(" and ")"
+    var args = splitTopLevel(inner);
+    if (args.length >= 1) {
+      var funcPart = args[0].trim(), v = (args[1] || 'x').trim();
+      // Detect multi-function: plot([sin(x),cos(x)],x)
+      if (funcPart.charAt(0) === '[' && funcPart.charAt(funcPart.length - 1) === ']') {
+        var funcs = splitTopLevel(funcPart.slice(1, -1));
+        var curves = [], allPts = [], colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628'];
+        for (var i = 0; i < funcs.length; i++) {
+          var pts = sampleFuncPoints(funcs[i].trim(), v, -10, 10);
+          if (pts) { curves.push({ xs: pts.xs, ys: pts.ys, color: colors[i % colors.length] }); allPts.push(pts); }
+        }
+        if (curves.length > 0) {
+          renderJSXGraphPlot(outputEl, { curves: curves, polygons: [], points: [], bbox: computeBBox(allPts) });
+          return true;
+        }
+      } else {
+        // Single function with optional range: plot(sin(x)) or plot(sin(x),x) or plot(sin(x),x=-5..5)
+        var range = parseRange(v);
+        var varName = range ? range.varName : v;
+        var xmin = range ? range.min : -10, xmax = range ? range.max : 10;
+        var pts = sampleFuncPoints(funcPart, varName, xmin, xmax);
+        if (pts) {
+          renderJSXGraphPlot(outputEl, { curves: [{ xs: pts.xs, ys: pts.ys, color: '#e41a1c' }], polygons: [], points: [], bbox: computeBBox([pts]) });
+          return true;
+        }
+      }
+    }
+  }
+
+  // ── plotfunc(expr,x) or plotfunc(expr,x=a..b) — 2D ONLY (skip 3D with [x,y]) ──
+  if (/^plotfunc\(/.test(expr)) {
+    var inner = expr.slice(9, -1); // strip "plotfunc(" and ")"
+    var args = splitTopLevel(inner);
+    if (args.length >= 2) {
+      var lastArg = args[args.length - 1].trim();
+      if (lastArg.charAt(0) === '[') {
+        // 3D plotfunc: create canvas BEFORE caseval so Emscripten's SDL/WebGL
+        // initializes on our canvas, not the hidden default one.
+        if (!webglAvailable()) {
+          outputEl.textContent = t('plot3dNotSupported');
+          return true;
+        }
+        var gr = getGiacRenderer();
+        if (!gr) { outputEl.textContent = t('plot3dNotSupported'); return true; }
+
+        var container = document.createElement('div');
+        container.className = 'gl3d-container';
+        var canvas = document.createElement('canvas');
+        canvas.id = 'gl3d_pending_' + Date.now();
+        var cw = Math.min(outputEl.clientWidth || 600, 600);
+        canvas.width = cw;
+        canvas.height = Math.round(cw * 2 / 3);
+        container.appendChild(canvas);
+        outputEl.appendChild(container);
+
+        // Set Module.canvas BEFORE caseval so SDL init targets our canvas
+        var savedCanvas = Module.canvas;
+        Module.canvas = canvas;
+
+        var raw = caseval(expr);
+        if (raw && raw.length > 5 && raw.substr(0, 5) === 'gl3d ') {
+          var sceneId = raw.substr(5).trim();
+          canvas.id = 'gl3d_' + sceneId;
+          try { gr(sceneId); } catch(e) {
+            container.innerHTML = '<div class="plot-3d-msg">' + t('plot3dNotSupported') + '</div>';
+            Module.canvas = savedCanvas;
+            return true;
+          }
+          // Mouse interaction
+          var pushed = false, lastX = 0, lastY = 0;
+          canvas.addEventListener('mousedown', function(e) { pushed = true; lastX = e.clientX; lastY = e.clientY; e.preventDefault(); });
+          canvas.addEventListener('mouseup', function() { pushed = false; });
+          canvas.addEventListener('mouseleave', function() { pushed = false; });
+          canvas.addEventListener('mousemove', function(e) {
+            if (!pushed) return;
+            var dx = e.clientX - lastX, dy = e.clientY - lastY;
+            if (Math.abs(dx) > 2) gr((dx > 0 ? 'r' : 'l') + sceneId);
+            if (Math.abs(dy) > 2) gr((dy > 0 ? 'd' : 'u') + sceneId);
+            lastX = e.clientX; lastY = e.clientY; e.preventDefault();
+          });
+          // Cleanup SDL keyboard listeners
+          try {
+            var kle = Module['keyboardListeningElement'] || document;
+            if (typeof SDL !== 'undefined' && SDL.receiveEvent) {
+              kle.removeEventListener('keydown', SDL.receiveEvent);
+              kle.removeEventListener('keyup', SDL.receiveEvent);
+              kle.removeEventListener('keypress', SDL.receiveEvent);
+            }
+          } catch(e) {}
+        } else {
+          // Not gl3d output — remove our canvas, show raw result
+          container.remove();
+          Module.canvas = savedCanvas;
+          return false; // Fall through to normal pipeline
+        }
+        // Restore saved canvas reference for non-3D future calls
+        // (keep Module.canvas = our canvas so rotation commands work)
+        return true;
+      } else {
+        // 2D plotfunc
+        var funcPart = args.slice(0, -1).join(',').trim();
+        var funcs = (funcPart.charAt(0) === '[' && funcPart.charAt(funcPart.length - 1) === ']')
+          ? splitTopLevel(funcPart.slice(1, -1)) : [funcPart];
+        var range = parseRange(lastArg);
+        var varName = range ? range.varName : lastArg;
+        var xmin = range ? range.min : -10, xmax = range ? range.max : 10;
+        var curves = [], allPts = [], colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628'];
+        for (var i = 0; i < funcs.length; i++) {
+          var pts = sampleFuncPoints(funcs[i].trim(), varName, xmin, xmax);
+          if (pts) { curves.push({ xs: pts.xs, ys: pts.ys, color: colors[i % colors.length] }); allPts.push(pts); }
+        }
+        if (curves.length > 0) {
+          renderJSXGraphPlot(outputEl, { curves: curves, polygons: [], points: [], bbox: computeBBox(allPts) });
+          return true;
+        }
+      }
+    }
+  }
+
+  // ── barplot([3,5,2,8,1]) ──
+  m = expr.match(/^barplot\((.+)\)$/);
+  if (m) {
+    var vals = parseGiacList(caseval(m[1]));
+    if (vals && vals.length > 0) {
+      renderJSXBarPlot(outputEl, vals);
+      return true;
+    }
+  }
+
+  // ── histogram(data) ──
+  m = expr.match(/^histogram\((.+)\)$/);
+  if (m) {
+    var vals = parseGiacList(caseval(m[1]));
+    if (vals && vals.length > 0) {
+      renderJSXHistogram(outputEl, vals);
+      return true;
+    }
+  }
+
+  // ── boxwhisker(data) ──
+  m = expr.match(/^boxwhisker\((.+)\)$/);
+  if (m) {
+    var vals = parseGiacList(caseval(m[1]));
+    if (vals && vals.length > 0) {
+      renderJSXBoxPlot(outputEl, vals);
+      return true;
+    }
+  }
+
+  // ── scatterplot(xs, ys) ──
+  m = expr.match(/^scatterplot\((.+)\)$/);
+  if (m) {
+    var args = splitTopLevel(m[1]);
+    if (args.length === 2) {
+      var xs = parseGiacList(caseval(args[0].trim()));
+      var ys = parseGiacList(caseval(args[1].trim()));
+      if (xs && ys && xs.length === ys.length) {
+        renderJSXScatterPlot(outputEl, xs, ys);
+        return true;
+      }
+    }
+  }
+
+  // ── camembert([["A",30],["B",50],["C",20]]) ──
+  m = expr.match(/^camembert\((.+)\)$/);
+  if (m) {
+    // Try parsing from raw input first (preserves string labels)
+    var pairs = parseGiacPairList(m[1]);
+    if (!pairs) {
+      // Fallback: evaluate through caseval
+      try { pairs = parseGiacPairList(caseval(m[1])); } catch(e) {}
+    }
+    if (pairs) {
+      renderJSXPieChart(outputEl, pairs);
+      return true;
+    }
+  }
+
+  // ── plotimplicit(expr, x, y) or plotimplicit(expr, x=a..b, y=c..d) ──
+  if (/^plotimplicit\(/.test(expr)) {
+    var inner = expr.slice(13, -1);
+    var args = splitTopLevel(inner);
+    if (args.length >= 3) {
+      var fExpr = args[0].trim();
+      var r1 = parseRange(args[1].trim()), r2 = parseRange(args[2].trim());
+      var xVar = r1 ? r1.varName : args[1].trim();
+      var yVar = r2 ? r2.varName : args[2].trim();
+      var xmin = r1 ? r1.min : -5, xmax = r1 ? r1.max : 5;
+      var ymin = r2 ? r2.min : -5, ymax = r2 ? r2.max : 5;
+      var jsFn = giacExprToJSFunc(fExpr, [xVar, yVar]);
+      if (jsFn) {
+        var pad = Math.max(xmax - xmin, ymax - ymin) * 0.1;
+        var bbox = { xmin: xmin - pad, xmax: xmax + pad, ymin: ymin - pad, ymax: ymax + pad };
+        var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: true });
+        board.create('implicitcurve', [jsFn], {
+          strokeColor: '#e41a1c', strokeWidth: 2, highlight: false
+        });
+        return true;
+      }
+    }
+  }
+
+  // ── plotfield(expr, [x,y]) ──
+  if (/^plotfield\(/.test(expr)) {
+    var inner = expr.slice(10, -1);
+    var args = splitTopLevel(inner);
+    if (args.length >= 2) {
+      var fExpr = args[0].trim();
+      var vl = parseVarList(args[1]);
+      if (vl.vars.length >= 2) {
+        var xVar = vl.vars[0], yVar = vl.vars[1];
+        var xmin = vl.ranges[0] ? vl.ranges[0].min : -5, xmax = vl.ranges[0] ? vl.ranges[0].max : 5;
+        var ymin = vl.ranges[1] ? vl.ranges[1].min : -5, ymax = vl.ranges[1] ? vl.ranges[1].max : 5;
+        var jsFn = giacExprToJSFunc(fExpr, [xVar, yVar]);
+        if (jsFn) {
+          var pad = Math.max(xmax - xmin, ymax - ymin) * 0.1;
+          var bbox = { xmin: xmin - pad, xmax: xmax + pad, ymin: ymin - pad, ymax: ymax + pad };
+          var board = createJSXBoard(outputEl, bbox);
+          var nx = 15, ny = 15;
+          var dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny;
+          var scale = Math.min(dx, dy) * 0.4;
+          for (var i = 0; i <= nx; i++) {
+            for (var j = 0; j <= ny; j++) {
+              var px = xmin + i * dx, py = ymin + j * dy;
+              var slope = jsFn(px, py);
+              if (!isFinite(slope)) continue;
+              var len = Math.sqrt(1 + slope * slope);
+              var ddx = scale / len, ddy = scale * slope / len;
+              var p1 = board.create('point', [px - ddx, py - ddy], { visible: false, fixed: true });
+              var p2 = board.create('point', [px + ddx, py + ddy], { visible: false, fixed: true });
+              board.create('arrow', [p1, p2], {
+                strokeColor: '#377eb8', strokeWidth: 1.5,
+                lastArrow: { type: 2, size: 4 },
+                fixed: true, highlight: false
+              });
+            }
+          }
+          return true;
+        }
+      }
+    }
+  }
+
+  // ── plotcontour(expr, [x=a..b,y=c..d]) ──
+  if (/^plotcontour\(/.test(expr)) {
+    var inner = expr.slice(12, -1);
+    var args = splitTopLevel(inner);
+    if (args.length >= 2) {
+      var fExpr = args[0].trim();
+      var vl = parseVarList(args[1]);
+      if (vl.vars.length >= 2) {
+        var xVar = vl.vars[0], yVar = vl.vars[1];
+        var xmin = vl.ranges[0] ? vl.ranges[0].min : -5, xmax = vl.ranges[0] ? vl.ranges[0].max : 5;
+        var ymin = vl.ranges[1] ? vl.ranges[1].min : -5, ymax = vl.ranges[1] ? vl.ranges[1].max : 5;
+        var jsFn = giacExprToJSFunc(fExpr, [xVar, yVar]);
+        if (jsFn) {
+          // Sample to find value range
+          var vmin = Infinity, vmax = -Infinity, ns = 30;
+          for (var i = 0; i <= ns; i++) for (var j = 0; j <= ns; j++) {
+            var v = jsFn(xmin + i * (xmax - xmin) / ns, ymin + j * (ymax - ymin) / ns);
+            if (isFinite(v)) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
+          }
+          var bbox = { xmin: xmin, xmax: xmax, ymin: ymin, ymax: ymax };
+          var board = createJSXBoard(outputEl, bbox);
+          var nLevels = 10;
+          var colors = ['#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e','#e6ab02','#a6761d','#666666','#e41a1c','#377eb8'];
+          for (var k = 1; k < nLevels; k++) {
+            var level = vmin + k * (vmax - vmin) / nLevels;
+            (function(lev, col) {
+              board.create('implicitcurve', [function(x, y) { return jsFn(x, y) - lev; }], {
+                strokeColor: col, strokeWidth: 1.5, highlight: false
+              });
+            })(level, colors[k % colors.length]);
+          }
+          return true;
+        }
+      }
+    }
+  }
+
+  // ── plotode(expr, [t,y], [t0,y0]) ──
+  if (/^plotode\(/.test(expr)) {
+    var inner = expr.slice(8, -1);
+    var args = splitTopLevel(inner);
+    if (args.length >= 3) {
+      var fExpr = args[0].trim();
+      var vl = parseVarList(args[1]);
+      var initStr = args[2].trim();
+      if (initStr.charAt(0) === '[') initStr = initStr.slice(1, -1);
+      var initParts = splitTopLevel(initStr);
+      var t0 = parseFloat(caseval('evalf(' + initParts[0].trim() + ')'));
+      var y0 = parseFloat(caseval('evalf(' + initParts[1].trim() + ')'));
+      if (vl.vars.length >= 2 && !isNaN(t0) && !isNaN(y0)) {
+        var tVar = vl.vars[0], yVar = vl.vars[1];
+        var jsFn = giacExprToJSFunc(fExpr, [tVar, yVar]);
+        if (jsFn) {
+          // RK4 integration forward and backward
+          var dt = 0.02;
+          var ts = [t0], ys = [y0];
+          var t = t0, y = y0;
+          for (var step = 0; step < 500; step++) {
+            var k1 = jsFn(t, y);
+            var k2 = jsFn(t + dt/2, y + dt*k1/2);
+            var k3 = jsFn(t + dt/2, y + dt*k2/2);
+            var k4 = jsFn(t + dt, y + dt*k3);
+            y += dt * (k1 + 2*k2 + 2*k3 + k4) / 6;
+            t += dt;
+            if (!isFinite(y) || Math.abs(y) > 1e6) break;
+            ts.push(t); ys.push(y);
+          }
+          t = t0; y = y0;
+          for (var step = 0; step < 500; step++) {
+            var k1 = jsFn(t, y);
+            var k2 = jsFn(t - dt/2, y - dt*k1/2);
+            var k3 = jsFn(t - dt/2, y - dt*k2/2);
+            var k4 = jsFn(t - dt, y - dt*k3);
+            y -= dt * (k1 + 2*k2 + 2*k3 + k4) / 6;
+            t -= dt;
+            if (!isFinite(y) || Math.abs(y) > 1e6) break;
+            ts.unshift(t); ys.unshift(y);
+          }
+          var bbox = computeBBox([{ xs: ts, ys: ys }]);
+          var board = createJSXBoard(outputEl, bbox);
+          board.create('curve', [ts, ys], { strokeColor: '#e41a1c', strokeWidth: 2, highlight: false });
+          board.create('point', [t0, y0], { strokeColor: '#e41a1c', fillColor: '#e41a1c', size: 4, fixed: true, name: '' });
+          return true;
+        }
+      }
+    }
+  }
+
+  // ── plotseq(expr, x0, n) — cobweb diagram ──
+  if (/^plotseq\(/.test(expr)) {
+    var inner = expr.slice(8, -1);
+    var args = splitTopLevel(inner);
+    if (args.length >= 3) {
+      var fExpr = args[0].trim();
+      var x0 = parseFloat(caseval('evalf(' + args[1].trim() + ')'));
+      var nIter = parseInt(args[2].trim());
+      if (!isNaN(x0) && !isNaN(nIter)) {
+        var jsFn = giacExprToJSFunc(fExpr, ['x']);
+        if (jsFn) {
+          // Determine range by iterating and sampling
+          var lo = x0, hi = x0;
+          var xn = x0;
+          for (var k = 0; k < nIter + 5; k++) {
+            xn = jsFn(xn);
+            if (!isFinite(xn)) break;
+            if (xn < lo) lo = xn;
+            if (xn > hi) hi = xn;
+          }
+          var pad = Math.max((hi - lo) * 0.3, 0.5);
+          lo -= pad; hi += pad;
+
+          var bbox = { xmin: lo, xmax: hi, ymin: lo, ymax: hi };
+          var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: true });
+
+          // Plot y = f(x)
+          var fxs = [], fys = [], nPts = 200;
+          for (var k = 0; k <= nPts; k++) {
+            var xv = lo + k * (hi - lo) / nPts;
+            fxs.push(xv); fys.push(jsFn(xv));
+          }
+          board.create('curve', [fxs, fys], { strokeColor: '#377eb8', strokeWidth: 2 });
+
+          // Plot y = x
+          board.create('line', [[0, 0], [1, 1]], { strokeColor: '#999999', strokeWidth: 1, dash: 2 });
+
+          // Cobweb staircase
+          var cwXs = [x0, x0], cwYs = [0, jsFn(x0)];
+          xn = x0;
+          for (var k = 0; k < nIter; k++) {
+            var yn = jsFn(xn);
+            cwXs.push(yn); cwYs.push(yn);   // horizontal to y=x
+            cwXs.push(yn); cwYs.push(jsFn(yn)); // vertical to f(x)
+            xn = yn;
+          }
+          board.create('curve', [cwXs, cwYs], { strokeColor: '#e41a1c', strokeWidth: 1.5 });
+
+          return true;
+        }
+      }
+    }
+  }
+
+  // ── Geometry: circle, segment, point, triangle (multi-command with ;) ──
+  if (/\b(circle|segment|point|triangle)\s*\(/.test(expr)) {
+    var cmds = expr.split(';').map(function(s) { return s.trim(); }).filter(Boolean);
+    var geomObjects = [];
+    cmds.forEach(function(cmd) {
+      var gm;
+      // circle(center, radius)
+      gm = cmd.match(/^circle\((.+?),\s*(.+)\)$/);
+      if (gm) {
+        var center = parseComplexToPoint(gm[1]);
+        var radius = parseFloat(caseval('evalf(' + gm[2].trim() + ')'));
+        if (center && !isNaN(radius) && radius > 0) {
+          geomObjects.push({ type: 'circle', center: center, radius: radius });
+        }
+        return;
+      }
+      // segment([x1,y1],[x2,y2])
+      gm = cmd.match(/^segment\(\[(.+?)\]\s*,\s*\[(.+?)\]\)$/);
+      if (gm) {
+        var c1 = gm[1].split(',').map(function(s) { return parseFloat(caseval('evalf(' + s.trim() + ')')); });
+        var c2 = gm[2].split(',').map(function(s) { return parseFloat(caseval('evalf(' + s.trim() + ')')); });
+        if (c1.length === 2 && c2.length === 2 && c1.every(isFinite) && c2.every(isFinite)) {
+          geomObjects.push({ type: 'segment', p1: c1, p2: c2 });
+        }
+        return;
+      }
+      // point(x, y)
+      gm = cmd.match(/^point\((.+?),\s*(.+)\)$/);
+      if (gm) {
+        var px = parseFloat(caseval('evalf(' + gm[1].trim() + ')'));
+        var py = parseFloat(caseval('evalf(' + gm[2].trim() + ')'));
+        if (isFinite(px) && isFinite(py)) {
+          geomObjects.push({ type: 'point', coords: [px, py] });
+        }
+        return;
+      }
+      // triangle(a, b, c) — complex number vertices
+      gm = cmd.match(/^triangle\((.+)\)$/);
+      if (gm) {
+        var tArgs = splitTopLevel(gm[1]);
+        var verts = tArgs.map(function(a) { return parseComplexToPoint(a.trim()); }).filter(Boolean);
+        if (verts.length === 3) {
+          geomObjects.push({ type: 'triangle', vertices: verts });
+        }
+        return;
+      }
+    });
+
+    if (geomObjects.length > 0) {
+      // Compute bounding box
+      var allXs = [], allYs = [];
+      geomObjects.forEach(function(obj) {
+        if (obj.type === 'circle') {
+          allXs.push(obj.center[0] - obj.radius, obj.center[0] + obj.radius);
+          allYs.push(obj.center[1] - obj.radius, obj.center[1] + obj.radius);
+        } else if (obj.type === 'segment') {
+          allXs.push(obj.p1[0], obj.p2[0]); allYs.push(obj.p1[1], obj.p2[1]);
+        } else if (obj.type === 'point') {
+          allXs.push(obj.coords[0]); allYs.push(obj.coords[1]);
+        } else if (obj.type === 'triangle') {
+          obj.vertices.forEach(function(v) { allXs.push(v[0]); allYs.push(v[1]); });
+        }
+      });
+      var gxmin = Math.min.apply(null, allXs), gxmax = Math.max.apply(null, allXs);
+      var gymin = Math.min.apply(null, allYs), gymax = Math.max.apply(null, allYs);
+      var gpad = Math.max(gxmax - gxmin, gymax - gymin) * 0.2 || 1;
+      var bbox = { xmin: gxmin - gpad, xmax: gxmax + gpad, ymin: gymin - gpad, ymax: gymax + gpad };
+      // Make square for geometry
+      var w = bbox.xmax - bbox.xmin, h = bbox.ymax - bbox.ymin;
+      if (w > h) { var d = (w - h) / 2; bbox.ymin -= d; bbox.ymax += d; }
+      else { var d = (h - w) / 2; bbox.xmin -= d; bbox.xmax += d; }
+
+      var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: true });
+      var colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00'];
+      var ci = 0;
+
+      geomObjects.forEach(function(obj) {
+        var color = colors[ci++ % colors.length];
+        if (obj.type === 'circle') {
+          var c = board.create('point', obj.center, { visible: false, fixed: true });
+          board.create('circle', [c, obj.radius], {
+            strokeColor: color, strokeWidth: 2, fillColor: 'none', highlight: false
+          });
+        } else if (obj.type === 'segment') {
+          var pa = board.create('point', obj.p1, { visible: false, fixed: true });
+          var pb = board.create('point', obj.p2, { visible: false, fixed: true });
+          board.create('segment', [pa, pb], { strokeColor: color, strokeWidth: 2, highlight: false });
+        } else if (obj.type === 'point') {
+          board.create('point', obj.coords, {
+            strokeColor: color, fillColor: color, size: 4, fixed: true, name: ''
+          });
+        } else if (obj.type === 'triangle') {
+          var verts = obj.vertices.map(function(v) {
+            return board.create('point', v, { visible: true, fixed: true, size: 2, strokeColor: color, fillColor: color, name: '' });
+          });
+          board.create('polygon', verts, {
+            borders: { strokeColor: color, strokeWidth: 2 },
+            fillColor: color, fillOpacity: 0.1,
+            vertices: { visible: true }, highlight: false
+          });
+        }
+      });
+
+      return true;
+    }
+  }
+
+  return false; // Not recognized — fall back to caseval pipeline
+}
+
+/** Split "sin(x),cos(x)" respecting parentheses */
+function splitTopLevel(str) {
+  var parts = [], depth = 0, start = 0;
+  for (var i = 0; i < str.length; i++) {
+    if (str[i] === '(' || str[i] === '[') depth++;
+    else if (str[i] === ')' || str[i] === ']') depth--;
+    else if (str[i] === ',' && depth === 0) {
+      parts.push(str.substring(start, i));
+      start = i + 1;
+    }
+  }
+  parts.push(str.substring(start));
+  return parts;
+}
+
+/** Compute bounding box from arrays of point sets */
+function computeBBox(ptSets) {
+  var allXs = [], allYs = [];
+  ptSets.forEach(function(pts) {
+    pts.xs.forEach(function(x) { if (isFinite(x)) allXs.push(x); });
+    pts.ys.forEach(function(y) { if (isFinite(y)) allYs.push(y); });
+  });
+  var xmin = Math.min.apply(null, allXs), xmax = Math.max.apply(null, allXs);
+  var ymin = Math.min.apply(null, allYs), ymax = Math.max.apply(null, allYs);
+  var padX = (xmax - xmin) * 0.08 || 1, padY = (ymax - ymin) * 0.08 || 1;
+  return { xmin: xmin - padX, xmax: xmax + padX, ymin: ymin - padY, ymax: ymax + padY };
+}
+
+/** Render a bar plot with JSXGraph */
+function renderJSXBarPlot(outputEl, vals) {
+  var polygons = [], maxVal = Math.max.apply(null, vals);
+  for (var i = 0; i < vals.length; i++) {
+    polygons.push({
+      corners: [[i + 0.1, 0], [i + 0.9, 0], [i + 0.9, vals[i]], [i + 0.1, vals[i]]],
+      color: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628', '#f781bf', '#999999'][i % 8]
+    });
+  }
+  var bbox = { xmin: -0.5, xmax: vals.length + 0.5, ymin: -maxVal * 0.1, ymax: maxVal * 1.15 };
+  renderJSXGraphPlot(outputEl, { curves: [], polygons: polygons, points: [], bbox: bbox });
+}
+
+/** Render a histogram with JSXGraph */
+function renderJSXHistogram(outputEl, vals) {
+  var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+  var nBins = Math.max(5, Math.min(30, Math.ceil(Math.sqrt(vals.length))));
+  var binWidth = (max - min) / nBins || 1;
+  var bins = new Array(nBins).fill(0);
+  vals.forEach(function(v) {
+    var idx = Math.min(Math.floor((v - min) / binWidth), nBins - 1);
+    bins[idx]++;
+  });
+  var maxCount = Math.max.apply(null, bins);
+  var polygons = [];
+  for (var i = 0; i < nBins; i++) {
+    var x0 = min + i * binWidth, x1 = x0 + binWidth;
+    polygons.push({
+      corners: [[x0, 0], [x1, 0], [x1, bins[i]], [x0, bins[i]]],
+      color: '#377eb8'
+    });
+  }
+  var bbox = { xmin: min - binWidth, xmax: max + binWidth, ymin: -maxCount * 0.1, ymax: maxCount * 1.2 };
+  renderJSXGraphPlot(outputEl, { curves: [], polygons: polygons, points: [], bbox: bbox });
+}
+
+/** Render a box-and-whisker plot with JSXGraph */
+function renderJSXBoxPlot(outputEl, vals) {
+  vals.sort(function(a, b) { return a - b; });
+  var n = vals.length;
+  var q1 = vals[Math.floor(n * 0.25)], q2 = vals[Math.floor(n * 0.5)], q3 = vals[Math.floor(n * 0.75)];
+  var vmin = vals[0], vmax = vals[n - 1];
+  var range = vmax - vmin || 1;
+  var polygons = [
+    // Box (Q1 to Q3)
+    { corners: [[0.3, q1], [0.7, q1], [0.7, q3], [0.3, q3]], color: '#377eb8' }
+  ];
+  var curves = [
+    // Median line
+    { xs: [0.3, 0.7], ys: [q2, q2], color: '#e41a1c' },
+    // Lower whisker
+    { xs: [0.5, 0.5], ys: [vmin, q1], color: 'black' },
+    { xs: [0.4, 0.6], ys: [vmin, vmin], color: 'black' },
+    // Upper whisker
+    { xs: [0.5, 0.5], ys: [q3, vmax], color: 'black' },
+    { xs: [0.4, 0.6], ys: [vmax, vmax], color: 'black' }
+  ];
+  var bbox = { xmin: -0.5, xmax: 1.5, ymin: vmin - range * 0.15, ymax: vmax + range * 0.15 };
+  renderJSXGraphPlot(outputEl, { curves: curves, polygons: polygons, points: [], bbox: bbox });
+}
+
+/** Render a scatter plot with JSXGraph */
+function renderJSXScatterPlot(outputEl, xs, ys) {
+  var pts = [];
+  for (var i = 0; i < xs.length; i++) pts.push({ x: xs[i], y: ys[i], color: '#e41a1c' });
+  var bbox = computeBBox([{ xs: xs, ys: ys }]);
+  renderJSXGraphPlot(outputEl, { curves: [], polygons: [], points: pts, bbox: bbox });
+}
+
+/** Render a pie chart with JSXGraph */
+function renderJSXPieChart(outputEl, pairs) {
+  var total = pairs.reduce(function(s, p) { return s + p.value; }, 0);
+  if (total <= 0) return;
+  var colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628', '#f781bf', '#999999'];
+  var polygons = [], labels = [], angle = 0;
+  pairs.forEach(function(p, idx) {
+    var sweep = (p.value / total) * 2 * Math.PI;
+    var corners = [[0, 0]];
+    var steps = Math.max(20, Math.round(sweep * 30));
+    for (var s = 0; s <= steps; s++) {
+      var a = angle + sweep * s / steps;
+      corners.push([Math.cos(a), Math.sin(a)]);
+    }
+    polygons.push({ corners: corners, color: colors[idx % colors.length] });
+    // Label at midpoint of sector
+    var midAngle = angle + sweep / 2;
+    labels.push({ x: 0.6 * Math.cos(midAngle), y: 0.6 * Math.sin(midAngle), text: p.label });
+    angle += sweep;
+  });
+  var bbox = { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5 };
+  renderJSXGraphPlot(outputEl, { curves: [], polygons: polygons, points: [], labels: labels, bbox: bbox });
+}
+
+// ── JSXGraph board management ─────────────────────────────
 
 function jsxGraphAvailable() {
   return typeof JXG !== 'undefined' && JXG.JSXGraph;
@@ -1400,46 +2228,150 @@ function parseSvgPlotData(svgString) {
     }
   });
 
-  // Extract path elements
+  var polygons = [];
+  var points = [];
+
+  // Extract <circle> elements — large circles as curves, small ones as points
+  var circles = svg.querySelectorAll('circle');
+  circles.forEach(function(circ) {
+    var cx = parseFloat(circ.getAttribute('cx')) || 0;
+    var cy = parseFloat(circ.getAttribute('cy')) || 0;
+    var r = parseFloat(circ.getAttribute('r'));
+    if (isNaN(r) || r <= 0) return;
+    var color = circ.getAttribute('stroke') || circ.getAttribute('fill') || defaultColors[colorIdx++ % defaultColors.length];
+    if (r < 5) {
+      // Small circle = scatter point
+      points.push({ x: cx, y: cy, color: color });
+    } else {
+      // Large circle = curve
+      var xs = [], ys = [], steps = 64;
+      for (var s = 0; s <= steps; s++) {
+        var a = 2 * Math.PI * s / steps;
+        xs.push(cx + r * Math.cos(a));
+        ys.push(cy + r * Math.sin(a));
+      }
+      curves.push({ xs: xs, ys: ys, color: color });
+    }
+  });
+
+  // Extract <ellipse> elements
+  var ellipses = svg.querySelectorAll('ellipse');
+  ellipses.forEach(function(el) {
+    var cx = parseFloat(el.getAttribute('cx')) || 0;
+    var cy = parseFloat(el.getAttribute('cy')) || 0;
+    var rx = parseFloat(el.getAttribute('rx'));
+    var ry = parseFloat(el.getAttribute('ry'));
+    if (isNaN(rx) || isNaN(ry) || rx <= 0 || ry <= 0) return;
+    var xs = [], ys = [], steps = 64;
+    for (var s = 0; s <= steps; s++) {
+      var a = 2 * Math.PI * s / steps;
+      xs.push(cx + rx * Math.cos(a));
+      ys.push(cy + ry * Math.sin(a));
+    }
+    var color = el.getAttribute('stroke') || defaultColors[colorIdx++ % defaultColors.length];
+    curves.push({ xs: xs, ys: ys, color: color });
+  });
+
+  // Extract <rect> elements (bars in histograms/barplots, boxes in boxwhisker)
+  var rects = svg.querySelectorAll('rect');
+  rects.forEach(function(rect) {
+    var x = parseFloat(rect.getAttribute('x')) || 0;
+    var y = parseFloat(rect.getAttribute('y')) || 0;
+    var w = parseFloat(rect.getAttribute('width'));
+    var h = parseFloat(rect.getAttribute('height'));
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) return;
+    var fill = rect.getAttribute('fill') || rect.getAttribute('stroke') || defaultColors[colorIdx++ % defaultColors.length];
+    if (fill === 'none' || fill === 'white' || fill === '#ffffff') return; // skip background rects
+    polygons.push({
+      corners: [[x, y], [x + w, y], [x + w, y + h], [x, y + h]],
+      color: fill
+    });
+  });
+
+  // Extract <polygon> elements
+  var svgPolygons = svg.querySelectorAll('polygon');
+  svgPolygons.forEach(function(pg) {
+    var pts = pg.getAttribute('points');
+    if (!pts) return;
+    var corners = [];
+    pts.trim().split(/\s+/).forEach(function(p) {
+      var xy = p.split(',');
+      if (xy.length === 2) corners.push([parseFloat(xy[0]), parseFloat(xy[1])]);
+    });
+    if (corners.length >= 3) {
+      var fill = pg.getAttribute('fill') || pg.getAttribute('stroke') || defaultColors[colorIdx++ % defaultColors.length];
+      polygons.push({ corners: corners, color: fill });
+    }
+  });
+
+  // Extract path elements (supports both absolute and relative commands)
   var paths = svg.querySelectorAll('path');
   paths.forEach(function(path) {
     var d = path.getAttribute('d');
     if (!d) return;
     var xs = [], ys = [];
-    var commands = d.match(/[MLCQZ][^MLCQZ]*/gi);
+    var commands = d.match(/[MLCQZAHVmlcqzahv][^MLCQZAHVmlcqzahv]*/g);
     if (!commands) return;
+    var curX = 0, curY = 0;
     commands.forEach(function(cmd) {
       var type = cmd.charAt(0);
       var nums = cmd.slice(1).trim().split(/[\s,]+/).map(Number);
-      if (type === 'M' || type === 'L') {
+      var rel = (type === type.toLowerCase()); // relative if lowercase
+      var T = type.toUpperCase();
+      if (T === 'M' || T === 'L') {
         for (var i = 0; i + 1 < nums.length; i += 2) {
-          xs.push(nums[i]);
-          ys.push(nums[i + 1]);
+          curX = rel ? curX + nums[i] : nums[i];
+          curY = rel ? curY + nums[i + 1] : nums[i + 1];
+          xs.push(curX); ys.push(curY);
         }
-      } else if (type === 'C') {
+      } else if (T === 'H') {
+        for (var i = 0; i < nums.length; i++) {
+          curX = rel ? curX + nums[i] : nums[i];
+          xs.push(curX); ys.push(curY);
+        }
+      } else if (T === 'V') {
+        for (var i = 0; i < nums.length; i++) {
+          curY = rel ? curY + nums[i] : nums[i];
+          xs.push(curX); ys.push(curY);
+        }
+      } else if (T === 'C') {
         for (var i = 0; i + 5 < nums.length; i += 6) {
-          var px = xs.length > 0 ? xs[xs.length - 1] : 0;
-          var py = ys.length > 0 ? ys[ys.length - 1] : 0;
-          var cp1x = nums[i], cp1y = nums[i+1];
-          var cp2x = nums[i+2], cp2y = nums[i+3];
-          var ex = nums[i+4], ey = nums[i+5];
+          var px = curX, py = curY;
+          var cp1x = rel ? px + nums[i] : nums[i], cp1y = rel ? py + nums[i+1] : nums[i+1];
+          var cp2x = rel ? px + nums[i+2] : nums[i+2], cp2y = rel ? py + nums[i+3] : nums[i+3];
+          var ex = rel ? px + nums[i+4] : nums[i+4], ey = rel ? py + nums[i+5] : nums[i+5];
           for (var t = 1; t <= 20; t++) {
             var u = t / 20, u2 = u*u, u3 = u2*u, inv = 1-u, inv2 = inv*inv, inv3 = inv2*inv;
             xs.push(inv3*px + 3*inv2*u*cp1x + 3*inv*u2*cp2x + u3*ex);
             ys.push(inv3*py + 3*inv2*u*cp1y + 3*inv*u2*cp2y + u3*ey);
           }
+          curX = ex; curY = ey;
         }
-      } else if (type === 'Q') {
+      } else if (T === 'Q') {
         for (var i = 0; i + 3 < nums.length; i += 4) {
-          var px = xs.length > 0 ? xs[xs.length - 1] : 0;
-          var py = ys.length > 0 ? ys[ys.length - 1] : 0;
-          var cpx = nums[i], cpy = nums[i+1];
-          var ex = nums[i+2], ey = nums[i+3];
+          var px = curX, py = curY;
+          var cpx = rel ? px + nums[i] : nums[i], cpy = rel ? py + nums[i+1] : nums[i+1];
+          var ex = rel ? px + nums[i+2] : nums[i+2], ey = rel ? py + nums[i+3] : nums[i+3];
           for (var t = 1; t <= 20; t++) {
             var u = t / 20, inv = 1-u;
             xs.push(inv*inv*px + 2*inv*u*cpx + u*u*ex);
             ys.push(inv*inv*py + 2*inv*u*cpy + u*u*ey);
           }
+          curX = ex; curY = ey;
+        }
+      } else if (T === 'A') {
+        // Arc: rx ry x-rotation large-arc sweep-flag x y
+        for (var i = 0; i + 6 < nums.length; i += 7) {
+          var ex = rel ? curX + nums[i+5] : nums[i+5];
+          var ey = rel ? curY + nums[i+6] : nums[i+6];
+          // Approximate arc with line segments
+          var steps = 20;
+          for (var t = 1; t <= steps; t++) {
+            var u = t / steps;
+            xs.push(curX + (ex - curX) * u);
+            ys.push(curY + (ey - curY) * u);
+          }
+          curX = ex; curY = ey;
         }
       }
     });
@@ -1449,11 +2381,13 @@ function parseSvgPlotData(svgString) {
     }
   });
 
-  if (curves.length === 0) return null;
+  if (curves.length === 0 && polygons.length === 0 && points.length === 0) return null;
 
-  // Compute tight bounding box from actual curve data
+  // Compute tight bounding box from all data
   var allXs = [], allYs = [];
   curves.forEach(function(c) { allXs = allXs.concat(c.xs); allYs = allYs.concat(c.ys); });
+  polygons.forEach(function(p) { p.corners.forEach(function(c) { allXs.push(c[0]); allYs.push(c[1]); }); });
+  points.forEach(function(p) { allXs.push(p.x); allYs.push(p.y); });
   var dataXmin = Math.min.apply(null, allXs), dataXmax = Math.max.apply(null, allXs);
   var dataYmin = Math.min.apply(null, allYs), dataYmax = Math.max.apply(null, allYs);
   var padX = (dataXmax - dataXmin) * 0.08 || 1;
@@ -1463,7 +2397,7 @@ function parseSvgPlotData(svgString) {
     ymin: dataYmin - padY, ymax: dataYmax + padY
   };
 
-  return { curves: curves, bbox: bbox };
+  return { curves: curves, polygons: polygons, points: points, bbox: bbox };
 }
 
 /** Parse gr2d(logo(...)) output into curve data for JSXGraph */
@@ -1586,16 +2520,156 @@ function renderJSXGraphPlot(outputEl, plotData) {
     });
   });
 
+  // Render filled polygons (rects from histograms/barplots, SVG polygons)
+  if (plotData.polygons) {
+    plotData.polygons.forEach(function(pg) {
+      var verts = pg.corners.map(function(c) {
+        return board.create('point', c, { visible: false, fixed: true });
+      });
+      board.create('polygon', verts, {
+        fillColor: pg.color,
+        fillOpacity: 0.7,
+        borders: { strokeColor: pg.color, strokeWidth: 1 },
+        vertices: { visible: false },
+        highlight: false
+      });
+    });
+  }
+
+  // Render scatter points
+  if (plotData.points) {
+    plotData.points.forEach(function(pt) {
+      board.create('point', [pt.x, pt.y], {
+        strokeColor: pt.color,
+        fillColor: pt.color,
+        size: 3,
+        fixed: true,
+        highlight: false
+      });
+    });
+  }
+
+  // Render text labels (for pie charts etc.)
+  if (plotData.labels) {
+    plotData.labels.forEach(function(lbl) {
+      board.create('text', [lbl.x, lbl.y, lbl.text], {
+        anchorX: 'middle',
+        anchorY: 'middle',
+        fontSize: 14,
+        fixed: true,
+        highlight: false
+      });
+    });
+  }
+
   jsxGraphBoards[boardId] = board;
   return board;
 }
 
-// T012: gl3d message
-function renderGl3dMessage(outputEl) {
-  var msg = document.createElement('div');
-  msg.className = 'plot-3d-msg';
-  msg.textContent = t('plot3dNotSupported');
-  outputEl.appendChild(msg);
+// ── gl3d 3D Plot Rendering ─────────────────────────────────
+// Uses Giac's built-in OpenGL renderer compiled to WebGL via Emscripten.
+// No external 3D library needed — giac_renderer() draws directly to canvas.
+
+function webglAvailable() {
+  try {
+    var c = document.createElement('canvas');
+    return !!(c.getContext('webgl') || c.getContext('experimental-webgl'));
+  } catch(e) { return false; }
+}
+
+var gl3dRendererFn = null;
+
+function getGiacRenderer() {
+  if (gl3dRendererFn) return gl3dRendererFn;
+  try {
+    gl3dRendererFn = Module.cwrap('_ZN4giac13giac_rendererEPKc', 'number', ['string']);
+    return gl3dRendererFn;
+  } catch(e) { return null; }
+}
+
+function renderGl3dPlot(outputEl, sceneId) {
+  // Check WebGL availability
+  if (UI.disable3d || !webglAvailable()) {
+    var msg = document.createElement('div');
+    msg.className = 'plot-3d-msg';
+    msg.textContent = t('plot3dNotSupported');
+    outputEl.appendChild(msg);
+    return;
+  }
+
+  var gr = getGiacRenderer();
+  if (!gr) {
+    var msg = document.createElement('div');
+    msg.className = 'plot-3d-msg';
+    msg.textContent = t('plot3dNotSupported');
+    outputEl.appendChild(msg);
+    return;
+  }
+
+  // Create canvas with required ID pattern for Giac's renderer
+  var canvasId = 'gl3d_' + sceneId;
+  var container = document.createElement('div');
+  container.className = 'gl3d-container';
+
+  var canvas = document.createElement('canvas');
+  canvas.id = canvasId;
+  // Responsive: use container width but cap at 600px
+  var containerWidth = Math.min(outputEl.clientWidth || 600, 600);
+  canvas.width = containerWidth;
+  canvas.height = Math.round(containerWidth * 2 / 3); // 3:2 aspect ratio
+  container.appendChild(canvas);
+  outputEl.appendChild(container);
+
+  // Point Emscripten's GL output to this canvas, then render
+  Module.canvas = canvas;
+  try {
+    gr(sceneId);
+  } catch(e) {
+    container.innerHTML = '';
+    var msg = document.createElement('div');
+    msg.className = 'plot-3d-msg';
+    msg.textContent = t('plot3dNotSupported');
+    container.appendChild(msg);
+    return;
+  }
+
+  // Mouse interaction for 3D rotation
+  var pushed = false, lastX = 0, lastY = 0;
+
+  canvas.addEventListener('mousedown', function(e) {
+    pushed = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    e.preventDefault();
+  });
+
+  canvas.addEventListener('mouseup', function() { pushed = false; });
+  canvas.addEventListener('mouseleave', function() { pushed = false; });
+
+  canvas.addEventListener('mousemove', function(e) {
+    if (!pushed) return;
+    var dx = e.clientX - lastX;
+    var dy = e.clientY - lastY;
+    if (Math.abs(dx) > 2) {
+      gr((dx > 0 ? 'r' : 'l') + sceneId);
+    }
+    if (Math.abs(dy) > 2) {
+      gr((dy > 0 ? 'd' : 'u') + sceneId);
+    }
+    lastX = e.clientX;
+    lastY = e.clientY;
+    e.preventDefault();
+  });
+
+  // Clean up SDL keyboard listeners that Emscripten attaches
+  try {
+    var kle = Module['keyboardListeningElement'] || document;
+    if (typeof SDL !== 'undefined' && SDL.receiveEvent) {
+      kle.removeEventListener('keydown', SDL.receiveEvent);
+      kle.removeEventListener('keyup', SDL.receiveEvent);
+      kle.removeEventListener('keypress', SDL.receiveEvent);
+    }
+  } catch(e) { /* SDL may not exist */ }
 }
 
 </script>

@@ -1,0 +1,12 @@
+*
+
+!.gitignore
+
+!giac.js
+!giacsimple.js
+!giacwasm.js
+!index.html
+!LICENSE.txt
+!package-lock.json
+!package.json
+!README.md
