@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xcas Reactive Notebook</title>
+
+<!-- ═══════════════════════════════════════════════════
+  External dependencies (loaded from CDN)
+  ═══════════════════════════════════════════════════ -->
+<script src="https://unpkg.com/mathlive"></script>
+<script src="https://unpkg.com/@cortex-js/compute-engine"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<!-- ═══════════════════════════════════════════════════
+  Giac/Xcas engine (asm.js) — HOST giac.js LOCALLY
+  Download: https://www-fourier.univ-grenoble-alpes.fr/~parisse/giacjs.tar.gz
+  We bypass giacsimple.js and define a minimal Module object
+  so giac.js (Emscripten asm.js build) can initialize.
+  ═══════════════════════════════════════════════════ -->
+<script>
+var Module = {
+  ready: false,
+  preRun: [],
+  postRun: [],
+  print: function(text) { console.log('giac:', text); },
+  printErr: function(text) { console.warn('giac:', text); },
+  setStatus: function(text) { if (text) console.log('giac status:', text); },
+  totalDependencies: 0,
+  monitorRunDependencies: function(left) {
+    this.totalDependencies = Math.max(this.totalDependencies, left);
+  },
+  onRuntimeInitialized: function() {
+    console.log('Giac runtime initialized');
+    Module.ready = true;
+  }
+};
+// Minimal UI stub — giac.js references UI.* during some computations
+var UI = {
+  Datestart: Date.now(),
+  disable3d: 0,
+  warnpy: false,
+  python_output: '',
+  assistant_matr_maxrows: 100,
+  assistant_matr_maxcols: 100,
+  clean_for_html: function(s) { return s; },
+  add_python_output: function(s) { UI.python_output += s; },
+  set_config_width: function() {},
+  open_sheet: function() {},
+  sheet_recompute: function() {},
+  sheet_set_ij: function() {}
+};
+</script>
+<script src="giac.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
+
+  :root {
+    --bg:#f4f2ed;--surface:#fff;--border:#d9d4ca;--border-focus:#2563eb;
+    --text:#1c1917;--text-muted:#78716c;--output-bg:#fafaf6;
+    --accent:#2563eb;--accent-hover:#1d4ed8;--accent-light:#eff3ff;
+    --success:#15803d;--error:#b91c1c;--warning:#ca8a04;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow:0 2px 8px rgba(0,0,0,0.06);
+    --radius:10px;
+    --mono:'JetBrains Mono','Menlo','Consolas',monospace;
+    --body:'Newsreader','Georgia',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.65}
+
+  /* ═══════ Header ═══════ */
+  .header{background:#0c0f1a;color:#eae8e0;padding:1.6rem 2rem 1.2rem;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 500px 250px at 5% 90%,rgba(37,99,235,.12),transparent),radial-gradient(ellipse 350px 180px at 95% 10%,rgba(168,85,247,.08),transparent);pointer-events:none}
+  .header-inner{position:relative;max-width:960px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+  .header-left h1{font-family:var(--mono);font-size:1.35rem;font-weight:500;letter-spacing:-.3px}
+  .header-left p{font-size:.82rem;opacity:.5;margin-top:.1rem;font-family:var(--mono)}
+  .header-right{display:flex;align-items:center;gap:.75rem;margin-top:.2rem}
+  #giac-status{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.7rem;padding:4px 11px;border-radius:20px;background:rgba(255,255,255,.07);transition:background .3s}
+  #giac-status .dot{width:7px;height:7px;border-radius:50%;background:#facc15;transition:background .3s}
+  #giac-status.ready .dot{background:#4ade80}
+  #giac-status.error .dot{background:#f87171}
+  .lang-select{font-family:var(--mono);font-size:.7rem;padding:3px 8px;border-radius:5px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#eae8e0;cursor:pointer;outline:none}
+  .lang-select:hover{border-color:rgba(255,255,255,.3)}
+  .lang-select option{background:#1c1917;color:#eae8e0}
+
+  /* ═══════ Toolbar ═══════ */
+  .toolbar-wrap{border-bottom:1px solid var(--border);background:var(--surface);padding:0 2rem}
+  .toolbar{max-width:960px;margin:0 auto;display:flex;gap:.4rem;padding:.6rem 0;flex-wrap:wrap;align-items:center}
+  .toolbar button{font-family:var(--mono);font-size:.72rem;padding:5px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap}
+  .toolbar button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .toolbar button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .toolbar button.primary:hover{background:var(--accent-hover)}
+  .toolbar .sep{width:1px;height:20px;background:var(--border);margin:0 .15rem}
+
+  /* ═══════ Notebook ═══════ */
+  .notebook{max-width:960px;margin:1.2rem auto;padding:0 1rem 5rem}
+
+  /* ═══════ Cell ═══════ */
+  .cell{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:.6rem;box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+  .cell:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+  .cell.running{border-color:var(--warning)}
+  .cell-head{display:flex;align-items:center;padding:.3rem .7rem;border-bottom:1px solid var(--border);background:#fafaf7;border-radius:var(--radius) var(--radius) 0 0;gap:.45rem;min-height:30px}
+  .cell-idx{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);min-width:44px}
+  .cell-badge{font-family:var(--mono);font-size:.6rem;padding:1px 7px;border-radius:4px;color:#fff;letter-spacing:.3px;text-transform:uppercase}
+  .cell-badge.math{background:#7c3aed}.cell-badge.text{background:#d97706}.cell-badge.raw{background:#64748b}
+  .mode-toggle{font-family:var(--mono);font-size:.63rem;display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-left:.2rem}
+  .mode-toggle button{padding:2px 7px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-family:inherit;font-size:inherit;transition:all .15s}
+  .mode-toggle button.active{background:var(--accent);color:#fff}
+  .mode-toggle button:hover:not(.active){background:var(--accent-light)}
+  .cell-actions{margin-left:auto;display:flex;gap:3px;opacity:0;transition:opacity .15s}
+  .cell:hover .cell-actions{opacity:1}
+  .cell-actions button{font-size:.66rem;padding:2px 7px;border:none;border-radius:3px;background:transparent;color:var(--text-muted);cursor:pointer;font-family:var(--mono)}
+  .cell-actions button:hover{background:#eee;color:var(--text)}
+  .cell-actions button.del:hover{background:#fee;color:var(--error)}
+
+  /* ═══════ Input ═══════ */
+  .cell-input{padding:.65rem .8rem;min-height:46px}
+  .cell-input math-field{width:100%;font-size:1.2rem;border:none;outline:none;--caret-color:var(--accent);--selection-background-color:rgba(37,99,235,.12)}
+  .cell-input textarea{width:100%;min-height:34px;border:none;outline:none;font-family:var(--mono);font-size:.8rem;color:var(--text);background:transparent;resize:vertical;line-height:1.55}
+
+  /* ═══════ Debug ═══════ */
+  .cell-debug{padding:.3rem .8rem;background:#f7f6f2;border-top:1px dashed var(--border);font-family:var(--mono);font-size:.65rem;color:var(--text-muted);display:none;overflow-x:auto;word-break:break-all}
+  .cell-debug.visible{display:block}
+  .cell-debug .lbl{font-weight:500;color:var(--accent);margin-right:.3rem}
+  .cell-debug .xcas-out{color:var(--success);margin-left:.4rem}
+
+  /* ═══════ Output ═══════ */
+  .cell-output{padding:.65rem .8rem;background:var(--output-bg);border-top:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);min-height:26px;overflow-x:auto}
+  .cell-output:empty{display:none}
+  .cell-output .err{color:var(--error);font-family:var(--mono);font-size:.78rem}
+  .cell-output .katex-display{margin:.2rem 0;text-align:left}
+  .cell-output .raw-res{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-top:.3rem;white-space:pre-wrap}
+  .cell-output .md-out{font-family:var(--body);font-size:.93rem}
+  .cell-output .md-out h1{font-size:1.35rem;margin:.35rem 0}
+  .cell-output .md-out h2{font-size:1.1rem;margin:.3rem 0}
+  .cell-output .md-out h3{font-size:.95rem;margin:.25rem 0}
+  .cell-output .md-out p{margin:.3rem 0}
+  .cell-output .md-out code{background:#eee;padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:.83em}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle;margin-right:5px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ═══════ Bottom bar ═══════ */
+  .bottombar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:.4rem 1.5rem;font-family:var(--mono);font-size:.63rem;color:var(--text-muted);display:flex;gap:1.4rem;align-items:center;z-index:10}
+  .bottombar kbd{background:#eeede8;padding:1px 5px;border-radius:3px;border:1px solid var(--border);font-size:.62rem}
+  .bottombar label{display:flex;align-items:center;gap:4px;cursor:pointer}
+  .bottombar input[type="checkbox"]{accent-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="header"><div class="header-inner">
+  <div class="header-left">
+    <h1>📓 <span data-i18n="title">Xcas Notebook</span></h1>
+    <p data-i18n="subtitle">Reactive CAS — MathJSON ↔ Giac via WebAssembly</p>
+  </div>
+  <div class="header-right">
+    <select class="lang-select" id="lang-select" onchange="setLocale(this.value)">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="es">Español</option>
+      <option value="de">Deutsch</option>
+    </select>
+    <div id="giac-status">
+      <span class="dot"></span>
+      <span class="text" data-i18n="giacLoading">Loading Giac…</span>
+    </div>
+  </div>
+</div></div>
+
+<div class="toolbar-wrap"><div class="toolbar">
+  <button onclick="addCell('math')" data-i18n="addMath">+ Math</button>
+  <button onclick="addCell('raw')" data-i18n="addRaw">+ Xcas raw</button>
+  <button onclick="addCell('text')" data-i18n="addText">+ Text</button>
+  <div class="sep"></div>
+  <button class="primary" onclick="runAll()" data-i18n="runAll">▶ Run all</button>
+  <button onclick="clearAllOutputs()" data-i18n="clearOutputs">✕ Clear outputs</button>
+  <div class="sep"></div>
+  <button onclick="exportNotebook()" data-i18n="exportBtn">💾 Export</button>
+  <button onclick="importNotebook()" data-i18n="importBtn">📂 Import</button>
+</div></div>
+
+<div class="notebook" id="notebook"></div>
+
+<div class="bottombar">
+  <span><kbd>Shift</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRun">Run</span></span>
+  <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRunNew">Run + new cell</span></span>
+  <label><input type="checkbox" id="toggle-debug" onchange="toggleAllDebug(this.checked)">
+    <span data-i18n="showMathJSON">Show MathJSON</span></label>
+</div>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 1 — INTERNATIONALIZATION (i18n)
+//
+// All user-facing strings live in LOCALES. Any element with
+// data-i18n="key" is auto-updated when the locale changes.
+//
+// To add a language:
+//   1. Add an entry to LOCALES
+//   2. Add an <option> in #lang-select
+// ─────────────────────────────────────────────────────────────
+
+const LOCALES = {
+  en: {
+    title: 'Xcas Notebook',
+    subtitle: 'Reactive CAS — MathJSON ↔ Giac via WebAssembly',
+    giacLoading: 'Loading Giac…',
+    giacReady: 'Giac ready',
+    giacError: 'Giac init error',
+    giacDemo: 'Demo mode (Giac not loaded)',
+    addMath: '+ Math', addRaw: '+ Xcas raw', addText: '+ Text',
+    runAll: '▶ Run all', clearOutputs: '✕ Clear outputs',
+    exportBtn: '💾 Export', importBtn: '📂 Import',
+    shortcutRun: 'Run', shortcutRunNew: 'Run + new cell',
+    showMathJSON: 'Show MathJSON',
+    cellMath: 'Math', cellRaw: 'Xcas', cellText: 'Text',
+    placeholderRaw: 'Xcas syntax (e.g. factor(x^4-1))',
+    placeholderText: 'Notes, Markdown…',
+    computing: 'Computing…',
+    giacNotReady: '⏳ Giac is still loading…',
+    errorPrefix: '✗ Error:',
+    moveUp: 'Move up', moveDown: 'Move down',
+    deleteCell: 'Delete', runCell: 'Run',
+    modeVisual: 'Visual math input', modeRaw: 'Raw Xcas syntax',
+    invalidJson: 'Invalid JSON file',
+    welcomeTitle: '# Welcome to the Xcas Notebook',
+    welcomeBody: 'Type math visually (MathJSON) or use raw Xcas syntax.\nTick **Show MathJSON** at the bottom to inspect the conversion pipeline.',
+  },
+  fr: {
+    title: 'Notebook Xcas',
+    subtitle: 'Calcul formel réactif — MathJSON ↔ Giac via WebAssembly',
+    giacLoading: 'Chargement de Giac…',
+    giacReady: 'Giac prêt',
+    giacError: 'Erreur init Giac',
+    giacDemo: 'Mode démo (Giac non chargé)',
+    addMath: '+ Math', addRaw: '+ Xcas brut', addText: '+ Texte',
+    runAll: '▶ Tout exécuter', clearOutputs: '✕ Effacer sorties',
+    exportBtn: '💾 Exporter', importBtn: '📂 Importer',
+    shortcutRun: 'Exécuter', shortcutRunNew: 'Exécuter + nouvelle cellule',
+    showMathJSON: 'Afficher MathJSON',
+    cellMath: 'Math', cellRaw: 'Xcas', cellText: 'Texte',
+    placeholderRaw: 'Syntaxe Xcas (ex : factor(x^4-1))',
+    placeholderText: 'Notes, Markdown…',
+    computing: 'Calcul en cours…',
+    giacNotReady: '⏳ Giac en chargement…',
+    errorPrefix: '✗ Erreur :',
+    moveUp: 'Monter', moveDown: 'Descendre',
+    deleteCell: 'Supprimer', runCell: 'Exécuter',
+    modeVisual: 'Saisie math visuelle', modeRaw: 'Syntaxe Xcas brute',
+    invalidJson: 'Fichier JSON invalide',
+    welcomeTitle: '# Bienvenue dans le Notebook Xcas',
+    welcomeBody: 'Saisissez des maths visuellement (MathJSON) ou en syntaxe Xcas brute.\nCochez **Afficher MathJSON** en bas pour inspecter la conversion.',
+  },
+  es: {
+    title: 'Cuaderno Xcas',
+    subtitle: 'CAS reactivo — MathJSON ↔ Giac vía WebAssembly',
+    giacLoading: 'Cargando Giac…',
+    giacReady: 'Giac listo',
+    giacError: 'Error al iniciar Giac',
+    giacDemo: 'Modo demo (Giac no cargado)',
+    addMath: '+ Mate', addRaw: '+ Xcas directo', addText: '+ Texto',
+    runAll: '▶ Ejecutar todo', clearOutputs: '✕ Limpiar salidas',
+    exportBtn: '💾 Exportar', importBtn: '📂 Importar',
+    shortcutRun: 'Ejecutar', shortcutRunNew: 'Ejecutar + nueva celda',
+    showMathJSON: 'Mostrar MathJSON',
+    cellMath: 'Mate', cellRaw: 'Xcas', cellText: 'Texto',
+    placeholderRaw: 'Sintaxis Xcas (ej: factor(x^4-1))',
+    placeholderText: 'Notas, Markdown…',
+    computing: 'Calculando…',
+    giacNotReady: '⏳ Giac está cargando…',
+    errorPrefix: '✗ Error:',
+    moveUp: 'Subir', moveDown: 'Bajar',
+    deleteCell: 'Eliminar', runCell: 'Ejecutar',
+    modeVisual: 'Entrada visual', modeRaw: 'Sintaxis Xcas directa',
+    invalidJson: 'Archivo JSON no válido',
+    welcomeTitle: '# Bienvenido al Cuaderno Xcas',
+    welcomeBody: 'Escribe matemáticas visualmente (MathJSON) o usa sintaxis Xcas directa.\nMarca **Mostrar MathJSON** abajo para inspeccionar la conversión.',
+  },
+  de: {
+    title: 'Xcas Notizbuch',
+    subtitle: 'Reaktives CAS — MathJSON ↔ Giac via WebAssembly',
+    giacLoading: 'Giac wird geladen…',
+    giacReady: 'Giac bereit',
+    giacError: 'Giac Init-Fehler',
+    giacDemo: 'Demo-Modus (Giac nicht geladen)',
+    addMath: '+ Mathe', addRaw: '+ Xcas direkt', addText: '+ Text',
+    runAll: '▶ Alles ausführen', clearOutputs: '✕ Ausgaben löschen',
+    exportBtn: '💾 Exportieren', importBtn: '📂 Importieren',
+    shortcutRun: 'Ausführen', shortcutRunNew: 'Ausführen + neue Zelle',
+    showMathJSON: 'MathJSON anzeigen',
+    cellMath: 'Mathe', cellRaw: 'Xcas', cellText: 'Text',
+    placeholderRaw: 'Xcas-Syntax (z.B. factor(x^4-1))',
+    placeholderText: 'Notizen, Markdown…',
+    computing: 'Berechnung…',
+    giacNotReady: '⏳ Giac wird noch geladen…',
+    errorPrefix: '✗ Fehler:',
+    moveUp: 'Nach oben', moveDown: 'Nach unten',
+    deleteCell: 'Löschen', runCell: 'Ausführen',
+    modeVisual: 'Visuelle Mathe-Eingabe', modeRaw: 'Direkte Xcas-Syntax',
+    invalidJson: 'Ungültige JSON-Datei',
+    welcomeTitle: '# Willkommen im Xcas Notizbuch',
+    welcomeBody: 'Gib Mathematik visuell ein (MathJSON) oder nutze direkte Xcas-Syntax.\nAktiviere **MathJSON anzeigen** unten, um die Konvertierung zu prüfen.',
+  },
+};
+
+let currentLocale = 'en';
+
+/** Look up a translation key; falls back to English */
+function t(key) {
+  return LOCALES[currentLocale]?.[key] ?? LOCALES.en[key] ?? key;
+}
+
+/** Refresh all data-i18n elements + dynamic placeholders */
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('.cell').forEach(cell => {
+    const ta = cell.querySelector('textarea');
+    if (ta && cell.dataset.type === 'raw')  ta.placeholder = t('placeholderRaw');
+    if (ta && cell.dataset.type === 'text') ta.placeholder = t('placeholderText');
+  });
+  document.documentElement.lang = currentLocale;
+}
+
+/** Set locale, refresh UI, persist preference */
+function setLocale(locale) {
+  if (!LOCALES[locale]) return;
+  currentLocale = locale;
+  document.getElementById('lang-select').value = locale;
+  applyI18n();
+  try { localStorage.setItem('xcas-nb-locale', locale); } catch(e) {}
+}
+
+/** Auto-detect from stored preference or browser language */
+function detectLocale() {
+  try {
+    const s = localStorage.getItem('xcas-nb-locale');
+    if (s && LOCALES[s]) return s;
+  } catch(e) {}
+  const lang = (navigator.language || '').slice(0, 2);
+  return LOCALES[lang] ? lang : 'en';
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 2 — COMPUTE ENGINE
+// ─────────────────────────────────────────────────────────────
+
+const ce = new ComputeEngine.ComputeEngine();
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 3 — GIAC INITIALIZATION
+//
+// Giac exposes:  extern "C" const char* caseval(const char*);
+// Two loading strategies:
+//   A) giacsimple.js → UI.ready / UI.caseval
+//   B) giacwasm.js   → Module.cwrap('caseval','string',['string'])
+// ─────────────────────────────────────────────────────────────
+
+let giacReady = false;
+let caseval = null;
+
+function initGiac() {
+  const el  = document.getElementById('giac-status');
+  const txt = el.querySelector('.text');
+
+  if (typeof Module === 'undefined') {
+    // No Module at all — demo mode
+    txt.textContent = t('giacDemo');
+    el.classList.add('error');
+    caseval = (expr) => '[DEMO] ' + expr;
+    giacReady = true;
+    return;
+  }
+
+  // Poll until Module.ready (set by onRuntimeInitialized)
+  const poll = setInterval(() => {
+    if (Module.ready) {
+      clearInterval(poll);
+      try {
+        caseval = Module.cwrap('caseval', 'string', ['string']);
+        giacReady = true;
+        txt.textContent = t('giacReady');
+        el.classList.add('ready');
+      } catch (e) {
+        txt.textContent = t('giacError');
+        el.classList.add('error');
+        console.error('Giac init error:', e);
+      }
+    }
+  }, 200);
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 4 — MATHJSON → XCAS CONVERTER
+//
+// MathJSON (CortexJS) uses PascalCase function names:
+//   ["Add", 1, 2]  →  1+2
+//   ["D", f, x]    →  diff(f, x)
+//
+// The converter walks the AST recursively and emits a
+// Xcas-compatible string for caseval().
+// ─────────────────────────────────────────────────────────────
+
+const SYMBOL_MAP = {
+  Pi: 'pi', ExponentialE: 'e', ImaginaryUnit: 'i',
+  Infinity: '+infinity', NegativeInfinity: '-infinity',
+  True: 'true', False: 'false', Nothing: 'undef', Half: '1/2',
+};
+
+/**
+ * Convert a MathJSON expression to a Xcas-compatible string.
+ * @param {*} expr - MathJSON node (number | string | array | object)
+ * @returns {string}
+ */
+function mathJsonToXcas(expr) {
+  if (expr == null) return '';
+  if (typeof expr === 'number') return String(expr);
+  if (typeof expr === 'string') return SYMBOL_MAP[expr] ?? expr;
+
+  // Object literal form: { num, sym, str, fn }
+  if (typeof expr === 'object' && !Array.isArray(expr)) {
+    if ('num' in expr) return expr.num;
+    if ('sym' in expr) return mathJsonToXcas(expr.sym);
+    if ('str' in expr) return '"' + expr.str + '"';
+    if ('fn'  in expr) return mathJsonToXcas(expr.fn);
+    return JSON.stringify(expr);
+  }
+
+  if (!Array.isArray(expr) || expr.length === 0) return '';
+
+  const [head, ...args] = expr;
+  const c   = (i) => mathJsonToXcas(args[i]);
+  const all = ()  => args.map(mathJsonToXcas);
+  const w   = (s) => '(' + s + ')';
+
+  // Helper: unwrap CortexJS ["Function", ["Block", body], var] pattern
+  function unwrapFn(node) {
+    if (!Array.isArray(node) || node[0] !== 'Function') return null;
+    let body = node[1];
+    if (Array.isArray(body) && body[0] === 'Block') body = body[1];
+    const v = node.length >= 3 ? mathJsonToXcas(node[2]) : 'x';
+    return { body: mathJsonToXcas(body), v };
+  }
+  function isNothing(node) {
+    return node == null || node === 'Nothing' ||
+      (typeof node === 'object' && !Array.isArray(node) && node.sym === 'Nothing');
+  }
+
+  switch (head) {
+
+    // ══════ Arithmetic ══════
+    case 'Add': case 'Sum':
+      return w(all().join('+'));
+    case 'Subtract':
+      return args.length === 1 ? '(-' + w(c(0)) + ')' : w(c(0) + '-' + w(c(1)));
+    case 'Negate':
+      return '(-' + w(c(0)) + ')';
+    case 'Multiply':
+      return w(all().join('*'));
+    case 'Divide':
+      return '(' + w(c(0)) + '/' + w(c(1)) + ')';
+    case 'Rational':
+      return '(' + c(0) + '/' + c(1) + ')';
+    case 'Power':
+      return '(' + w(c(0)) + '^' + w(c(1)) + ')';
+    case 'Sqrt':
+      return 'sqrt(' + c(0) + ')';
+    case 'Root':
+      return args.length >= 2
+        ? '(' + w(c(0)) + '^(1/' + w(c(1)) + '))'
+        : 'sqrt(' + c(0) + ')';
+    case 'Abs':       return 'abs(' + c(0) + ')';
+    case 'Factorial': return '(' + c(0) + ')!';
+
+    // ══════ Trigonometric ══════
+    case 'Sin': return 'sin(' + c(0) + ')';
+    case 'Cos': return 'cos(' + c(0) + ')';
+    case 'Tan': return 'tan(' + c(0) + ')';
+    case 'Sec': return '(1/cos(' + c(0) + '))';
+    case 'Csc': return '(1/sin(' + c(0) + '))';
+    case 'Cot': return '(1/tan(' + c(0) + '))';
+    case 'Arcsin': return 'asin(' + c(0) + ')';
+    case 'Arccos': return 'acos(' + c(0) + ')';
+    case 'Arctan': return 'atan(' + c(0) + ')';
+    case 'Sinh': return 'sinh(' + c(0) + ')';
+    case 'Cosh': return 'cosh(' + c(0) + ')';
+    case 'Tanh': return 'tanh(' + c(0) + ')';
+
+    // ══════ Log / Exp ══════
+    case 'Ln':  return 'ln(' + c(0) + ')';
+    case 'Exp': return 'exp(' + c(0) + ')';
+    case 'Log':
+      return args.length >= 2 ? 'log(' + c(0) + ',' + c(1) + ')' : 'ln(' + c(0) + ')';
+    case 'Log2':  return 'log(' + c(0) + ',2)';
+    case 'Log10': return 'log(' + c(0) + ',10)';
+
+    // ══════ Calculus ══════
+    case 'D': case 'Derivative': {
+      const diffFn = unwrapFn(args[0]);
+      if (diffFn) return 'diff(' + diffFn.body + ',' + diffFn.v + ')';
+      return args.length >= 2 ? 'diff(' + c(0) + ',' + c(1) + ')' : 'diff(' + c(0) + ',x)';
+    }
+
+    case 'Integrate': {
+      // CortexJS pattern: ["Integrate", ["Function", ["Block", body], var], ["Limits", var, lo, hi]]
+      const intFn = unwrapFn(args[0]);
+      if (intFn) {
+        if (Array.isArray(args[1]) && args[1][0] === 'Limits') {
+          const lo = args[1][2], hi = args[1][3];
+          if (isNothing(lo) && isNothing(hi)) {
+            return 'int(' + intFn.body + ',' + intFn.v + ')';
+          }
+          return 'int(' + intFn.body + ',' + intFn.v + ',' + mathJsonToXcas(lo) + ',' + mathJsonToXcas(hi) + ')';
+        }
+        return 'int(' + intFn.body + ',' + intFn.v + ')';
+      }
+      if (args.length === 1) return 'int(' + c(0) + ',x)';
+      // Definite integral: ["Integrate", f, ["Triple", var, lo, hi]]
+      if (Array.isArray(args[1]) &&
+          ['Triple','Tuple'].includes(args[1][0]) &&
+          args[1].length === 4) {
+        const [, v, lo, hi] = args[1].map(mathJsonToXcas);
+        return 'int(' + c(0) + ',' + v + ',' + lo + ',' + hi + ')';
+      }
+      if (args.length === 2) return 'int(' + c(0) + ',' + c(1) + ')';
+      if (args.length === 4) return 'int(' + c(0) + ',' + c(1) + ',' + c(2) + ',' + c(3) + ')';
+      return 'int(' + all().join(',') + ')';
+    }
+
+    case 'Limit': {
+      // CortexJS pattern: ["Limit", ["Function", ["Block", body], var], point]
+      const limFn = unwrapFn(args[0]);
+      if (limFn) {
+        if (args.length >= 2) return 'limit(' + limFn.body + ',' + limFn.v + ',' + c(1) + ')';
+        return 'limit(' + limFn.body + ',' + limFn.v + ')';
+      }
+      if (args.length >= 3) return 'limit(' + c(0) + ',' + c(1) + '=' + c(2) + ')';
+      if (args.length === 2) return 'limit(' + c(0) + ',' + c(1) + ')';
+      return 'limit(' + c(0) + ')';
+    }
+
+    case 'Series': case 'Taylor':
+      return 'series(' + all().join(',') + ')';
+
+    // ══════ Algebra ══════
+    case 'Solve':    return 'solve(' + all().join(',') + ')';
+    case 'Factor':   return 'factor(' + c(0) + ')';
+    case 'Simplify': return 'simplify(' + c(0) + ')';
+    case 'Expand':   return 'expand(' + c(0) + ')';
+
+    // ══════ Linear algebra ══════
+    case 'Determinant': case 'Det': return 'det(' + c(0) + ')';
+    case 'Inverse':      return 'inv(' + c(0) + ')';
+    case 'Transpose':    return 'tran(' + c(0) + ')';
+    case 'Eigenvalues':  return 'eigenvalues(' + c(0) + ')';
+    case 'Eigenvectors': return 'eigenvects(' + c(0) + ')';
+
+    // ══════ Relations ══════
+    case 'Equal':        return c(0) + '=' + c(1);
+    case 'Less':         return c(0) + '<' + c(1);
+    case 'LessEqual':    return c(0) + '<=' + c(1);
+    case 'Greater':      return c(0) + '>' + c(1);
+    case 'GreaterEqual': return c(0) + '>=' + c(1);
+    case 'NotEqual':     return c(0) + '!=' + c(1);
+
+    // ══════ Data structures ══════
+    case 'List':   return '[' + all().join(',') + ']';
+    case 'Matrix': {
+      const rows = args.map(r =>
+        Array.isArray(r) && r[0] === 'List'
+          ? '[' + r.slice(1).map(mathJsonToXcas).join(',') + ']'
+          : mathJsonToXcas(r));
+      return '[' + rows.join(',') + ']';
+    }
+    case 'Tuple': case 'Triple': case 'Pair': case 'Sequence':
+      return all().join(',');
+    case 'Set':       return '{' + all().join(',') + '}';
+    case 'Range':     return c(0) + '..' + c(1);
+    case 'Delimiter':
+      return args.length === 1 && Array.isArray(args[0])
+        ? w(mathJsonToXcas(args[0])) : w(all().join(','));
+
+    // ══════ Special functions ══════
+    case 'Floor': return 'floor(' + c(0) + ')';
+    case 'Ceil':  return 'ceil(' + c(0) + ')';
+    case 'Round': return 'round(' + c(0) + ')';
+    case 'Max':   return 'max(' + all().join(',') + ')';
+    case 'Min':   return 'min(' + all().join(',') + ')';
+    case 'Gcd':   return 'gcd(' + all().join(',') + ')';
+    case 'Lcm':   return 'lcm(' + all().join(',') + ')';
+    case 'Mod':   return 'irem(' + c(0) + ',' + c(1) + ')';
+    case 'Binomial': case 'Choose':
+      return 'comb(' + c(0) + ',' + c(1) + ')';
+
+    // ══════ CortexJS wrappers ══════
+    case 'Block':    return args.length >= 1 ? c(0) : '';
+    case 'Function': return args.length >= 1 ? c(0) : '';
+    case 'Limits':   return args.length >= 1 ? c(0) : '';
+
+    // ══════ Misc ══════
+    case 'Assign': return c(0) + ':=' + c(1);
+    case 'Plot':   return 'plot(' + all().join(',') + ')';
+
+    // ══════ Unknown → attempt direct Xcas call ══════
+    default: {
+      const fn = head.charAt(0).toLowerCase() + head.slice(1);
+      return args.length === 0 ? fn : fn + '(' + all().join(',') + ')';
+    }
+  }
+}
+
+/**
+ * Full pipeline: LaTeX (from math-field) → MathJSON → Xcas string.
+ */
+function latexToXcas(latex) {
+  try {
+    return mathJsonToXcas(ce.parse(latex, { canonical: false }).json);
+  } catch (e) {
+    console.warn('LaTeX→MathJSON error:', e);
+    return latex; // Giac can parse some LaTeX directly
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 5 — CELL MANAGEMENT
+// ─────────────────────────────────────────────────────────────
+
+let cellCounter = 0;
+let cells = [];
+let showDebug = false;
+
+function addCell(type = 'math', initialLatex = '', initialRaw = '') {
+  cellCounter++;
+  const id = 'cell-' + cellCounter;
+  const nb = document.getElementById('notebook');
+  const div = document.createElement('div');
+  div.className = 'cell'; div.id = id; div.dataset.type = type;
+
+  const badge = { math:'cellMath', raw:'cellRaw', text:'cellText' }[type];
+  const idx   = type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;
+
+  div.innerHTML = `
+    <div class="cell-head">
+      <span class="cell-idx">${idx}</span>
+      <span class="cell-badge ${type}" data-i18n="${badge}">${t(badge)}</span>
+      ${type === 'math' ? `<div class="mode-toggle">
+        <button class="active" onclick="setCellMode('${id}','math')" title="${t('modeVisual')}">𝑓(𝑥)</button>
+        <button onclick="setCellMode('${id}','raw')" title="${t('modeRaw')}">{ }</button>
+      </div>` : ''}
+      <div class="cell-actions">
+        <button onclick="runSingleCell('${id}')" title="${t('runCell')}">▶</button>
+        <button onclick="moveCell('${id}',-1)" title="${t('moveUp')}">↑</button>
+        <button onclick="moveCell('${id}',1)" title="${t('moveDown')}">↓</button>
+        <button class="del" onclick="deleteCell('${id}')" title="${t('deleteCell')}">✕</button>
+      </div>
+    </div>
+    <div class="cell-input"></div>
+    <div class="cell-debug ${showDebug?'visible':''}"></div>
+    <div class="cell-output" id="${id}-output"></div>`;
+
+  nb.appendChild(div);
+  const inp = div.querySelector('.cell-input');
+
+  if (type === 'math') {
+    const mf = document.createElement('math-field');
+    mf.value = initialLatex || '';
+    mf.setAttribute('virtual-keyboard-mode', 'manual');
+    mf.addEventListener('input', () => updateDebug(id));
+    mf.addEventListener('keydown', (e) => cellKey(e, id, 'math'));
+    inp.appendChild(mf);
+    setTimeout(() => updateDebug(id), 100);
+  } else {
+    const ph = type === 'raw' ? t('placeholderRaw') : t('placeholderText');
+    const ta = mkTextarea(ph, initialRaw);
+    ta.rows = type === 'text' ? 3 : 2;
+    ta.addEventListener('keydown', (e) => cellKey(e, id, type));
+    inp.appendChild(ta);
+  }
+
+  cells.push({ id, type, element: div });
+  return id;
+}
+
+function mkTextarea(ph, val) {
+  const ta = document.createElement('textarea');
+  ta.placeholder = ph; ta.value = val || '';
+  ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; });
+  return ta;
+}
+
+function cellKey(e, id, type) {
+  if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); runSingleCell(id); }
+  if (e.key === 'Enter' && e.ctrlKey)  { e.preventDefault(); runSingleCell(id); addCell(type === 'text' ? 'text' : 'math'); }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 6 — DEBUG PANEL
+// ─────────────────────────────────────────────────────────────
+
+function updateDebug(cellId) {
+  const cell = document.getElementById(cellId);
+  if (!cell) return;
+  const dbg = cell.querySelector('.cell-debug');
+  const mf  = cell.querySelector('math-field');
+  if (!mf || !dbg) return;
+  try {
+    const json = ce.parse(mf.value, { canonical: false }).json;
+    const xcas = mathJsonToXcas(json);
+    dbg.innerHTML =
+      '<span class="lbl">MathJSON:</span><code>' + esc(JSON.stringify(json)) + '</code>' +
+      '<span class="xcas-out">→ Xcas: <code>' + esc(xcas) + '</code></span>';
+  } catch (e) {
+    dbg.innerHTML = '<span class="lbl">Error:</span> ' + esc(e.message);
+  }
+}
+
+function toggleAllDebug(show) {
+  showDebug = show;
+  document.querySelectorAll('.cell-debug').forEach(d => d.classList.toggle('visible', show));
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 7 — MODE SWITCHING (math ↔ raw)
+// ─────────────────────────────────────────────────────────────
+
+function setCellMode(cellId, mode) {
+  const cell = document.getElementById(cellId);
+  if (!cell) return;
+  const inp  = cell.querySelector('.cell-input');
+  const btns = cell.querySelectorAll('.mode-toggle button');
+
+  if (mode === 'raw') {
+    const mf = cell.querySelector('math-field');
+    const xcas = mf ? latexToXcas(mf.value) : '';
+    inp.innerHTML = '';
+    const ta = mkTextarea(t('placeholderRaw'), xcas);
+    ta.addEventListener('keydown', (e) => cellKey(e, cellId, 'raw'));
+    inp.appendChild(ta);
+    cell.dataset.mode = 'raw';
+    btns[0].classList.remove('active'); btns[1].classList.add('active');
+  } else {
+    const ta = cell.querySelector('textarea');
+    inp.innerHTML = '';
+    const mf = document.createElement('math-field');
+    mf.value = ta ? ta.value : '';
+    mf.setAttribute('virtual-keyboard-mode', 'manual');
+    mf.addEventListener('input', () => updateDebug(cellId));
+    mf.addEventListener('keydown', (e) => cellKey(e, cellId, 'math'));
+    inp.appendChild(mf);
+    cell.dataset.mode = 'math';
+    btns[0].classList.add('active'); btns[1].classList.remove('active');
+    setTimeout(() => updateDebug(cellId), 100);
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 8 — EXECUTION
+// ─────────────────────────────────────────────────────────────
+
+function getXcasExpr(cellId) {
+  const cell = document.getElementById(cellId);
+  if (!cell || cell.dataset.type === 'text') return '';
+  const mode = cell.dataset.mode || cell.dataset.type;
+  if (cell.dataset.type === 'raw' || mode === 'raw') {
+    return cell.querySelector('textarea')?.value.trim() || '';
+  }
+  const mf = cell.querySelector('math-field');
+  return mf ? latexToXcas(mf.value) : '';
+}
+
+function runSingleCell(cellId) {
+  const cell = document.getElementById(cellId);
+  if (!cell) return;
+  if (cell.dataset.type === 'text') { renderTextCell(cellId); return; }
+
+  const expr = getXcasExpr(cellId);
+  const out  = document.getElementById(cellId + '-output');
+  if (!expr) { out.innerHTML = ''; return; }
+  if (!giacReady) { out.innerHTML = '<span class="err">' + t('giacNotReady') + '</span>'; return; }
+
+  cell.classList.add('running');
+  out.innerHTML = '<span class="spinner"></span> ' + t('computing');
+
+  setTimeout(() => {
+    try {
+      const raw = caseval(expr);
+      let latex = '';
+      try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+
+      out.innerHTML = '';
+      if (latex && typeof katex !== 'undefined') {
+        const d = document.createElement('div');
+        try {
+          katex.render(latex, d, { displayMode: true, throwOnError: false, trust: true });
+          out.appendChild(d);
+        } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>'; }
+      } else {
+        out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
+      }
+      const r = document.createElement('div');
+      r.className = 'raw-res'; r.textContent = '→ ' + raw;
+      out.appendChild(r);
+    } catch (err) {
+      out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
+    }
+    cell.classList.remove('running');
+  }, 10);
+}
+
+function renderTextCell(cellId) {
+  const cell = document.getElementById(cellId);
+  if (!cell) return;
+  const ta = cell.querySelector('textarea');
+  const out = document.getElementById(cellId + '-output');
+  if (!ta || !ta.value.trim()) { out.innerHTML = ''; return; }
+  let h = esc(ta.value)
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,   '<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,     '<em>$1</em>')
+    .replace(/`(.+?)`/g,       '<code>$1</code>')
+    .replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+  out.innerHTML = '<div class="md-out"><p>' + h + '</p></div>';
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 9 — GLOBAL ACTIONS
+// ─────────────────────────────────────────────────────────────
+
+function runAll() { cells.forEach(c => runSingleCell(c.id)); }
+function clearAllOutputs() { cells.forEach(c => { const o = document.getElementById(c.id+'-output'); if(o) o.innerHTML=''; }); }
+function deleteCell(id) { document.getElementById(id)?.remove(); cells = cells.filter(c => c.id !== id); }
+function moveCell(id, dir) {
+  const i = cells.findIndex(c => c.id === id);
+  if (i < 0) return;
+  const j = i + dir;
+  if (j < 0 || j >= cells.length) return;
+  [cells[i], cells[j]] = [cells[j], cells[i]];
+  const nb = document.getElementById('notebook');
+  nb.innerHTML = '';
+  cells.forEach(c => nb.appendChild(c.element));
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 10 — EXPORT / IMPORT
+// ─────────────────────────────────────────────────────────────
+
+function exportNotebook() {
+  const data = {
+    locale: currentLocale,
+    cells: cells.map(c => {
+      const el = c.element;
+      const mode = el.dataset.mode || el.dataset.type;
+      const mf = el.querySelector('math-field');
+      const ta = el.querySelector('textarea');
+      return {
+        type: el.dataset.type,
+        mode,
+        content: (mode === 'math' && mf) ? mf.value : (ta ? ta.value : '')
+      };
+    })
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'xcas-notebook.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importNotebook() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json';
+  inp.onchange = (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (data.locale && LOCALES[data.locale]) setLocale(data.locale);
+        document.getElementById('notebook').innerHTML = '';
+        cells = []; cellCounter = 0;
+        (Array.isArray(data) ? data : data.cells).forEach(item => {
+          item.type === 'math' ? addCell('math', item.content) : addCell(item.type, '', item.content);
+        });
+      } catch(err) { alert(t('invalidJson')); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 11 — UTILITIES
+// ─────────────────────────────────────────────────────────────
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION 12 — BOOT
+// ─────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  setLocale(detectLocale());
+  initGiac();
+
+  // Demo cells
+  addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'));
+  addCell('math', '\\frac{x^4-1}{x^2+1}');
+  addCell('math', '\\int \\frac{1}{x^2+1}\\, dx');
+  addCell('math', '\\frac{d}{dx}\\left(\\sin(x)\\cdot e^x\\right)');
+  addCell('math', '\\lim_{x \\to 0} \\frac{\\sin(x)}{x}');
+  addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
+  addCell('raw',  '', 'eigenvalues([[1,2],[3,4]])');
+});
+</script>
+</body>
+</html>
