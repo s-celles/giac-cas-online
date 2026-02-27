@@ -160,30 +160,23 @@ function moveCell(id, dir) {
 // ─────────────────────────────────────────────────────────────
 
 var _draggedCellId = null;
-var _dragFromHandle = false;
 
 function initCellDrag(cellDiv) {
-  cellDiv.setAttribute('draggable', 'true');
+  var handle = cellDiv.querySelector('.drag-handle');
+  if (!handle) return;
 
-  // Track whether mousedown originated on the drag handle
-  cellDiv.addEventListener('mousedown', function(e) {
-    _dragFromHandle = !!e.target.closest('.drag-handle');
-  });
+  handle.setAttribute('draggable', 'true');
 
-  cellDiv.addEventListener('dragstart', function(e) {
-    if (!_dragFromHandle) {
-      e.preventDefault();
-      return;
-    }
+  handle.addEventListener('dragstart', function(e) {
     _draggedCellId = cellDiv.id;
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', cellDiv.id);
+    e.dataTransfer.setDragImage(cellDiv, 20, 20);
     setTimeout(function() { cellDiv.classList.add('cell-dragging'); }, 0);
   });
 
-  cellDiv.addEventListener('dragend', function() {
+  handle.addEventListener('dragend', function() {
     cellDiv.classList.remove('cell-dragging');
-    _dragFromHandle = false;
     _draggedCellId = null;
     document.querySelectorAll('.cell-drag-over-top,.cell-drag-over-bottom').forEach(function(el) {
       el.classList.remove('cell-drag-over-top', 'cell-drag-over-bottom');
