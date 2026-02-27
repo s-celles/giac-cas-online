@@ -312,6 +312,27 @@ var EXAMPLE_DATA = {
       { type: 'text', content: '@bind(a, -5, 5, 0.1, 1, "sliderCoeffA")\n@bind(b, -10, 10, 0.1, -3, "sliderCoeffB")\n@bind(c, -10, 10, 0.1, 2, "sliderCoeffC")' }
     ]
   },
+  '3d-surface': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'ex3dSurfaceTitle', suffix: '\n\n@bind(a, 0.1, 5, 0.1, 1, "sliderFreqX")\n@bind(b, 0.1, 5, 0.1, 1, "sliderFreqY")', hidden: true },
+      { type: 'raw', content: 'plotfunc(sin(a*x)*cos(b*y),[x,y])' }
+    ]
+  },
+  '3d-parametric': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'ex3dParametricTitle', hidden: true },
+      { type: 'raw', content: 'plotparam3d([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u=0..6.28,v=-1.57..1.57])' }
+    ]
+  },
+  '3d-sliders': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'ex3dSlidersTitle', suffix: '\n\n@bind(k, 0, 5, 0.1, 2, "sliderWaveFreq")', hidden: true },
+      { type: 'raw', content: 'plotfunc(sin(k*x)*cos(y),[x,y])' }
+    ]
+  },
   'amplitude-modulation': {
     version: 2, reactiveMode: true,
     cells: [
@@ -337,6 +358,9 @@ var EXAMPLES = [
   { id: 'plots',                 i18nName: 'examplePlots' },
   { id: 'reactive-dag',          i18nName: 'exampleReactive' },
   { id: 'quadratic-equation',    i18nName: 'exampleQuadratic' },
+  { id: '3d-surface',             i18nName: 'example3dSurface' },
+  { id: '3d-parametric',          i18nName: 'example3dParametric' },
+  { id: '3d-sliders',             i18nName: 'example3dSliders' },
   { id: 'amplitude-modulation',  i18nName: 'exampleAM' },
   { id: 'frequency-modulation',  i18nName: 'exampleFM' },
   { id: 'physics-mechanics',     i18nName: 'exampleMechanics' },

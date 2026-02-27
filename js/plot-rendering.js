@@ -461,7 +461,7 @@ function tryDirectJSXGraph(expr, outputEl) {
     if (cmds.length > 1) {
       var lastCmd = cmds[cmds.length - 1];
       // Check if the last command is a known plot function (but not geometry — handled below)
-      var plotRe = /^(plot|plotfunc|camembert|barplot|histogram|boxwhisker|scatterplot|plotimplicit|plotfield|plotcontour|plotode|plotseq|plotparam|plotpolar)\s*\(/;
+      var plotRe = /^(plot|plotfunc|plot3d|plotparam3d|camembert|barplot|histogram|boxwhisker|scatterplot|plotimplicit|plotfield|plotcontour|plotode|plotseq|plotparam|plotpolar)\s*\(/;
       if (plotRe.test(lastCmd)) {
         // Evaluate prefix commands and track Giac config flags
         _plotGlOrtho = false;
@@ -510,74 +510,20 @@ function tryDirectJSXGraph(expr, outputEl) {
     }
   }
 
-  // ── plotfunc(expr,x) or plotfunc(expr,x=a..b) — 2D ONLY (skip 3D with [x,y]) ──
+  // ── plotfunc(expr,x) or plotfunc(expr,x=a..b) — handles both 2D and 3D ──
   if (/^plotfunc\(/.test(expr)) {
     var inner = expr.slice(9, -1); // strip "plotfunc(" and ")"
     var args = splitTopLevel(inner);
     if (args.length >= 2) {
       var lastArg = args[args.length - 1].trim();
       if (lastArg.charAt(0) === '[') {
-        // 3D plotfunc: create canvas BEFORE caseval so Emscripten's SDL/WebGL
-        // initializes on our canvas, not the hidden default one.
-        if (!webglAvailable()) {
-          outputEl.textContent = t('plot3dNotSupported');
-          return true;
+        // 3D plotfunc: render via JSXGraph 3D
+        if (jsxGraphAvailable()) {
+          var config3d = parse3DExpression(expr);
+          if (config3d && renderJSXGraph3D(outputEl, config3d)) return true;
         }
-        var gr = getGiacRenderer();
-        if (!gr) { outputEl.textContent = t('plot3dNotSupported'); return true; }
-
-        var container = document.createElement('div');
-        container.className = 'gl3d-container';
-        var canvas = document.createElement('canvas');
-        canvas.id = 'gl3d_pending_' + Date.now();
-        var cw = Math.min(outputEl.clientWidth || 600, 600);
-        canvas.width = cw;
-        canvas.height = Math.round(cw * 2 / 3);
-        container.appendChild(canvas);
-        outputEl.appendChild(container);
-
-        // Set Module.canvas BEFORE caseval so SDL init targets our canvas
-        var savedCanvas = Module.canvas;
-        Module.canvas = canvas;
-
-        var raw = caseval(expr);
-        if (raw && raw.length > 5 && raw.substr(0, 5) === 'gl3d ') {
-          var sceneId = raw.substr(5).trim();
-          canvas.id = 'gl3d_' + sceneId;
-          try { gr(sceneId); } catch(e) {
-            container.innerHTML = '<div class="plot-3d-msg">' + t('plot3dNotSupported') + '</div>';
-            Module.canvas = savedCanvas;
-            return true;
-          }
-          // Mouse interaction
-          var pushed = false, lastX = 0, lastY = 0;
-          canvas.addEventListener('mousedown', function(e) { pushed = true; lastX = e.clientX; lastY = e.clientY; e.preventDefault(); });
-          canvas.addEventListener('mouseup', function() { pushed = false; });
-          canvas.addEventListener('mouseleave', function() { pushed = false; });
-          canvas.addEventListener('mousemove', function(e) {
-            if (!pushed) return;
-            var dx = e.clientX - lastX, dy = e.clientY - lastY;
-            if (Math.abs(dx) > 2) gr((dx > 0 ? 'r' : 'l') + sceneId);
-            if (Math.abs(dy) > 2) gr((dy > 0 ? 'd' : 'u') + sceneId);
-            lastX = e.clientX; lastY = e.clientY; e.preventDefault();
-          });
-          // Cleanup SDL keyboard listeners
-          try {
-            var kle = Module['keyboardListeningElement'] || document;
-            if (typeof SDL !== 'undefined' && SDL.receiveEvent) {
-              kle.removeEventListener('keydown', SDL.receiveEvent);
-              kle.removeEventListener('keyup', SDL.receiveEvent);
-              kle.removeEventListener('keypress', SDL.receiveEvent);
-            }
-          } catch(e) {}
-        } else {
-          // Not gl3d output — remove our canvas, show raw result
-          container.remove();
-          Module.canvas = savedCanvas;
-          return false; // Fall through to normal pipeline
-        }
-        // Restore saved canvas reference for non-3D future calls
-        // (keep Module.canvas = our canvas so rotation commands work)
+        // Fallback: show informative message (old gl3d pipeline removed)
+        outputEl.innerHTML = '<div class="plot-3d-msg">' + t('plot3dNotSupported') + '</div>';
         return true;
       } else {
         // 2D plotfunc
@@ -598,6 +544,26 @@ function tryDirectJSXGraph(expr, outputEl) {
         }
       }
     }
+  }
+
+  // ── plot3d(expr, [x,y]) — alias for 3D surface ──
+  if (/^plot3d\(/.test(expr)) {
+    if (jsxGraphAvailable()) {
+      var config3d = parse3DExpression(expr);
+      if (config3d && renderJSXGraph3D(outputEl, config3d)) return true;
+    }
+    outputEl.innerHTML = '<div class="plot-3d-msg">' + t('plot3dNotSupported') + '</div>';
+    return true;
+  }
+
+  // ── plotparam3d([X,Y,Z], [u,v]) — parametric 3D surface ──
+  if (/^plotparam3d\(/.test(expr)) {
+    if (jsxGraphAvailable()) {
+      var config3d = parse3DExpression(expr);
+      if (config3d && renderJSXGraph3D(outputEl, config3d)) return true;
+    }
+    outputEl.innerHTML = '<div class="plot-3d-msg">' + t('plot3dNotSupported') + '</div>';
+    return true;
   }
 
   // ── barplot([3,5,2,8,1]) ──
@@ -1529,6 +1495,176 @@ function renderJSXGraphPlot(outputEl, plotData) {
 
   jsxGraphBoards[boardId] = board;
   return board;
+}
+
+// ── JSXGraph 3D Surface Rendering ─────────────────────────
+
+/** Parse a Giac 3D plot command into a Surface3DConfig object.
+ *  Returns null if the expression is not a recognized 3D command. */
+function parse3DExpression(expr) {
+  var inner, args, lastArg, varInfo;
+
+  // plotfunc(expr, [x,y]) or plotfunc(expr, [x=-3..3, y=-3..3])
+  if (/^plotfunc\(/.test(expr)) {
+    inner = expr.slice(9, -1);
+    args = splitTopLevel(inner);
+    if (args.length < 2) return null;
+    lastArg = args[args.length - 1].trim();
+    if (lastArg.charAt(0) !== '[') return null;
+    varInfo = parseVarList(lastArg);
+    if (varInfo.vars.length < 2) return null;
+    return {
+      type: 'explicit',
+      expression: args.slice(0, -1).join(',').trim(),
+      xVar: varInfo.vars[0], yVar: varInfo.vars[1],
+      xRange: varInfo.ranges[0] ? [varInfo.ranges[0].min, varInfo.ranges[0].max] : [-5, 5],
+      yRange: varInfo.ranges[1] ? [varInfo.ranges[1].min, varInfo.ranges[1].max] : [-5, 5],
+      stepsU: 30, stepsV: 30
+    };
+  }
+
+  // plot3d(expr, [x,y])
+  if (/^plot3d\(/.test(expr)) {
+    inner = expr.slice(7, -1);
+    args = splitTopLevel(inner);
+    if (args.length < 2) return null;
+    lastArg = args[args.length - 1].trim();
+    if (lastArg.charAt(0) !== '[') return null;
+    varInfo = parseVarList(lastArg);
+    if (varInfo.vars.length < 2) return null;
+    return {
+      type: 'explicit',
+      expression: args.slice(0, -1).join(',').trim(),
+      xVar: varInfo.vars[0], yVar: varInfo.vars[1],
+      xRange: varInfo.ranges[0] ? [varInfo.ranges[0].min, varInfo.ranges[0].max] : [-5, 5],
+      yRange: varInfo.ranges[1] ? [varInfo.ranges[1].min, varInfo.ranges[1].max] : [-5, 5],
+      stepsU: 30, stepsV: 30
+    };
+  }
+
+  // plotparam3d([X,Y,Z], [u,v])
+  if (/^plotparam3d\(/.test(expr)) {
+    inner = expr.slice(12, -1);
+    args = splitTopLevel(inner);
+    if (args.length < 2) return null;
+    var firstArg = args[0].trim();
+    lastArg = args[args.length - 1].trim();
+    if (firstArg.charAt(0) !== '[' || lastArg.charAt(0) !== '[') return null;
+    var exprList = splitTopLevel(firstArg.slice(1, -1));
+    if (exprList.length < 3) return null;
+    varInfo = parseVarList(lastArg);
+    if (varInfo.vars.length < 2) return null;
+    return {
+      type: 'parametric',
+      expressions: [exprList[0].trim(), exprList[1].trim(), exprList[2].trim()],
+      xVar: varInfo.vars[0], yVar: varInfo.vars[1],
+      xRange: varInfo.ranges[0] ? [varInfo.ranges[0].min, varInfo.ranges[0].max] : [-5, 5],
+      yRange: varInfo.ranges[1] ? [varInfo.ranges[1].min, varInfo.ranges[1].max] : [-5, 5],
+      stepsU: 30, stepsV: 30
+    };
+  }
+
+  return null;
+}
+
+/** Create an interactive 3D surface plot using JSXGraph view3d.
+ *  Returns true on success, false to fall through to gl3d pipeline. */
+function renderJSXGraph3D(outputEl, config) {
+  var boardId = 'jsxgraph-3d-' + (++jsxGraphBoardCounter);
+  var wrapper = document.createElement('div');
+  wrapper.className = 'jsxgraph-3d-container';
+  var box = document.createElement('div');
+  box.id = boardId;
+  box.className = 'jxgbox';
+  wrapper.appendChild(box);
+  outputEl.appendChild(wrapper);
+
+  try {
+    var board = JXG.JSXGraph.initBoard(boardId, {
+      boundingbox: [-8, 8, 8, -8],
+      axis: false,
+      showCopyright: false,
+      showNavigation: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    var xR = config.xRange, yR = config.yRange;
+    var varStr = config.xVar + ',' + config.yVar;
+
+    // Helper: parse expression to JS function via JessieCode snippet or fallback
+    function parseExpr(exprStr) {
+      var fn = null;
+      try { fn = board.jc.snippet(exprStr, true, varStr); } catch(e) {}
+      if (!fn) fn = giacExprToJSFunc(exprStr, [config.xVar, config.yVar]);
+      return fn;
+    }
+
+    // Helper: sample a function on a coarse grid to estimate value range
+    function estimateRange(fn, uR, vR) {
+      var lo = Infinity, hi = -Infinity, steps = 12;
+      for (var i = 0; i <= steps; i++) {
+        for (var j = 0; j <= steps; j++) {
+          var u = uR[0] + (uR[1] - uR[0]) * i / steps;
+          var v = vR[0] + (vR[1] - vR[0]) * j / steps;
+          try {
+            var val = fn(u, v);
+            if (isFinite(val)) {
+              if (val < lo) lo = val;
+              if (val > hi) hi = val;
+            }
+          } catch(e) {}
+        }
+      }
+      if (!isFinite(lo) || !isFinite(hi)) return [-5, 5];
+      var pad = (hi - lo) * 0.15 || 1;
+      return [lo - pad, hi + pad];
+    }
+
+    if (config.type === 'explicit') {
+      var fn = parseExpr(config.expression);
+      if (!fn) {
+        wrapper.innerHTML = '<div class="plot-3d-msg">' + t('plot3dExprError') + '</div>';
+        return false;
+      }
+      var zR = estimateRange(fn, xR, yR);
+      var view = board.create('view3d',
+        [[-6, -3], [8, 8], [xR, yR, zR]],
+        { xPlaneRear: { visible: false }, yPlaneRear: { visible: false }, projection: 'central' }
+      );
+      view.create('functiongraph3d', [fn, xR, yR], {
+        stepsU: config.stepsU, stepsV: config.stepsV, strokeWidth: 0.5
+      });
+
+    } else if (config.type === 'parametric') {
+      var fns = [];
+      for (var k = 0; k < 3; k++) {
+        var f = parseExpr(config.expressions[k]);
+        if (!f) {
+          wrapper.innerHTML = '<div class="plot-3d-msg">' + t('plot3dExprError') + '</div>';
+          return false;
+        }
+        fns.push(f);
+      }
+      // Estimate bounding box by sampling all three coordinate functions
+      var ranges = [];
+      for (var d = 0; d < 3; d++) ranges.push(estimateRange(fns[d], xR, yR));
+      var view = board.create('view3d',
+        [[-6, -3], [8, 8], ranges],
+        { xPlaneRear: { visible: false }, yPlaneRear: { visible: false }, projection: 'central' }
+      );
+      view.create('parametricsurface3d', [fns[0], fns[1], fns[2], xR, yR], {
+        stepsU: config.stepsU, stepsV: config.stepsV, strokeWidth: 0.5
+      });
+    }
+
+    jsxGraphBoards[boardId] = board;
+    return true;
+  } catch(e) {
+    console.warn('JSXGraph 3D rendering failed:', e);
+    wrapper.remove();
+    return false;
+  }
 }
 
 // ── gl3d 3D Plot Rendering ─────────────────────────────────
