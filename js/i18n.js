@@ -133,7 +133,7 @@ const LOCALES = {
     exQuadFactored: '## Factored form', exQuadGraph: '## Graph',
     // QR Sharing
     shareQR: '📤 Share QR', scanQR: '📷 Scan QR',
-    copyUrl: 'Copy URL', urlCopied: 'Copied!',
+    copyUrl: 'Copy URL', urlCopied: 'Copied!', generateQR: 'Generate QR',
     sharePassword: 'Password (optional)', passwordPrompt: 'Enter password to open notebook',
     passwordError: 'Decryption failed', wrongPassword: 'Wrong password. Please try again.',
     corruptData: 'Could not load notebook: data appears corrupted.',
@@ -264,7 +264,7 @@ const LOCALES = {
     exQuadFactored: '## Forme factorisée', exQuadGraph: '## Graphique',
     // QR Sharing
     shareQR: '📤 Partager QR', scanQR: '📷 Scanner QR',
-    copyUrl: 'Copier l\'URL', urlCopied: 'Copié !',
+    copyUrl: 'Copier l\'URL', urlCopied: 'Copié !', generateQR: 'Générer QR',
     sharePassword: 'Mot de passe (optionnel)', passwordPrompt: 'Entrez le mot de passe pour ouvrir le notebook',
     passwordError: 'Échec du déchiffrement', wrongPassword: 'Mot de passe incorrect. Veuillez réessayer.',
     corruptData: 'Impossible de charger le notebook : données corrompues.',
@@ -395,7 +395,7 @@ const LOCALES = {
     exQuadFactored: '## Forma factorizada', exQuadGraph: '## Gráfico',
     // QR Sharing
     shareQR: '📤 Compartir QR', scanQR: '📷 Escanear QR',
-    copyUrl: 'Copiar URL', urlCopied: '¡Copiado!',
+    copyUrl: 'Copiar URL', urlCopied: '¡Copiado!', generateQR: 'Generar QR',
     sharePassword: 'Contraseña (opcional)', passwordPrompt: 'Introduzca la contraseña para abrir el cuaderno',
     passwordError: 'Error de descifrado', wrongPassword: 'Contraseña incorrecta. Inténtelo de nuevo.',
     corruptData: 'No se pudo cargar el cuaderno: datos corruptos.',
@@ -526,7 +526,7 @@ const LOCALES = {
     exQuadFactored: '## Faktorisierte Form', exQuadGraph: '## Graph',
     // QR Sharing
     shareQR: '📤 QR teilen', scanQR: '📷 QR scannen',
-    copyUrl: 'URL kopieren', urlCopied: 'Kopiert!',
+    copyUrl: 'URL kopieren', urlCopied: 'Kopiert!', generateQR: 'QR generieren',
     sharePassword: 'Passwort (optional)', passwordPrompt: 'Passwort eingeben, um das Notebook zu öffnen',
     passwordError: 'Entschlüsselung fehlgeschlagen', wrongPassword: 'Falsches Passwort. Bitte erneut versuchen.',
     corruptData: 'Notebook konnte nicht geladen werden: Daten beschädigt.',
@@ -657,7 +657,7 @@ const LOCALES = {
     exQuadFactored: '## الصيغة المحللة', exQuadGraph: '## الرسم البياني',
     // QR Sharing
     shareQR: '📤 مشاركة QR', scanQR: '📷 مسح QR',
-    copyUrl: 'نسخ الرابط', urlCopied: 'تم النسخ!',
+    copyUrl: 'نسخ الرابط', urlCopied: 'تم النسخ!', generateQR: 'إنشاء QR',
     sharePassword: 'كلمة المرور (اختياري)', passwordPrompt: 'أدخل كلمة المرور لفتح الدفتر',
     passwordError: 'فشل فك التشفير', wrongPassword: 'كلمة مرور خاطئة. حاول مرة أخرى.',
     corruptData: 'تعذر تحميل الدفتر: البيانات تالفة.',
@@ -788,7 +788,7 @@ const LOCALES = {
     exQuadFactored: '## गुणनखंड रूप', exQuadGraph: '## ग्राफ',
     // QR Sharing
     shareQR: '📤 QR साझा करें', scanQR: '📷 QR स्कैन करें',
-    copyUrl: 'URL कॉपी करें', urlCopied: 'कॉपी हो गया!',
+    copyUrl: 'URL कॉपी करें', urlCopied: 'कॉपी हो गया!', generateQR: 'QR बनाएं',
     sharePassword: 'पासवर्ड (वैकल्पिक)', passwordPrompt: 'नोटबुक खोलने के लिए पासवर्ड दर्ज करें',
     passwordError: 'डिक्रिप्शन विफल', wrongPassword: 'गलत पासवर्ड। कृपया पुनः प्रयास करें।',
     corruptData: 'नोटबुक लोड नहीं हो सका: डेटा दूषित है।',
@@ -919,7 +919,7 @@ const LOCALES = {
     exQuadFactored: '## Факторизованная форма', exQuadGraph: '## График',
     // QR Sharing
     shareQR: '📤 Поделиться QR', scanQR: '📷 Сканировать QR',
-    copyUrl: 'Копировать URL', urlCopied: 'Скопировано!',
+    copyUrl: 'Копировать URL', urlCopied: 'Скопировано!', generateQR: 'Создать QR',
     sharePassword: 'Пароль (необязательно)', passwordPrompt: 'Введите пароль для открытия тетради',
     passwordError: 'Ошибка расшифровки', wrongPassword: 'Неверный пароль. Попробуйте снова.',
     corruptData: 'Не удалось загрузить тетрадь: данные повреждены.',
@@ -1050,7 +1050,7 @@ const LOCALES = {
     exQuadFactored: '## 因式分解', exQuadGraph: '## 图形',
     // QR Sharing
     shareQR: '📤 共享二维码', scanQR: '📷 扫描二维码',
-    copyUrl: '复制链接', urlCopied: '已复制！',
+    copyUrl: '复制链接', urlCopied: '已复制！', generateQR: '生成二维码',
     sharePassword: '密码（可选）', passwordPrompt: '请输入密码以打开笔记本',
     passwordError: '解密失败', wrongPassword: '密码错误，请重试。',
     corruptData: '无法加载笔记本：数据已损坏。',
@@ -1181,7 +1181,7 @@ const LOCALES = {
     exQuadFactored: '## 因数分解', exQuadGraph: '## グラフ',
     // QR Sharing
     shareQR: '📤 QR共有', scanQR: '📷 QRスキャン',
-    copyUrl: 'URLをコピー', urlCopied: 'コピー済み！',
+    copyUrl: 'URLをコピー', urlCopied: 'コピー済み！', generateQR: 'QR生成',
     sharePassword: 'パスワード（任意）', passwordPrompt: 'ノートブックを開くためのパスワードを入力',
     passwordError: '復号に失敗しました', wrongPassword: 'パスワードが間違っています。もう一度お試しください。',
     corruptData: 'ノートブックを読み込めません：データが破損しています。',

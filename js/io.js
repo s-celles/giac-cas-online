@@ -84,13 +84,9 @@ function loadNotebookData(data, opts) {
       if (item.mathjson && fileVersion >= 3) {
         cid = addCell('math', '', '', item.mathjson, null, cellOpts);
       } else if (item.content) {
-        try {
-          var mjson = ce.parse(item.content, { canonical: false }).json;
-          cid = addCell('math', '', '', mjson, null, cellOpts);
-        } catch (e) {
-          console.warn('v2 import: unparseable LaTeX, importing as raw cell:', item.content, e);
-          cid = addCell('raw', '', item.content, null, null, cellOpts);
-        }
+        // Pass LaTeX directly to math-field (mf.value) instead of going
+        // through ce.parse() which corrupts some expressions (e.g. 0^+)
+        cid = addCell('math', item.content, '', null, null, cellOpts);
       } else {
         cid = addCell('math', '', '', null, null, cellOpts);
       }

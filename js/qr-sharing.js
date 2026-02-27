@@ -504,6 +504,7 @@ function showShareQR(opts) {
     var qrContainer = document.createElement('div');
     qrContainer.className = 'share-qr-code';
     qrContainer.id = 'share-qr-code';
+    qrContainer.style.display = 'none';
 
     var progressEl = document.createElement('div');
     progressEl.className = 'qr-progress';
@@ -512,6 +513,7 @@ function showShareQR(opts) {
     var urlDisplay = document.createElement('div');
     urlDisplay.className = 'share-qr-url';
     urlDisplay.id = 'share-qr-url';
+    urlDisplay.style.display = 'none';
 
     // Animated QR controls
     var controls = document.createElement('div');
@@ -528,7 +530,7 @@ function showShareQR(opts) {
 
     var generateBtn = document.createElement('button');
     generateBtn.className = 'primary';
-    generateBtn.textContent = t('shareQR');
+    generateBtn.textContent = t('generateQR');
     generateBtn.onclick = function() {
       var pw = passwordInput.value;
       _generateAndDisplayQR(compressed, pw);
@@ -537,6 +539,7 @@ function showShareQR(opts) {
     var copyBtn = document.createElement('button');
     copyBtn.id = 'share-copy-btn';
     copyBtn.textContent = t('copyUrl');
+    copyBtn.style.display = 'none';
     copyBtn.onclick = function() { copyNotebookURL(); };
 
     actions.appendChild(generateBtn);
@@ -559,8 +562,7 @@ function showShareQR(opts) {
     document.body.appendChild(overlay);
     document.addEventListener('keydown', _shareEscHandler);
 
-    // Auto-generate without password on open
-    _generateAndDisplayQR(compressed, '');
+    // QR is generated only after user clicks the generate button
 
     // Wire slider events
     var fpsSlider = document.getElementById('qr-fps-slider');
@@ -602,7 +604,11 @@ function _generateAndDisplayQR(compressed, password) {
   var progressEl = document.getElementById('share-qr-progress');
 
   if (!qrContainer) return;
+  qrContainer.style.display = '';
   qrContainer.innerHTML = '<p>Generating...</p>';
+  if (urlDisplay) urlDisplay.style.display = '';
+  var copyBtn = document.getElementById('share-copy-btn');
+  if (copyBtn) copyBtn.style.display = '';
 
   var doGenerate = function(payload, isEncrypted) {
     var url = generateNotebookURL(payload, isEncrypted);
