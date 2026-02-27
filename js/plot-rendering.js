@@ -1592,11 +1592,18 @@ function renderJSXGraph3D(outputEl, config) {
     var xR = config.xRange, yR = config.yRange;
     var varStr = config.xVar + ',' + config.yVar;
 
-    // Helper: parse expression to JS function via JessieCode snippet or fallback
+    // Helper: parse expression to JS function via JessieCode snippet or fallback.
+    // First lets Giac evaluate the expression so known variables (e.g. slider-bound
+    // a, b) are resolved symbolically, keeping plot variables (x, y) symbolic.
     function parseExpr(exprStr) {
+      var resolved = exprStr;
+      try {
+        var evaled = caseval('eval(' + exprStr + ')');
+        if (evaled && evaled !== exprStr) resolved = evaled;
+      } catch(e) {}
       var fn = null;
-      try { fn = board.jc.snippet(exprStr, true, varStr); } catch(e) {}
-      if (!fn) fn = giacExprToJSFunc(exprStr, [config.xVar, config.yVar]);
+      try { fn = board.jc.snippet(resolved, true, varStr); } catch(e) {}
+      if (!fn) fn = giacExprToJSFunc(resolved, [config.xVar, config.yVar]);
       return fn;
     }
 
