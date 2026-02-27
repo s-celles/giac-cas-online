@@ -207,9 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Custom virtual keyboard layouts (inspired by B. Parisse's math2d.html)
   setupMathKeyboard();
 
-  // Minimal default notebook: just a welcome cell
-  addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody', { hidden: true });
-  cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
+  // Check if URL contains a shared notebook (#nb= or #nbe=)
+  var loadedFromURL = (typeof loadFromURLHash === 'function') && loadFromURLHash();
+
+  if (!loadedFromURL) {
+    // Minimal default notebook: just a welcome cell
+    addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody', { hidden: true });
+    cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
+  }
 
   // Global keyboard shortcut for report view toggle
   document.addEventListener('keydown', function(e) {

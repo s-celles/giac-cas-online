@@ -223,3 +223,64 @@
   .bottombar kbd{background:#eeede8;padding:1px 5px;border-radius:3px;border:1px solid var(--border);font-size:.62rem}
   .bottombar label{display:flex;align-items:center;gap:4px;cursor:pointer}
   .bottombar input[type="checkbox"]{accent-color:var(--accent)}
+
+  /* ═══════ Share QR Dialog ═══════ */
+  .share-qr-overlay,.scan-qr-overlay,.password-prompt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+  .share-qr-dialog{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:1.5rem;position:relative}
+  .share-qr-close{position:absolute;top:.5rem;right:.5rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);line-height:1}
+  .share-qr-close:hover{color:var(--text)}
+  .share-qr-dialog h2{font-family:var(--mono);font-size:1.1rem;margin-bottom:1rem}
+  .share-password-group{margin-bottom:1rem}
+  .share-password-group label{display:block;font-family:var(--mono);font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
+  .share-password-group input{width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:.8rem}
+  .share-password-group input:focus{outline:none;border-color:var(--border-focus)}
+  .share-qr-code{display:flex;justify-content:center;align-items:center;min-height:150px;margin:1rem 0}
+  .share-qr-code svg{max-width:100%;height:auto}
+  .share-qr-url{font-family:var(--mono);font-size:.65rem;color:var(--text-muted);word-break:break-all;padding:.4rem;background:var(--output-bg);border-radius:4px;margin:.5rem 0}
+  .share-qr-actions{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+  .share-qr-actions button{font-family:var(--mono);font-size:.75rem;padding:.4rem 1rem;border:1px solid var(--border);border-radius:5px;background:var(--surface);cursor:pointer}
+  .share-qr-actions button:hover{background:var(--accent-light)}
+  .share-qr-actions button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .share-qr-actions button.primary:hover{background:var(--accent-hover)}
+
+  /* ═══════ Animated QR Controls ═══════ */
+  .qr-progress{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);text-align:center;margin:.3rem 0}
+  .animated-qr-controls{margin:.8rem 0;padding:.6rem;background:var(--output-bg);border-radius:6px;border:1px solid var(--border)}
+  .qr-slider-group{display:flex;align-items:center;gap:.5rem;margin:.3rem 0;font-family:var(--mono);font-size:.72rem}
+  .qr-slider-group label{min-width:80px;color:var(--text-muted)}
+  .qr-slider-group input[type="range"]{flex:1;accent-color:var(--accent)}
+  .qr-slider-group span{min-width:55px;text-align:right;font-size:.7rem}
+  .animated-qr-controls button{font-family:var(--mono);font-size:.72rem;padding:.3rem .8rem;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer;margin-top:.4rem}
+  .animated-qr-controls button:hover{background:var(--accent-light)}
+
+  /* ═══════ QR Scanner Overlay ═══════ */
+  .scan-qr-overlay{flex-direction:column;background:rgba(0,0,0,.85)}
+  .scan-viewfinder{max-width:100%;max-height:60vh;border-radius:8px;object-fit:cover}
+  .scan-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.8rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .scan-close:hover{background:rgba(255,255,255,.3)}
+  .scan-status{font-family:var(--mono);font-size:.8rem;color:#fff;margin-top:.8rem;text-align:center}
+  .scan-status.error{color:#f87171}
+  .scan-progress-bar{width:80%;max-width:350px;height:6px;background:rgba(255,255,255,.15);border-radius:3px;margin-top:.5rem;overflow:hidden}
+  .scan-progress-fill{height:100%;background:var(--success);border-radius:3px;transition:width .2s ease;width:0}
+
+  /* ═══════ Password Prompt Dialog ═══════ */
+  .password-prompt-dialog{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);max-width:380px;width:100%;padding:1.5rem;position:relative}
+  .password-prompt-dialog h3{font-family:var(--mono);font-size:.95rem;margin-bottom:1rem}
+  .password-input{width:100%;padding:.5rem .6rem;border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:.85rem;margin-bottom:.5rem}
+  .password-input:focus{outline:none;border-color:var(--border-focus)}
+  .password-error{font-family:var(--mono);font-size:.72rem;color:var(--error);min-height:1.2em;margin-bottom:.3rem}
+  .password-prompt-actions{display:flex;gap:.5rem;justify-content:flex-end}
+  .password-prompt-actions button{font-family:var(--mono);font-size:.75rem;padding:.4rem 1rem;border:1px solid var(--border);border-radius:5px;background:var(--surface);cursor:pointer}
+  .password-prompt-actions button:hover{background:var(--accent-light)}
+  .password-prompt-actions button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .password-prompt-actions button.primary:hover{background:var(--accent-hover)}
+
+  /* ═══════ QR Responsive ═══════ */
+  @media(max-width:480px){
+    .share-qr-dialog{padding:1rem;max-width:100%}
+    .share-qr-actions{flex-direction:column}
+    .share-qr-actions button{width:100%}
+    .qr-slider-group{flex-wrap:wrap}
+    .qr-slider-group label{min-width:100%;margin-bottom:.2rem}
+    .password-prompt-dialog{max-width:100%;padding:1rem}
+  }

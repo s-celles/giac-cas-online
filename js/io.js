@@ -6,6 +6,8 @@
 function exportNotebook() {
   const data = {
     version: 4,
+    type: 'xcas-notebook',
+    created: new Date().toISOString(),
     locale: currentLocale,
     reactiveMode: reactiveMode,
     cells: cells.map(c => {
@@ -41,7 +43,7 @@ function exportNotebook() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'xcas-notebook.json';
+  a.download = 'notebook.xcas.json';
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -107,13 +109,18 @@ function loadNotebookData(data, opts) {
 
 function importNotebook() {
   const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = '.json';
+  inp.type = 'file'; inp.accept = '.json,.xcas.json';
   inp.onchange = (e) => {
     const f = e.target.files[0]; if (!f) return;
     const r = new FileReader();
     r.onload = (ev) => {
       try {
-        loadNotebookData(JSON.parse(ev.target.result));
+        var parsed = JSON.parse(ev.target.result);
+        if (parsed.type && parsed.type !== 'xcas-notebook') {
+          alert(t('invalidJson'));
+          return;
+        }
+        loadNotebookData(parsed);
       } catch(err) { alert(t('invalidJson')); }
     };
     r.readAsText(f);
