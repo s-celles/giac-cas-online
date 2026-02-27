@@ -166,6 +166,13 @@ function mathJsonToXcas(expr) {
         if (!Array.isArray(node) || node.length < 2) return null;
         if (node[0] === 'Superplus')  return { point: node[1], dir: '1' };
         if (node[0] === 'Superminus') return { point: node[1], dir: '-1' };
+        // CortexJS bug: interprets 0^{+} as PseudoInverse(0) instead of Superplus(0)
+        if (node[0] === 'PseudoInverse') {
+          var p = node[1];
+          // If CortexJS wrapped the point in an Error, default to 0
+          if (Array.isArray(p) && p[0] === 'Error') p = 0;
+          return { point: p, dir: '1' };
+        }
         // Fallback: ["Power", point, "+"/"-"]
         if (node.length >= 3 && (node[0] === 'Power' || node[0] === 'Superscript')) {
           var sup = node[2];
@@ -269,27 +276,8 @@ function mathJsonToXcas(expr) {
  */
 function latexToXcas(latex) {
   try {
-    // Strip one-sided limit notation (^{+} or ^{-}) before CortexJS parsing,
-    // because CortexJS misinterprets ^{+} as PseudoInverse.
-    // We record the direction and inject it into the Xcas limit() call.
-    var limitDir = null;
-    var cleanLatex = latex.replace(
-      /(\\lim_\{[^}]*?(?:\\to|\\rightarrow)\s*)([^{}^]+?)\^\{?([+-])\}?(\})/,
-      function(_, before, point, dir, close) {
-        limitDir = dir === '+' ? '1' : '-1';
-        return before + point + close;
-      }
-    );
-
-    const json = ce.parse(cleanLatex, { canonical: false }).json;
-    var xcas = mathJsonToXcas(json);
-
-    // Inject direction into limit() call if we detected ^{+/-}
-    if (limitDir && /^limit\(/.test(xcas) && xcas.endsWith(')')) {
-      xcas = xcas.slice(0, -1) + ',' + limitDir + ')';
-    }
-
-    return xcas;
+    const json = ce.parse(latex, { canonical: false }).json;
+    return mathJsonToXcas(json);
   } catch (e) {
     console.warn('LaTeX→MathJSON error:', e);
     return latex; // Giac can parse some LaTeX directly

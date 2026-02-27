@@ -4,7 +4,7 @@
 // SECTION 5 — CELL MANAGEMENT (functions)
 // ─────────────────────────────────────────────────────────────
 
-function addCell(type = 'math', initialLatex = '', initialRaw = '') {
+function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJson = null) {
   cellCounter++;
   const id = 'cell-' + cellCounter;
   const nb = document.getElementById('notebook');
@@ -39,11 +39,16 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '') {
 
   if (type === 'math') {
     const mf = document.createElement('math-field');
-    mf.value = initialLatex || '';
+    if (initialMathJson) {
+      inp.appendChild(mf);
+      mf.expression = initialMathJson;
+    } else {
+      mf.value = initialLatex || '';
+      inp.appendChild(mf);
+    }
     mf.setAttribute('virtual-keyboard-mode', 'onfocus');
     mf.addEventListener('input', () => updateDebug(id));
     mf.addEventListener('keydown', (e) => cellKey(e, id, 'math'));
-    inp.appendChild(mf);
     setTimeout(() => updateDebug(id), 100);
   } else {
     const ph = type === 'raw' ? t('placeholderRaw') : t('placeholderText');
@@ -86,7 +91,7 @@ function updateDebug(cellId) {
   const mf  = cell.querySelector('math-field');
   if (!mf || !dbg) return;
   try {
-    const json = ce.parse(mf.value, { canonical: false }).json;
+    const json = mf.expression.json;
     const xcas = mathJsonToXcas(json);
     dbg.innerHTML =
       '<span class="lbl">MathJSON:</span><code>' + esc(JSON.stringify(json)) + '</code>' +
@@ -114,7 +119,7 @@ function setCellMode(cellId, mode) {
 
   if (mode === 'raw') {
     const mf = cell.querySelector('math-field');
-    const xcas = mf ? latexToXcas(mf.value) : '';
+    const xcas = mf ? mathJsonToXcas(mf.expression.json) : '';
     inp.innerHTML = '';
     const ta = mkTextarea(t('placeholderRaw'), xcas);
     ta.addEventListener('keydown', (e) => cellKey(e, cellId, 'raw'));

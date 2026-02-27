@@ -448,6 +448,27 @@ function parseComplexToPoint(str) {
 function tryDirectJSXGraph(expr, outputEl) {
   var m, data, plotData;
 
+  // ── Multi-command support: "setting; plotcmd(...)" ──
+  // If the expression contains semicolons and the last command is a plot
+  // function, evaluate prefix commands for side effects (e.g. gl_ortho=1)
+  // and process only the last command as a plot.
+  if (expr.indexOf(';') >= 0) {
+    var cmds = expr.split(';').map(function(s) { return s.trim(); }).filter(Boolean);
+    if (cmds.length > 1) {
+      var lastCmd = cmds[cmds.length - 1];
+      // Check if the last command is a known plot function (but not geometry — handled below)
+      var plotRe = /^(plot|plotfunc|camembert|barplot|histogram|boxwhisker|scatterplot|plotimplicit|plotfield|plotcontour|plotode|plotseq|plotparam|plotpolar)\s*\(/;
+      if (plotRe.test(lastCmd)) {
+        // Evaluate all preceding commands for side effects
+        for (var i = 0; i < cmds.length - 1; i++) {
+          caseval(cmds[i]);
+        }
+        // Recurse with only the plot command
+        return tryDirectJSXGraph(lastCmd, outputEl);
+      }
+    }
+  }
+
   // ── Helper: parse a plot(...) or plotfunc(...) expression ──
   // Uses splitTopLevel to properly handle nested parentheses.
 
@@ -1051,23 +1072,32 @@ function renderJSXPieChart(outputEl, pairs) {
   var total = pairs.reduce(function(s, p) { return s + p.value; }, 0);
   if (total <= 0) return;
   var colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628', '#f781bf', '#999999'];
-  var polygons = [], labels = [], angle = 0;
+  var bbox = { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5 };
+  var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: true, axis: false });
+  var angle = 0;
   pairs.forEach(function(p, idx) {
     var sweep = (p.value / total) * 2 * Math.PI;
-    var corners = [[0, 0]];
+    var xs = [0], ys = [0];
     var steps = Math.max(20, Math.round(sweep * 30));
     for (var s = 0; s <= steps; s++) {
       var a = angle + sweep * s / steps;
-      corners.push([Math.cos(a), Math.sin(a)]);
+      xs.push(Math.cos(a));
+      ys.push(Math.sin(a));
     }
-    polygons.push({ corners: corners, color: colors[idx % colors.length] });
+    xs.push(0); ys.push(0); // close the sector
+    board.create('curve', [xs, ys], {
+      strokeColor: '#fff', strokeWidth: 1.5,
+      fillColor: colors[idx % colors.length], fillOpacity: 0.85,
+      highlight: false
+    });
     // Label at midpoint of sector
     var midAngle = angle + sweep / 2;
-    labels.push({ x: 0.6 * Math.cos(midAngle), y: 0.6 * Math.sin(midAngle), text: p.label });
+    var pct = Math.round(p.value / total * 100);
+    board.create('text', [0.65 * Math.cos(midAngle), 0.65 * Math.sin(midAngle), p.label + ' ' + pct + '%'], {
+      anchorX: 'middle', anchorY: 'middle', fontSize: 12, highlight: false
+    });
     angle += sweep;
   });
-  var bbox = { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5 };
-  renderJSXGraphPlot(outputEl, { curves: [], polygons: polygons, points: [], labels: labels, bbox: bbox });
 }
 
 // ── JSXGraph board management ─────────────────────────────

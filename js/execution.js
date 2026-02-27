@@ -11,7 +11,9 @@ function getXcasExpr(cellId) {
     return cell.querySelector('textarea')?.value.trim() || '';
   }
   const mf = cell.querySelector('math-field');
-  return mf ? latexToXcas(mf.value) : '';
+  if (!mf) return '';
+  const json = mf.expression.json;
+  return mathJsonToXcas(json);
 }
 
 function runSingleCell(cellId, forceManual) {

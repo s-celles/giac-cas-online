@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('raw',  '', 'plotseq(cos(x),0.5,5)');
   addCell('raw',  '', 'histogram(seq(rand(100),k,1,200))');
   addCell('raw',  '', 'barplot([3,5,2,8,1])');
-  addCell('raw',  '', 'camembert([["A",30],["B",50],["C",20]])');
+  addCell('raw',  '', 'gl_ortho=1; camembert([["Maths",35],["Physique",25],["Chimie",20],["Info",20]])');
   addCell('raw',  '', 'boxwhisker([1,2,3,4,5,6,7,8,9,10])');
   addCell('raw',  '', 'scatterplot([1,2,3,4,5],[2,4,5,4,5])');
   addCell('raw',  '', 'circle(0,2); segment([0,0],[2,0]); point(1,1)');

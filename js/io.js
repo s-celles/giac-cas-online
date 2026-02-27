@@ -5,7 +5,7 @@
 
 function exportNotebook() {
   const data = {
-    version: 2,
+    version: 3,
     locale: currentLocale,
     reactiveMode: reactiveMode,
     cells: cells.map(c => {
@@ -14,13 +14,18 @@ function exportNotebook() {
       const mf = el.querySelector('math-field');
       const ta = el.querySelector('textarea');
       const cellInfo = cellVariableMap.get(c.id);
-      return {
+      const cell = {
         type: el.dataset.type,
         mode,
-        content: (mode === 'math' && mf) ? mf.value : (ta ? ta.value : ''),
         defines: cellInfo ? cellInfo.defines : [],
         references: cellInfo ? cellInfo.references : []
       };
+      if (mode === 'math' && mf) {
+        cell.mathjson = mf.expression.json;
+      } else {
+        cell.content = ta ? ta.value : '';
+      }
+      return cell;
     })
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -48,12 +53,33 @@ function importNotebook() {
         document.getElementById('notebook').innerHTML = '';
         cells = []; cellCounter = 0;
         if (data.reactiveMode !== undefined) toggleReactiveMode(data.reactiveMode);
+        var fileVersion = data.version || 1;
         var cellItems = Array.isArray(data) ? data : data.cells;
         cellItems.forEach(item => {
-          var cid = item.type === 'math' ? addCell('math', item.content) : addCell(item.type, '', item.content);
-          // v1 migration: extract deps if not present
+          var cid;
+          if (item.type === 'math') {
+            if (item.mathjson && fileVersion >= 3) {
+              // v3: MathJSON is the canonical representation
+              cid = addCell('math', '', '', item.mathjson);
+            } else if (item.content) {
+              // v2/v1: LaTeX content — convert to MathJSON
+              try {
+                var mjson = ce.parse(item.content, { canonical: false }).json;
+                cid = addCell('math', '', '', mjson);
+              } catch (e) {
+                // Fallback: unparseable LaTeX → import as raw cell with warning
+                console.warn('v2 import: unparseable LaTeX, importing as raw cell:', item.content, e);
+                cid = addCell('raw', '', item.content);
+              }
+            } else {
+              cid = addCell('math');
+            }
+          } else {
+            cid = addCell(item.type, '', item.content);
+          }
+          // Register in reactive graph if needed
           if (reactiveMode && observableModule && item.type !== 'text') {
-            var expr = item.type === 'math' ? '' : (item.content || '');
+            var expr = getXcasExpr(cid);
             if (expr) registerCell(cid, expr);
           }
         });
