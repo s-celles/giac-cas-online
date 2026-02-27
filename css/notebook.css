@@ -48,11 +48,11 @@
   .cell-idx{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);min-width:44px}
   .cell-badge{font-family:var(--mono);font-size:.6rem;padding:1px 7px;border-radius:4px;color:#fff;letter-spacing:.3px;text-transform:uppercase}
   .cell-badge.math{background:#7c3aed}.cell-badge.text{background:#d97706}.cell-badge.raw{background:#64748b}
-  .mode-toggle{font-family:var(--mono);font-size:.63rem;display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-left:.2rem}
+  .mode-toggle{font-family:var(--mono);font-size:.63rem;display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-inline-start:.2rem}
   .mode-toggle button{padding:2px 7px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-family:inherit;font-size:inherit;transition:all .15s}
   .mode-toggle button.active{background:var(--accent);color:#fff}
   .mode-toggle button:hover:not(.active){background:var(--accent-light)}
-  .cell-actions{margin-left:auto;display:flex;gap:3px;opacity:0;transition:opacity .15s}
+  .cell-actions{margin-inline-start:auto;display:flex;gap:3px;opacity:0;transition:opacity .15s}
   .cell:hover .cell-actions{opacity:1}
   .cell-actions button{font-size:.66rem;padding:2px 7px;border:none;border-radius:3px;background:transparent;color:var(--text-muted);cursor:pointer;font-family:var(--mono)}
   .cell-actions button:hover{background:#eee;color:var(--text)}
@@ -66,14 +66,14 @@
   /* ═══════ Debug ═══════ */
   .cell-debug{padding:.3rem .8rem;background:#f7f6f2;border-top:1px dashed var(--border);font-family:var(--mono);font-size:.65rem;color:var(--text-muted);display:none;overflow-x:auto;word-break:break-all}
   .cell-debug.visible{display:block}
-  .cell-debug .lbl{font-weight:500;color:var(--accent);margin-right:.3rem}
-  .cell-debug .xcas-out{color:var(--success);margin-left:.4rem}
+  .cell-debug .lbl{font-weight:500;color:var(--accent);margin-inline-end:.3rem}
+  .cell-debug .xcas-out{color:var(--success);margin-inline-start:.4rem}
 
   /* ═══════ Output ═══════ */
   .cell-output{padding:.65rem .8rem;background:var(--output-bg);border-top:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);min-height:26px;overflow-x:auto}
   .cell-output:empty{display:none}
   .cell-output .err{color:var(--error);font-family:var(--mono);font-size:.78rem}
-  .cell-output .katex-display{margin:.2rem 0;text-align:left}
+  .cell-output .katex-display{margin:.2rem 0;text-align:start}
   .cell-output .raw-res{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-top:.3rem;white-space:pre-wrap}
   .cell-output .md-out{font-family:var(--body);font-size:.93rem}
   .cell-output .md-out h1{font-size:1.35rem;margin:.35rem 0}
@@ -81,7 +81,7 @@
   .cell-output .md-out h3{font-size:.95rem;margin:.25rem 0}
   .cell-output .md-out p{margin:.3rem 0}
   .cell-output .md-out code{background:#eee;padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:.83em}
-  .spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle;margin-right:5px}
+  .spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle;margin-inline-end:5px}
   @keyframes spin{to{transform:rotate(360deg)}}
 
   /* ═══════ Plot ═══════ */
@@ -104,7 +104,7 @@
   .cell.cell-pending::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--warning),transparent);animation:pendingPulse 1.5s ease-in-out infinite}
   @keyframes pendingPulse{0%,100%{opacity:.3}50%{opacity:1}}
   .cell.cell-stale{border-color:var(--warning);border-style:dashed}
-  .cell.cell-error .cell-output{border-left:3px solid var(--error)}
+  .cell.cell-error .cell-output{border-inline-start:3px solid var(--error)}
   .reactive-toggle{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:.72rem;cursor:pointer}
   .reactive-toggle input[type="checkbox"]{accent-color:var(--success);cursor:pointer}
   .reactive-toggle .reactive-label{color:var(--text-muted);transition:color .2s}

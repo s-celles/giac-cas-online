@@ -3,121 +3,125 @@
 // SECTION 12 — BOOT
 // ─────────────────────────────────────────────────────────────
 
+/** Set up MathLive virtual keyboard layouts with localized tooltips */
+function setupMathKeyboard() {
+  if (typeof mathVirtualKeyboard === 'undefined') return;
+  mathVirtualKeyboard.layouts = [
+    "numeric",
+    {
+      label: "½",
+      tooltip: t('kbFractions'),
+      rows: [
+        [
+          { latex: "\\frac{#@}{#?}", label: "<span><sup>a</sup>⁄<sub>b</sub></span>", tooltip: t('kbFraction') },
+          { latex: "\\frac{1}{2}", label: "½", tooltip: t('kbHalf') },
+          { latex: "\\frac{1}{3}", label: "⅓", tooltip: t('kbThird') },
+          { latex: "\\frac{1}{4}", label: "¼", tooltip: t('kbQuarter') },
+          { latex: "\\frac{d}{dx}", label: "<span style='font-size:.85em'>d/dx</span>", tooltip: t('kbDerivative') },
+          { latex: "\\frac{\\partial}{\\partial x}", label: "∂/∂x", tooltip: t('kbPartialDeriv') },
+          { class: "separator w5" },
+          { latex: "\\sqrt{#@}", label: "√", tooltip: t('kbSqrt') },
+          { latex: "\\sqrt[3]{#@}", label: "∛", tooltip: t('kbCubeRoot') },
+          { latex: "\\sqrt[n]{#@}", label: "<span><sup>n</sup>√</span>", tooltip: t('kbNthRoot') }
+        ],
+        [
+          { latex: "#@^{#?}", label: "<span>x<sup>□</sup></span>", tooltip: t('kbExponent') },
+          { latex: "#@^{2}", label: "<span>x<sup>2</sup></span>", tooltip: t('kbSquare') },
+          { latex: "#@^{3}", label: "<span>x<sup>3</sup></span>", tooltip: t('kbCube') },
+          { latex: "#@^{n}", label: "<span>x<sup>n</sup></span>", tooltip: t('kbPowerN') },
+          { latex: "#@^{-1}", label: "<span>x<sup>−1</sup></span>", tooltip: t('kbInverse') },
+          { latex: "#@_{#?}", label: "<span>x<sub>□</sub></span>", tooltip: t('kbSubscript') },
+          { latex: "#@^{#?}_{#?}", label: "<span>x<sup>□</sup><sub>□</sub></span>", tooltip: t('kbExponentSubscript') },
+          { class: "separator w5" },
+          { latex: "\\left(#@\\right)", label: "( )", tooltip: t('kbParentheses') },
+          { latex: "\\left[#@\\right]", label: "[ ]", tooltip: t('kbBrackets') }
+        ],
+        [
+          { latex: "\\sin", label: "sin" },
+          { latex: "\\cos", label: "cos" },
+          { latex: "\\tan", label: "tan" },
+          { latex: "\\arcsin", label: "<span style='font-size:.8em'>arcsin</span>" },
+          { latex: "\\arccos", label: "<span style='font-size:.8em'>arccos</span>" },
+          { latex: "\\arctan", label: "<span style='font-size:.8em'>arctan</span>" },
+          { class: "separator w5" },
+          { latex: "\\ln", label: "ln" },
+          { latex: "\\log", label: "log" },
+          { latex: "\\exp", label: "exp" }
+        ],
+        [
+          "[undo]", "[redo]",
+          { class: "separator w5" },
+          "[left]", "[right]", "[up]", "[down]",
+          { class: "separator w5" },
+          "[backspace]", "[return]"
+        ]
+      ]
+    },
+    {
+      label: "∫",
+      tooltip: t('kbOperators'),
+      rows: [
+        [
+          { latex: "\\int", label: "∫", tooltip: t('kbIndefiniteIntegral') },
+          { latex: "\\int_{#?}^{#?}", label: "<span>∫<sup>b</sup><sub>a</sub></span>", tooltip: t('kbDefiniteIntegral') },
+          { latex: "\\iint", label: "∬", tooltip: t('kbDoubleIntegral') },
+          { latex: "\\iiint", label: "∭", tooltip: t('kbTripleIntegral') },
+          { latex: "\\oint", label: "∮", tooltip: t('kbLineIntegral') },
+          { class: "separator w5" },
+          { latex: "\\sum", label: "∑", tooltip: t('kbSum') },
+          { latex: "\\sum_{k=1}^{n}", label: "<span>∑<sup>n</sup><sub>k=1</sub></span>", tooltip: t('kbBoundedSum') },
+          { latex: "\\prod_{k=1}^{n}", label: "<span>∏<sup>n</sup><sub>k=1</sub></span>", tooltip: t('kbBoundedProduct') },
+          { latex: "\\lim_{#?\\to #?}#?", label: "lim", tooltip: t('kbLimit') }
+        ],
+        [
+          { latex: "\\leq", label: "≤" },
+          { latex: "\\geq", label: "≥" },
+          { latex: "\\neq", label: "≠" },
+          { latex: "\\approx", label: "≈" },
+          { latex: "\\equiv", label: "≡" },
+          { latex: "\\pm", label: "±" },
+          { latex: "\\times", label: "×" },
+          { latex: "\\div", label: "÷" },
+          { latex: "\\cdot", label: "·" },
+          { latex: "\\infty", label: "∞" }
+        ],
+        [
+          { latex: "\\mathbb{R}", label: "ℝ", tooltip: t('kbReals') },
+          { latex: "\\mathbb{N}", label: "ℕ", tooltip: t('kbNaturals') },
+          { latex: "\\mathbb{Z}", label: "ℤ", tooltip: t('kbIntegers') },
+          { latex: "\\mathbb{Q}", label: "ℚ", tooltip: t('kbRationals') },
+          { class: "separator w5" },
+          { latex: "\\in", label: "∈" },
+          { latex: "\\notin", label: "∉" },
+          { latex: "\\subset", label: "⊂" },
+          { latex: "\\cup", label: "∪" },
+          { latex: "\\cap", label: "∩" }
+        ],
+        [
+          { latex: "\\to", label: "→" },
+          { latex: "\\Rightarrow", label: "⇒" },
+          { latex: "\\Leftrightarrow", label: "⟺" },
+          { latex: "\\forall", label: "∀", tooltip: t('kbForAll') },
+          { latex: "\\exists", label: "∃", tooltip: t('kbExists') },
+          { latex: "\\land", label: "∧", tooltip: t('kbLogicalAnd') },
+          { latex: "\\lor", label: "∨", tooltip: t('kbLogicalOr') },
+          { latex: "\\neg", label: "¬", tooltip: t('kbNegation') },
+          { class: "separator w5" },
+          "[undo]", "[backspace]"
+        ]
+      ]
+    },
+    "alphabetic",
+    "greek"
+  ];
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setLocale(detectLocale());
   initGiac();
 
   // Custom virtual keyboard layouts (inspired by B. Parisse's math2d.html)
-  if (typeof mathVirtualKeyboard !== 'undefined') {
-    mathVirtualKeyboard.layouts = [
-      "numeric",
-      {
-        label: "½",
-        tooltip: "Fractions, puissances, racines, fonctions",
-        rows: [
-          [
-            { latex: "\\frac{#@}{#?}", label: "<span><sup>a</sup>⁄<sub>b</sub></span>", tooltip: "Fraction" },
-            { latex: "\\frac{1}{2}", label: "½", tooltip: "Un demi" },
-            { latex: "\\frac{1}{3}", label: "⅓", tooltip: "Un tiers" },
-            { latex: "\\frac{1}{4}", label: "¼", tooltip: "Un quart" },
-            { latex: "\\frac{d}{dx}", label: "<span style='font-size:.85em'>d/dx</span>", tooltip: "Dérivée" },
-            { latex: "\\frac{\\partial}{\\partial x}", label: "∂/∂x", tooltip: "Dérivée partielle" },
-            { class: "separator w5" },
-            { latex: "\\sqrt{#@}", label: "√", tooltip: "Racine carrée" },
-            { latex: "\\sqrt[3]{#@}", label: "∛", tooltip: "Racine cubique" },
-            { latex: "\\sqrt[n]{#@}", label: "<span><sup>n</sup>√</span>", tooltip: "Racine n-ième" }
-          ],
-          [
-            { latex: "#@^{#?}", label: "<span>x<sup>□</sup></span>", tooltip: "Exposant" },
-            { latex: "#@^{2}", label: "<span>x<sup>2</sup></span>", tooltip: "Carré" },
-            { latex: "#@^{3}", label: "<span>x<sup>3</sup></span>", tooltip: "Cube" },
-            { latex: "#@^{n}", label: "<span>x<sup>n</sup></span>", tooltip: "Puissance n" },
-            { latex: "#@^{-1}", label: "<span>x<sup>−1</sup></span>", tooltip: "Inverse" },
-            { latex: "#@_{#?}", label: "<span>x<sub>□</sub></span>", tooltip: "Indice" },
-            { latex: "#@^{#?}_{#?}", label: "<span>x<sup>□</sup><sub>□</sub></span>", tooltip: "Exposant + Indice" },
-            { class: "separator w5" },
-            { latex: "\\left(#@\\right)", label: "( )", tooltip: "Parenthèses auto" },
-            { latex: "\\left[#@\\right]", label: "[ ]", tooltip: "Crochets auto" }
-          ],
-          [
-            { latex: "\\sin", label: "sin" },
-            { latex: "\\cos", label: "cos" },
-            { latex: "\\tan", label: "tan" },
-            { latex: "\\arcsin", label: "<span style='font-size:.8em'>arcsin</span>" },
-            { latex: "\\arccos", label: "<span style='font-size:.8em'>arccos</span>" },
-            { latex: "\\arctan", label: "<span style='font-size:.8em'>arctan</span>" },
-            { class: "separator w5" },
-            { latex: "\\ln", label: "ln" },
-            { latex: "\\log", label: "log" },
-            { latex: "\\exp", label: "exp" }
-          ],
-          [
-            "[undo]", "[redo]",
-            { class: "separator w5" },
-            "[left]", "[right]", "[up]", "[down]",
-            { class: "separator w5" },
-            "[backspace]", "[return]"
-          ]
-        ]
-      },
-      {
-        label: "∫",
-        tooltip: "Intégrales, sommes, relations, ensembles",
-        rows: [
-          [
-            { latex: "\\int", label: "∫", tooltip: "Intégrale indéfinie" },
-            { latex: "\\int_{#?}^{#?}", label: "<span>∫<sup>b</sup><sub>a</sub></span>", tooltip: "Intégrale définie" },
-            { latex: "\\iint", label: "∬", tooltip: "Intégrale double" },
-            { latex: "\\iiint", label: "∭", tooltip: "Intégrale triple" },
-            { latex: "\\oint", label: "∮", tooltip: "Intégrale curviligne" },
-            { class: "separator w5" },
-            { latex: "\\sum", label: "∑", tooltip: "Somme" },
-            { latex: "\\sum_{k=1}^{n}", label: "<span>∑<sup>n</sup><sub>k=1</sub></span>", tooltip: "Somme bornée" },
-            { latex: "\\prod_{k=1}^{n}", label: "<span>∏<sup>n</sup><sub>k=1</sub></span>", tooltip: "Produit borné" },
-            { latex: "\\lim_{#?\\to #?}#?", label: "lim", tooltip: "Limite" }
-          ],
-          [
-            { latex: "\\leq", label: "≤" },
-            { latex: "\\geq", label: "≥" },
-            { latex: "\\neq", label: "≠" },
-            { latex: "\\approx", label: "≈" },
-            { latex: "\\equiv", label: "≡" },
-            { latex: "\\pm", label: "±" },
-            { latex: "\\times", label: "×" },
-            { latex: "\\div", label: "÷" },
-            { latex: "\\cdot", label: "·" },
-            { latex: "\\infty", label: "∞" }
-          ],
-          [
-            { latex: "\\mathbb{R}", label: "ℝ", tooltip: "Réels" },
-            { latex: "\\mathbb{N}", label: "ℕ", tooltip: "Entiers naturels" },
-            { latex: "\\mathbb{Z}", label: "ℤ", tooltip: "Entiers relatifs" },
-            { latex: "\\mathbb{Q}", label: "ℚ", tooltip: "Rationnels" },
-            { class: "separator w5" },
-            { latex: "\\in", label: "∈" },
-            { latex: "\\notin", label: "∉" },
-            { latex: "\\subset", label: "⊂" },
-            { latex: "\\cup", label: "∪" },
-            { latex: "\\cap", label: "∩" }
-          ],
-          [
-            { latex: "\\to", label: "→" },
-            { latex: "\\Rightarrow", label: "⇒" },
-            { latex: "\\Leftrightarrow", label: "⟺" },
-            { latex: "\\forall", label: "∀", tooltip: "Pour tout" },
-            { latex: "\\exists", label: "∃", tooltip: "Il existe" },
-            { latex: "\\land", label: "∧", tooltip: "Et logique" },
-            { latex: "\\lor", label: "∨", tooltip: "Ou logique" },
-            { latex: "\\neg", label: "¬", tooltip: "Négation" },
-            { class: "separator w5" },
-            "[undo]", "[backspace]"
-          ]
-        ]
-      },
-      "alphabetic",
-      "greek"
-    ];
-  }
+  setupMathKeyboard();
 
   // Demo cells
   addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'));

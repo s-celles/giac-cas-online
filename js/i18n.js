@@ -49,6 +49,21 @@ const LOCALES = {
     cancelCascade: 'Cancel',
     reactiveReady: 'Reactive mode enabled. Click "Run all" to build the dependency graph and evaluate.',
     runAllReactive: '▶ Run all (reactive)',
+    // Virtual keyboard tooltips
+    kbFractions: 'Fractions, powers, roots, functions',
+    kbOperators: 'Integrals, sums, relations, sets',
+    kbFraction: 'Fraction', kbHalf: 'One half', kbThird: 'One third', kbQuarter: 'One quarter',
+    kbDerivative: 'Derivative', kbPartialDeriv: 'Partial derivative',
+    kbSqrt: 'Square root', kbCubeRoot: 'Cube root', kbNthRoot: 'Nth root',
+    kbExponent: 'Exponent', kbSquare: 'Square', kbCube: 'Cube', kbPowerN: 'Power n',
+    kbInverse: 'Inverse', kbSubscript: 'Subscript', kbExponentSubscript: 'Exponent + Subscript',
+    kbParentheses: 'Auto parentheses', kbBrackets: 'Auto brackets',
+    kbIndefiniteIntegral: 'Indefinite integral', kbDefiniteIntegral: 'Definite integral',
+    kbDoubleIntegral: 'Double integral', kbTripleIntegral: 'Triple integral', kbLineIntegral: 'Line integral',
+    kbSum: 'Sum', kbBoundedSum: 'Bounded sum', kbBoundedProduct: 'Bounded product', kbLimit: 'Limit',
+    kbReals: 'Reals', kbNaturals: 'Natural numbers', kbIntegers: 'Integers', kbRationals: 'Rationals',
+    kbForAll: 'For all', kbExists: 'There exists',
+    kbLogicalAnd: 'Logical and', kbLogicalOr: 'Logical or', kbNegation: 'Negation',
   },
   fr: {
     title: 'Notebook Xcas',
@@ -87,6 +102,21 @@ const LOCALES = {
     cancelCascade: 'Annuler',
     reactiveReady: 'Mode réactif activé. Cliquez sur « Tout exécuter » pour construire le graphe de dépendances et évaluer.',
     runAllReactive: '▶ Tout exécuter (réactif)',
+    // Virtual keyboard tooltips
+    kbFractions: 'Fractions, puissances, racines, fonctions',
+    kbOperators: 'Intégrales, sommes, relations, ensembles',
+    kbFraction: 'Fraction', kbHalf: 'Un demi', kbThird: 'Un tiers', kbQuarter: 'Un quart',
+    kbDerivative: 'Dérivée', kbPartialDeriv: 'Dérivée partielle',
+    kbSqrt: 'Racine carrée', kbCubeRoot: 'Racine cubique', kbNthRoot: 'Racine n-ième',
+    kbExponent: 'Exposant', kbSquare: 'Carré', kbCube: 'Cube', kbPowerN: 'Puissance n',
+    kbInverse: 'Inverse', kbSubscript: 'Indice', kbExponentSubscript: 'Exposant + Indice',
+    kbParentheses: 'Parenthèses auto', kbBrackets: 'Crochets auto',
+    kbIndefiniteIntegral: 'Intégrale indéfinie', kbDefiniteIntegral: 'Intégrale définie',
+    kbDoubleIntegral: 'Intégrale double', kbTripleIntegral: 'Intégrale triple', kbLineIntegral: 'Intégrale curviligne',
+    kbSum: 'Somme', kbBoundedSum: 'Somme bornée', kbBoundedProduct: 'Produit borné', kbLimit: 'Limite',
+    kbReals: 'Réels', kbNaturals: 'Entiers naturels', kbIntegers: 'Entiers relatifs', kbRationals: 'Rationnels',
+    kbForAll: 'Pour tout', kbExists: 'Il existe',
+    kbLogicalAnd: 'Et logique', kbLogicalOr: 'Ou logique', kbNegation: 'Négation',
   },
   es: {
     title: 'Cuaderno Xcas',
@@ -125,6 +155,21 @@ const LOCALES = {
     cancelCascade: 'Cancelar',
     reactiveReady: 'Modo reactivo activado. Haga clic en "Ejecutar todo" para construir el grafo de dependencias y evaluar.',
     runAllReactive: '▶ Ejecutar todo (reactivo)',
+    // Virtual keyboard tooltips
+    kbFractions: 'Fracciones, potencias, raíces, funciones',
+    kbOperators: 'Integrales, sumas, relaciones, conjuntos',
+    kbFraction: 'Fracción', kbHalf: 'Un medio', kbThird: 'Un tercio', kbQuarter: 'Un cuarto',
+    kbDerivative: 'Derivada', kbPartialDeriv: 'Derivada parcial',
+    kbSqrt: 'Raíz cuadrada', kbCubeRoot: 'Raíz cúbica', kbNthRoot: 'Raíz enésima',
+    kbExponent: 'Exponente', kbSquare: 'Cuadrado', kbCube: 'Cubo', kbPowerN: 'Potencia n',
+    kbInverse: 'Inverso', kbSubscript: 'Subíndice', kbExponentSubscript: 'Exponente + Subíndice',
+    kbParentheses: 'Paréntesis automáticos', kbBrackets: 'Corchetes automáticos',
+    kbIndefiniteIntegral: 'Integral indefinida', kbDefiniteIntegral: 'Integral definida',
+    kbDoubleIntegral: 'Integral doble', kbTripleIntegral: 'Integral triple', kbLineIntegral: 'Integral de línea',
+    kbSum: 'Suma', kbBoundedSum: 'Suma acotada', kbBoundedProduct: 'Producto acotado', kbLimit: 'Límite',
+    kbReals: 'Reales', kbNaturals: 'Naturales', kbIntegers: 'Enteros', kbRationals: 'Racionales',
+    kbForAll: 'Para todo', kbExists: 'Existe',
+    kbLogicalAnd: 'Y lógico', kbLogicalOr: 'O lógico', kbNegation: 'Negación',
   },
   de: {
     title: 'Xcas Notizbuch',
@@ -163,8 +208,290 @@ const LOCALES = {
     cancelCascade: 'Abbrechen',
     reactiveReady: 'Reaktiver Modus aktiviert. Klicken Sie auf „Alles ausführen", um den Abhängigkeitsgraphen aufzubauen und auszuwerten.',
     runAllReactive: '▶ Alles ausführen (reaktiv)',
+    // Virtual keyboard tooltips
+    kbFractions: 'Brüche, Potenzen, Wurzeln, Funktionen',
+    kbOperators: 'Integrale, Summen, Relationen, Mengen',
+    kbFraction: 'Bruch', kbHalf: 'Ein Halb', kbThird: 'Ein Drittel', kbQuarter: 'Ein Viertel',
+    kbDerivative: 'Ableitung', kbPartialDeriv: 'Partielle Ableitung',
+    kbSqrt: 'Quadratwurzel', kbCubeRoot: 'Kubikwurzel', kbNthRoot: 'n-te Wurzel',
+    kbExponent: 'Exponent', kbSquare: 'Quadrat', kbCube: 'Kubik', kbPowerN: 'Potenz n',
+    kbInverse: 'Kehrwert', kbSubscript: 'Index', kbExponentSubscript: 'Exponent + Index',
+    kbParentheses: 'Klammern', kbBrackets: 'Eckige Klammern',
+    kbIndefiniteIntegral: 'Unbestimmtes Integral', kbDefiniteIntegral: 'Bestimmtes Integral',
+    kbDoubleIntegral: 'Doppelintegral', kbTripleIntegral: 'Dreifachintegral', kbLineIntegral: 'Kurvenintegral',
+    kbSum: 'Summe', kbBoundedSum: 'Begrenzte Summe', kbBoundedProduct: 'Begrenztes Produkt', kbLimit: 'Grenzwert',
+    kbReals: 'Reelle Zahlen', kbNaturals: 'Natürliche Zahlen', kbIntegers: 'Ganze Zahlen', kbRationals: 'Rationale Zahlen',
+    kbForAll: 'Für alle', kbExists: 'Es existiert',
+    kbLogicalAnd: 'Logisches Und', kbLogicalOr: 'Logisches Oder', kbNegation: 'Negation',
+  },
+  ar: {
+    title: 'دفتر Xcas',
+    subtitle: 'نظام حساب رمزي تفاعلي — MathJSON ↔ Giac عبر WebAssembly',
+    giacLoading: 'جارٍ تحميل Giac…',
+    giacReady: 'Giac جاهز',
+    giacError: 'خطأ في تهيئة Giac',
+    giacDemo: 'وضع تجريبي (Giac غير محمّل)',
+    addMath: '+ رياضيات', addRaw: '+ Xcas مباشر', addText: '+ نص',
+    runAll: '▶ تشغيل الكل', clearOutputs: '✕ مسح المخرجات',
+    exportBtn: '💾 تصدير', importBtn: '📂 استيراد',
+    shortcutRun: 'تشغيل', shortcutRunNew: 'تشغيل + خلية جديدة',
+    showMathJSON: 'إظهار MathJSON',
+    cellMath: 'رياضيات', cellRaw: 'Xcas', cellText: 'نص',
+    placeholderRaw: 'صيغة Xcas (مثال: factor(x^4-1))',
+    placeholderText: 'ملاحظات، Markdown…',
+    computing: 'جارٍ الحساب…',
+    giacNotReady: '⏳ Giac لا يزال يُحمَّل…',
+    errorPrefix: '✗ خطأ:',
+    moveUp: 'تحريك لأعلى', moveDown: 'تحريك لأسفل',
+    deleteCell: 'حذف', runCell: 'تشغيل',
+    modeVisual: 'إدخال رياضي مرئي', modeRaw: 'صيغة Xcas مباشرة',
+    invalidJson: 'ملف JSON غير صالح',
+    welcomeTitle: '# مرحبًا في دفتر Xcas',
+    welcomeBody: 'أدخل الرياضيات بصريًا (MathJSON) أو استخدم صيغة Xcas المباشرة.\nفعّل **إظهار MathJSON** في الأسفل لفحص عملية التحويل.',
+    plot3dNotSupported: 'الرسوم البيانية ثلاثية الأبعاد غير مدعومة بعد. استخدم أوامر الرسم ثنائي الأبعاد.',
+    plotCoordinates: 'إحداثيات',
+    reactiveToggle: 'تفاعلي',
+    pendingEvaluation: 'قيد الانتظار…',
+    dependencyError: 'خطأ في التبعية: فشلت الخلية السابقة',
+    cyclicDependency: 'تم اكتشاف تبعية دورية',
+    duplicateVariable: 'تعريف متغير مكرر',
+    brokenDependency: 'تبعية معطلة: تم حذف الخلية السابقة',
+    staleOutputWarning: 'قد تكون بعض المخرجات قديمة. هل تريد إعادة التقييم؟',
+    reEvalAll: 'إعادة تقييم الكل',
+    cancelCascade: 'إلغاء',
+    reactiveReady: 'تم تفعيل الوضع التفاعلي. انقر على «تشغيل الكل» لبناء رسم التبعيات والتقييم.',
+    runAllReactive: '▶ تشغيل الكل (تفاعلي)',
+    // Virtual keyboard tooltips
+    kbFractions: 'كسور، قوى، جذور، دوال',
+    kbOperators: 'تكاملات، مجاميع، علاقات، مجموعات',
+    kbFraction: 'كسر', kbHalf: 'نصف', kbThird: 'ثلث', kbQuarter: 'ربع',
+    kbDerivative: 'مشتقة', kbPartialDeriv: 'مشتقة جزئية',
+    kbSqrt: 'جذر تربيعي', kbCubeRoot: 'جذر تكعيبي', kbNthRoot: 'جذر نوني',
+    kbExponent: 'أس', kbSquare: 'تربيع', kbCube: 'تكعيب', kbPowerN: 'قوة n',
+    kbInverse: 'معكوس', kbSubscript: 'رمز سفلي', kbExponentSubscript: 'أس + رمز سفلي',
+    kbParentheses: 'أقواس', kbBrackets: 'أقواس معقوفة',
+    kbIndefiniteIntegral: 'تكامل غير محدد', kbDefiniteIntegral: 'تكامل محدد',
+    kbDoubleIntegral: 'تكامل مزدوج', kbTripleIntegral: 'تكامل ثلاثي', kbLineIntegral: 'تكامل خطي',
+    kbSum: 'مجموع', kbBoundedSum: 'مجموع محدود', kbBoundedProduct: 'جداء محدود', kbLimit: 'نهاية',
+    kbReals: 'الأعداد الحقيقية', kbNaturals: 'الأعداد الطبيعية', kbIntegers: 'الأعداد الصحيحة', kbRationals: 'الأعداد النسبية',
+    kbForAll: 'لكل', kbExists: 'يوجد',
+    kbLogicalAnd: 'و منطقي', kbLogicalOr: 'أو منطقي', kbNegation: 'نفي',
+  },
+  hi: {
+    title: 'Xcas नोटबुक',
+    subtitle: 'प्रतिक्रियाशील CAS — MathJSON ↔ Giac WebAssembly द्वारा',
+    giacLoading: 'Giac लोड हो रहा है…',
+    giacReady: 'Giac तैयार',
+    giacError: 'Giac आरंभ त्रुटि',
+    giacDemo: 'डेमो मोड (Giac लोड नहीं हुआ)',
+    addMath: '+ गणित', addRaw: '+ Xcas कच्चा', addText: '+ पाठ',
+    runAll: '▶ सभी चलाएँ', clearOutputs: '✕ आउटपुट साफ़ करें',
+    exportBtn: '💾 निर्यात', importBtn: '📂 आयात',
+    shortcutRun: 'चलाएँ', shortcutRunNew: 'चलाएँ + नई सेल',
+    showMathJSON: 'MathJSON दिखाएँ',
+    cellMath: 'गणित', cellRaw: 'Xcas', cellText: 'पाठ',
+    placeholderRaw: 'Xcas वाक्यविन्यास (उदा: factor(x^4-1))',
+    placeholderText: 'नोट्स, Markdown…',
+    computing: 'गणना हो रही है…',
+    giacNotReady: '⏳ Giac अभी लोड हो रहा है…',
+    errorPrefix: '✗ त्रुटि:',
+    moveUp: 'ऊपर ले जाएँ', moveDown: 'नीचे ले जाएँ',
+    deleteCell: 'हटाएँ', runCell: 'चलाएँ',
+    modeVisual: 'दृश्य गणित इनपुट', modeRaw: 'कच्चा Xcas वाक्यविन्यास',
+    invalidJson: 'अमान्य JSON फ़ाइल',
+    welcomeTitle: '# Xcas नोटबुक में आपका स्वागत है',
+    welcomeBody: 'गणित को दृश्य रूप में (MathJSON) या कच्चे Xcas वाक्यविन्यास में लिखें।\nरूपांतरण देखने के लिए नीचे **MathJSON दिखाएँ** पर टिक करें।',
+    plot3dNotSupported: '3D ग्राफ़ अभी समर्थित नहीं हैं। 2D प्लॉट कमांड का उपयोग करें।',
+    plotCoordinates: 'निर्देशांक',
+    reactiveToggle: 'प्रतिक्रियाशील',
+    pendingEvaluation: 'लंबित…',
+    dependencyError: 'निर्भरता त्रुटि: पूर्ववर्ती सेल विफल',
+    cyclicDependency: 'चक्रीय निर्भरता पाई गई',
+    duplicateVariable: 'डुप्लिकेट चर परिभाषा',
+    brokenDependency: 'टूटी निर्भरता: पूर्ववर्ती सेल हटाई गई',
+    staleOutputWarning: 'कुछ आउटपुट पुराने हो सकते हैं। सभी पुनर्मूल्यांकन करें?',
+    reEvalAll: 'सभी पुनर्मूल्यांकन करें',
+    cancelCascade: 'रद्द करें',
+    reactiveReady: 'प्रतिक्रियाशील मोड सक्रिय। निर्भरता ग्राफ़ बनाने और मूल्यांकन करने के लिए "सभी चलाएँ" पर क्लिक करें।',
+    runAllReactive: '▶ सभी चलाएँ (प्रतिक्रियाशील)',
+    // Virtual keyboard tooltips
+    kbFractions: 'भिन्न, घात, मूल, फलन',
+    kbOperators: 'समाकल, योग, संबंध, समुच्चय',
+    kbFraction: 'भिन्न', kbHalf: 'आधा', kbThird: 'तिहाई', kbQuarter: 'चौथाई',
+    kbDerivative: 'अवकलज', kbPartialDeriv: 'आंशिक अवकलज',
+    kbSqrt: 'वर्गमूल', kbCubeRoot: 'घनमूल', kbNthRoot: 'n-वाँ मूल',
+    kbExponent: 'घातांक', kbSquare: 'वर्ग', kbCube: 'घन', kbPowerN: 'घात n',
+    kbInverse: 'व्युत्क्रम', kbSubscript: 'अनुक्रमणिका', kbExponentSubscript: 'घातांक + अनुक्रमणिका',
+    kbParentheses: 'कोष्ठक', kbBrackets: 'वर्ग कोष्ठक',
+    kbIndefiniteIntegral: 'अनिश्चित समाकल', kbDefiniteIntegral: 'निश्चित समाकल',
+    kbDoubleIntegral: 'द्विगुण समाकल', kbTripleIntegral: 'त्रिगुण समाकल', kbLineIntegral: 'रेखा समाकल',
+    kbSum: 'योग', kbBoundedSum: 'परिबद्ध योग', kbBoundedProduct: 'परिबद्ध गुणनफल', kbLimit: 'सीमा',
+    kbReals: 'वास्तविक संख्याएँ', kbNaturals: 'प्राकृतिक संख्याएँ', kbIntegers: 'पूर्णांक', kbRationals: 'परिमेय संख्याएँ',
+    kbForAll: 'सभी के लिए', kbExists: 'अस्तित्व है',
+    kbLogicalAnd: 'तार्किक और', kbLogicalOr: 'तार्किक या', kbNegation: 'निषेध',
+  },
+  ru: {
+    title: 'Тетрадь Xcas',
+    subtitle: 'Реактивная CAS — MathJSON ↔ Giac через WebAssembly',
+    giacLoading: 'Загрузка Giac…',
+    giacReady: 'Giac готов',
+    giacError: 'Ошибка инициализации Giac',
+    giacDemo: 'Демо-режим (Giac не загружен)',
+    addMath: '+ Математика', addRaw: '+ Xcas напрямую', addText: '+ Текст',
+    runAll: '▶ Запустить всё', clearOutputs: '✕ Очистить вывод',
+    exportBtn: '💾 Экспорт', importBtn: '📂 Импорт',
+    shortcutRun: 'Запустить', shortcutRunNew: 'Запустить + новая ячейка',
+    showMathJSON: 'Показать MathJSON',
+    cellMath: 'Математика', cellRaw: 'Xcas', cellText: 'Текст',
+    placeholderRaw: 'Синтаксис Xcas (напр.: factor(x^4-1))',
+    placeholderText: 'Заметки, Markdown…',
+    computing: 'Вычисление…',
+    giacNotReady: '⏳ Giac ещё загружается…',
+    errorPrefix: '✗ Ошибка:',
+    moveUp: 'Вверх', moveDown: 'Вниз',
+    deleteCell: 'Удалить', runCell: 'Запустить',
+    modeVisual: 'Визуальный ввод', modeRaw: 'Синтаксис Xcas напрямую',
+    invalidJson: 'Недопустимый файл JSON',
+    welcomeTitle: '# Добро пожаловать в тетрадь Xcas',
+    welcomeBody: 'Вводите математику визуально (MathJSON) или используйте синтаксис Xcas.\nВключите **Показать MathJSON** внизу, чтобы проверить конвейер преобразования.',
+    plot3dNotSupported: '3D-графики пока не поддерживаются. Используйте команды 2D-графиков.',
+    plotCoordinates: 'Координаты',
+    reactiveToggle: 'Реактивный',
+    pendingEvaluation: 'Ожидание…',
+    dependencyError: 'Ошибка зависимости: предшествующая ячейка не выполнена',
+    cyclicDependency: 'Обнаружена циклическая зависимость',
+    duplicateVariable: 'Дублирование определения переменной',
+    brokenDependency: 'Нарушенная зависимость: предшествующая ячейка удалена',
+    staleOutputWarning: 'Некоторые результаты могут быть устаревшими. Пересчитать всё?',
+    reEvalAll: 'Пересчитать всё',
+    cancelCascade: 'Отмена',
+    reactiveReady: 'Реактивный режим включён. Нажмите «Запустить всё» для построения графа зависимостей и вычисления.',
+    runAllReactive: '▶ Запустить всё (реактивный)',
+    // Virtual keyboard tooltips
+    kbFractions: 'Дроби, степени, корни, функции',
+    kbOperators: 'Интегралы, суммы, отношения, множества',
+    kbFraction: 'Дробь', kbHalf: 'Одна вторая', kbThird: 'Одна третья', kbQuarter: 'Одна четвёртая',
+    kbDerivative: 'Производная', kbPartialDeriv: 'Частная производная',
+    kbSqrt: 'Квадратный корень', kbCubeRoot: 'Кубический корень', kbNthRoot: 'Корень n-й степени',
+    kbExponent: 'Показатель степени', kbSquare: 'Квадрат', kbCube: 'Куб', kbPowerN: 'Степень n',
+    kbInverse: 'Обратное', kbSubscript: 'Нижний индекс', kbExponentSubscript: 'Показатель + Индекс',
+    kbParentheses: 'Скобки', kbBrackets: 'Квадратные скобки',
+    kbIndefiniteIntegral: 'Неопределённый интеграл', kbDefiniteIntegral: 'Определённый интеграл',
+    kbDoubleIntegral: 'Двойной интеграл', kbTripleIntegral: 'Тройной интеграл', kbLineIntegral: 'Криволинейный интеграл',
+    kbSum: 'Сумма', kbBoundedSum: 'Ограниченная сумма', kbBoundedProduct: 'Ограниченное произведение', kbLimit: 'Предел',
+    kbReals: 'Вещественные числа', kbNaturals: 'Натуральные числа', kbIntegers: 'Целые числа', kbRationals: 'Рациональные числа',
+    kbForAll: 'Для всех', kbExists: 'Существует',
+    kbLogicalAnd: 'Логическое И', kbLogicalOr: 'Логическое ИЛИ', kbNegation: 'Отрицание',
+  },
+  zh: {
+    title: 'Xcas 笔记本',
+    subtitle: '响应式计算代数系统 — MathJSON ↔ Giac 通过 WebAssembly',
+    giacLoading: '正在加载 Giac…',
+    giacReady: 'Giac 就绪',
+    giacError: 'Giac 初始化错误',
+    giacDemo: '演示模式（Giac 未加载）',
+    addMath: '+ 数学', addRaw: '+ Xcas 原始', addText: '+ 文本',
+    runAll: '▶ 全部运行', clearOutputs: '✕ 清除输出',
+    exportBtn: '💾 导出', importBtn: '📂 导入',
+    shortcutRun: '运行', shortcutRunNew: '运行 + 新单元格',
+    showMathJSON: '显示 MathJSON',
+    cellMath: '数学', cellRaw: 'Xcas', cellText: '文本',
+    placeholderRaw: 'Xcas 语法（例如：factor(x^4-1)）',
+    placeholderText: '笔记、Markdown…',
+    computing: '计算中…',
+    giacNotReady: '⏳ Giac 仍在加载…',
+    errorPrefix: '✗ 错误：',
+    moveUp: '上移', moveDown: '下移',
+    deleteCell: '删除', runCell: '运行',
+    modeVisual: '可视化数学输入', modeRaw: '原始 Xcas 语法',
+    invalidJson: '无效的 JSON 文件',
+    welcomeTitle: '# 欢迎使用 Xcas 笔记本',
+    welcomeBody: '以可视化方式（MathJSON）或原始 Xcas 语法输入数学表达式。\n勾选底部的 **显示 MathJSON** 以查看转换过程。',
+    plot3dNotSupported: '暂不支持 3D 图形。请使用 2D 绘图命令。',
+    plotCoordinates: '坐标',
+    reactiveToggle: '响应式',
+    pendingEvaluation: '等待中…',
+    dependencyError: '依赖错误：上游单元格执行失败',
+    cyclicDependency: '检测到循环依赖',
+    duplicateVariable: '重复的变量定义',
+    brokenDependency: '依赖断裂：上游单元格已删除',
+    staleOutputWarning: '某些输出可能已过期。是否重新计算？',
+    reEvalAll: '全部重新计算',
+    cancelCascade: '取消',
+    reactiveReady: '响应式模式已启用。点击"全部运行"以构建依赖图并计算。',
+    runAllReactive: '▶ 全部运行（响应式）',
+    // Virtual keyboard tooltips
+    kbFractions: '分数、幂、根式、函数',
+    kbOperators: '积分、求和、关系、集合',
+    kbFraction: '分数', kbHalf: '二分之一', kbThird: '三分之一', kbQuarter: '四分之一',
+    kbDerivative: '导数', kbPartialDeriv: '偏导数',
+    kbSqrt: '平方根', kbCubeRoot: '立方根', kbNthRoot: 'n次方根',
+    kbExponent: '指数', kbSquare: '平方', kbCube: '立方', kbPowerN: 'n次幂',
+    kbInverse: '倒数', kbSubscript: '下标', kbExponentSubscript: '指数 + 下标',
+    kbParentheses: '括号', kbBrackets: '方括号',
+    kbIndefiniteIntegral: '不定积分', kbDefiniteIntegral: '定积分',
+    kbDoubleIntegral: '二重积分', kbTripleIntegral: '三重积分', kbLineIntegral: '曲线积分',
+    kbSum: '求和', kbBoundedSum: '有界求和', kbBoundedProduct: '有界乘积', kbLimit: '极限',
+    kbReals: '实数', kbNaturals: '自然数', kbIntegers: '整数', kbRationals: '有理数',
+    kbForAll: '对所有', kbExists: '存在',
+    kbLogicalAnd: '逻辑与', kbLogicalOr: '逻辑或', kbNegation: '否定',
+  },
+  ja: {
+    title: 'Xcas ノートブック',
+    subtitle: 'リアクティブ CAS — MathJSON ↔ Giac WebAssembly 経由',
+    giacLoading: 'Giac を読み込み中…',
+    giacReady: 'Giac 準備完了',
+    giacError: 'Giac 初期化エラー',
+    giacDemo: 'デモモード（Giac 未読み込み）',
+    addMath: '+ 数学', addRaw: '+ Xcas 直接入力', addText: '+ テキスト',
+    runAll: '▶ すべて実行', clearOutputs: '✕ 出力をクリア',
+    exportBtn: '💾 エクスポート', importBtn: '📂 インポート',
+    shortcutRun: '実行', shortcutRunNew: '実行 + 新しいセル',
+    showMathJSON: 'MathJSON を表示',
+    cellMath: '数学', cellRaw: 'Xcas', cellText: 'テキスト',
+    placeholderRaw: 'Xcas 構文（例：factor(x^4-1)）',
+    placeholderText: 'メモ、Markdown…',
+    computing: '計算中…',
+    giacNotReady: '⏳ Giac はまだ読み込み中です…',
+    errorPrefix: '✗ エラー：',
+    moveUp: '上に移動', moveDown: '下に移動',
+    deleteCell: '削除', runCell: '実行',
+    modeVisual: 'ビジュアル数学入力', modeRaw: 'Xcas 直接構文',
+    invalidJson: '無効な JSON ファイル',
+    welcomeTitle: '# Xcas ノートブックへようこそ',
+    welcomeBody: '数学をビジュアルに（MathJSON）または Xcas 構文で直接入力できます。\n変換パイプラインを確認するには、下部の **MathJSON を表示** にチェックを入れてください。',
+    plot3dNotSupported: '3D グラフはまだサポートされていません。2D プロットコマンドをお使いください。',
+    plotCoordinates: '座標',
+    reactiveToggle: 'リアクティブ',
+    pendingEvaluation: '保留中…',
+    dependencyError: '依存関係エラー：上流セルが失敗しました',
+    cyclicDependency: '循環依存が検出されました',
+    duplicateVariable: '変数の重複定義',
+    brokenDependency: '依存関係の破損：上流セルが削除されました',
+    staleOutputWarning: '一部の出力が古い可能性があります。すべて再評価しますか？',
+    reEvalAll: 'すべて再評価',
+    cancelCascade: 'キャンセル',
+    reactiveReady: 'リアクティブモードが有効です。「すべて実行」をクリックして依存関係グラフを構築し評価してください。',
+    runAllReactive: '▶ すべて実行（リアクティブ）',
+    // Virtual keyboard tooltips
+    kbFractions: '分数、累乗、根号、関数',
+    kbOperators: '積分、総和、関係、集合',
+    kbFraction: '分数', kbHalf: '2分の1', kbThird: '3分の1', kbQuarter: '4分の1',
+    kbDerivative: '微分', kbPartialDeriv: '偏微分',
+    kbSqrt: '平方根', kbCubeRoot: '立方根', kbNthRoot: 'n乗根',
+    kbExponent: '指数', kbSquare: '2乗', kbCube: '3乗', kbPowerN: 'n乗',
+    kbInverse: '逆数', kbSubscript: '下付き文字', kbExponentSubscript: '指数 + 下付き文字',
+    kbParentheses: '括弧', kbBrackets: '角括弧',
+    kbIndefiniteIntegral: '不定積分', kbDefiniteIntegral: '定積分',
+    kbDoubleIntegral: '二重積分', kbTripleIntegral: '三重積分', kbLineIntegral: '線積分',
+    kbSum: '総和', kbBoundedSum: '有限和', kbBoundedProduct: '有限積', kbLimit: '極限',
+    kbReals: '実数', kbNaturals: '自然数', kbIntegers: '整数', kbRationals: '有理数',
+    kbForAll: 'すべてに対して', kbExists: '存在する',
+    kbLogicalAnd: '論理積', kbLogicalOr: '論理和', kbNegation: '否定',
   },
 };
+
+const RTL_LOCALES = ['ar'];
 
 let currentLocale = 'en';
 
@@ -184,6 +511,7 @@ function applyI18n() {
     if (ta && cell.dataset.type === 'text') ta.placeholder = t('placeholderText');
   });
   document.documentElement.lang = currentLocale;
+  document.documentElement.dir = RTL_LOCALES.includes(currentLocale) ? 'rtl' : 'ltr';
 }
 
 /** Set locale, refresh UI, persist preference */
@@ -192,6 +520,7 @@ function setLocale(locale) {
   currentLocale = locale;
   document.getElementById('lang-select').value = locale;
   applyI18n();
+  if (typeof setupMathKeyboard === 'function') setupMathKeyboard();
   try { localStorage.setItem('xcas-nb-locale', locale); } catch(e) {}
 }
 
