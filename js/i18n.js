@@ -35,7 +35,7 @@ const LOCALES = {
     modeVisual: 'Visual math input', modeRaw: 'Raw Xcas syntax',
     invalidJson: 'Invalid JSON file',
     welcomeTitle: '# Welcome to the Xcas Notebook',
-    welcomeBody: 'Type math visually (MathJSON) or use raw Xcas syntax.\nTick **Show MathJSON** at the bottom to inspect the conversion pipeline.',
+    welcomeBody: 'Type math visually (MathJSON) or use raw Xcas syntax.\nTick **Show MathJSON** at the bottom to inspect the conversion pipeline.\n\nText cells support LaTeX: inline $v = \\frac{d}{t}$ and display mode:\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: '3D plots are not yet supported. Use 2D plot commands instead.',
     plotCoordinates: 'Coordinates',
     reactiveToggle: 'Reactive',
@@ -88,7 +88,7 @@ const LOCALES = {
     modeVisual: 'Saisie math visuelle', modeRaw: 'Syntaxe Xcas brute',
     invalidJson: 'Fichier JSON invalide',
     welcomeTitle: '# Bienvenue dans le Notebook Xcas',
-    welcomeBody: 'Saisissez des maths visuellement (MathJSON) ou en syntaxe Xcas brute.\nCochez **Afficher MathJSON** en bas pour inspecter la conversion.',
+    welcomeBody: 'Saisissez des maths visuellement (MathJSON) ou en syntaxe Xcas brute.\nCochez **Afficher MathJSON** en bas pour inspecter la conversion.\n\nLes cellules texte supportent le LaTeX : en ligne $v = \\frac{d}{t}$ et en mode display :\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: 'Les graphiques 3D ne sont pas encore pris en charge. Utilisez les commandes de tracé 2D.',
     plotCoordinates: 'Coordonnées',
     reactiveToggle: 'Réactif',
@@ -141,7 +141,7 @@ const LOCALES = {
     modeVisual: 'Entrada visual', modeRaw: 'Sintaxis Xcas directa',
     invalidJson: 'Archivo JSON no válido',
     welcomeTitle: '# Bienvenido al Cuaderno Xcas',
-    welcomeBody: 'Escribe matemáticas visualmente (MathJSON) o usa sintaxis Xcas directa.\nMarca **Mostrar MathJSON** abajo para inspeccionar la conversión.',
+    welcomeBody: 'Escribe matemáticas visualmente (MathJSON) o usa sintaxis Xcas directa.\nMarca **Mostrar MathJSON** abajo para inspeccionar la conversión.\n\nLas celdas de texto soportan LaTeX: en línea $v = \\frac{d}{t}$ y en modo display:\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: 'Los gráficos 3D aún no son compatibles. Usa comandos de gráficos 2D.',
     plotCoordinates: 'Coordenadas',
     reactiveToggle: 'Reactivo',
@@ -194,7 +194,7 @@ const LOCALES = {
     modeVisual: 'Visuelle Mathe-Eingabe', modeRaw: 'Direkte Xcas-Syntax',
     invalidJson: 'Ungültige JSON-Datei',
     welcomeTitle: '# Willkommen im Xcas Notizbuch',
-    welcomeBody: 'Gib Mathematik visuell ein (MathJSON) oder nutze direkte Xcas-Syntax.\nAktiviere **MathJSON anzeigen** unten, um die Konvertierung zu prüfen.',
+    welcomeBody: 'Gib Mathematik visuell ein (MathJSON) oder nutze direkte Xcas-Syntax.\nAktiviere **MathJSON anzeigen** unten, um die Konvertierung zu prüfen.\n\nTextzellen unterstützen LaTeX: inline $v = \\frac{d}{t}$ und im Display-Modus:\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: '3D-Grafiken werden noch nicht unterstützt. Verwenden Sie 2D-Plotbefehle.',
     plotCoordinates: 'Koordinaten',
     reactiveToggle: 'Reaktiv',
@@ -247,7 +247,7 @@ const LOCALES = {
     modeVisual: 'إدخال رياضي مرئي', modeRaw: 'صيغة Xcas مباشرة',
     invalidJson: 'ملف JSON غير صالح',
     welcomeTitle: '# مرحبًا في دفتر Xcas',
-    welcomeBody: 'أدخل الرياضيات بصريًا (MathJSON) أو استخدم صيغة Xcas المباشرة.\nفعّل **إظهار MathJSON** في الأسفل لفحص عملية التحويل.',
+    welcomeBody: 'أدخل الرياضيات بصريًا (MathJSON) أو استخدم صيغة Xcas المباشرة.\nفعّل **إظهار MathJSON** في الأسفل لفحص عملية التحويل.\n\nتدعم خلايا النص LaTeX: مضمّن $v = \\frac{d}{t}$ ووضع العرض:\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: 'الرسوم البيانية ثلاثية الأبعاد غير مدعومة بعد. استخدم أوامر الرسم ثنائي الأبعاد.',
     plotCoordinates: 'إحداثيات',
     reactiveToggle: 'تفاعلي',
@@ -300,7 +300,7 @@ const LOCALES = {
     modeVisual: 'दृश्य गणित इनपुट', modeRaw: 'कच्चा Xcas वाक्यविन्यास',
     invalidJson: 'अमान्य JSON फ़ाइल',
     welcomeTitle: '# Xcas नोटबुक में आपका स्वागत है',
-    welcomeBody: 'गणित को दृश्य रूप में (MathJSON) या कच्चे Xcas वाक्यविन्यास में लिखें।\nरूपांतरण देखने के लिए नीचे **MathJSON दिखाएँ** पर टिक करें।',
+    welcomeBody: 'गणित को दृश्य रूप में (MathJSON) या कच्चे Xcas वाक्यविन्यास में लिखें।\nरूपांतरण देखने के लिए नीचे **MathJSON दिखाएँ** पर टिक करें।\n\nटेक्स्ट सेल LaTeX का समर्थन करते हैं: इनलाइन $v = \\frac{d}{t}$ और डिस्प्ले मोड:\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: '3D ग्राफ़ अभी समर्थित नहीं हैं। 2D प्लॉट कमांड का उपयोग करें।',
     plotCoordinates: 'निर्देशांक',
     reactiveToggle: 'प्रतिक्रियाशील',
@@ -353,7 +353,7 @@ const LOCALES = {
     modeVisual: 'Визуальный ввод', modeRaw: 'Синтаксис Xcas напрямую',
     invalidJson: 'Недопустимый файл JSON',
     welcomeTitle: '# Добро пожаловать в тетрадь Xcas',
-    welcomeBody: 'Вводите математику визуально (MathJSON) или используйте синтаксис Xcas.\nВключите **Показать MathJSON** внизу, чтобы проверить конвейер преобразования.',
+    welcomeBody: 'Вводите математику визуально (MathJSON) или используйте синтаксис Xcas.\nВключите **Показать MathJSON** внизу, чтобы проверить конвейер преобразования.\n\nТекстовые ячейки поддерживают LaTeX: встроенный $v = \\frac{d}{t}$ и режим отображения:\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: '3D-графики пока не поддерживаются. Используйте команды 2D-графиков.',
     plotCoordinates: 'Координаты',
     reactiveToggle: 'Реактивный',
@@ -406,7 +406,7 @@ const LOCALES = {
     modeVisual: '可视化数学输入', modeRaw: '原始 Xcas 语法',
     invalidJson: '无效的 JSON 文件',
     welcomeTitle: '# 欢迎使用 Xcas 笔记本',
-    welcomeBody: '以可视化方式（MathJSON）或原始 Xcas 语法输入数学表达式。\n勾选底部的 **显示 MathJSON** 以查看转换过程。',
+    welcomeBody: '以可视化方式（MathJSON）或原始 Xcas 语法输入数学表达式。\n勾选底部的 **显示 MathJSON** 以查看转换过程。\n\n文本单元格支持 LaTeX：行内 $v = \\frac{d}{t}$ 和展示模式：\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: '暂不支持 3D 图形。请使用 2D 绘图命令。',
     plotCoordinates: '坐标',
     reactiveToggle: '响应式',
@@ -459,7 +459,7 @@ const LOCALES = {
     modeVisual: 'ビジュアル数学入力', modeRaw: 'Xcas 直接構文',
     invalidJson: '無効な JSON ファイル',
     welcomeTitle: '# Xcas ノートブックへようこそ',
-    welcomeBody: '数学をビジュアルに（MathJSON）または Xcas 構文で直接入力できます。\n変換パイプラインを確認するには、下部の **MathJSON を表示** にチェックを入れてください。',
+    welcomeBody: '数学をビジュアルに（MathJSON）または Xcas 構文で直接入力できます。\n変換パイプラインを確認するには、下部の **MathJSON を表示** にチェックを入れてください。\n\nテキストセルは LaTeX をサポートしています：インライン $v = \\frac{d}{t}$ とディスプレイモード：\n\n$$\\vec{F} = m\\vec{a}$$',
     plot3dNotSupported: '3D グラフはまだサポートされていません。2D プロットコマンドをお使いください。',
     plotCoordinates: '座標',
     reactiveToggle: 'リアクティブ',
@@ -509,6 +509,12 @@ function applyI18n() {
     const ta = cell.querySelector('textarea');
     if (ta && cell.dataset.type === 'raw')  ta.placeholder = t('placeholderRaw');
     if (ta && cell.dataset.type === 'text') ta.placeholder = t('placeholderText');
+    // Refresh i18n-bound text cells
+    if (ta && cell.dataset.i18nContent) {
+      var keys = cell.dataset.i18nContent.split(',');
+      ta.value = keys.map(function(k) { return t(k.trim()); }).join('\n\n');
+      if (typeof renderTextCell === 'function') renderTextCell(cell.id);
+    }
   });
   document.documentElement.lang = currentLocale;
   document.documentElement.dir = RTL_LOCALES.includes(currentLocale) ? 'rtl' : 'ltr';

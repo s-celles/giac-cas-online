@@ -123,8 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Custom virtual keyboard layouts (inspired by B. Parisse's math2d.html)
   setupMathKeyboard();
 
-  // Demo cells
-  addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'));
+  // Demo cells (i18n-bound: content refreshes when locale changes)
+  addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody');
 
   // Reactive DAG demo cells
   addCell('raw', '', 'p := 5');
@@ -185,6 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('raw',  '', 'scatterplot([1,2,3,4,5],[2,4,5,4,5])');
   addCell('raw',  '', 'circle(0,2); segment([0,0],[2,0]); point(1,1)');
   addCell('raw',  '', 'plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])');
+
+  // Auto-render all text cells (no CAS needed, all scripts loaded at this point)
+  cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
 
   // Show reactive consent banner on boot (reactive mode is default)
   var notebook = document.getElementById('notebook');

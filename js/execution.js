@@ -170,7 +170,25 @@ function renderTextCell(cellId) {
   const ta = cell.querySelector('textarea');
   const out = document.getElementById(cellId + '-output');
   if (!ta || !ta.value.trim()) { out.innerHTML = ''; return; }
-  let h = esc(ta.value)
+  var raw = ta.value;
+  // Extract LaTeX blocks before escaping to protect them from HTML escaping
+  var latexBlocks = [];
+  var PH = '\u0002LATEX';  // safe placeholder (browsers strip \x00)
+  // Display math $$...$$ (must come before inline $...$)
+  raw = raw.replace(/\$\$([\s\S]+?)\$\$/g, function(_, tex) {
+    var idx = latexBlocks.length;
+    try { latexBlocks.push(katex.renderToString(tex.trim(), { displayMode: true, throwOnError: false, trust: true })); }
+    catch(e) { latexBlocks.push('<code>' + esc(tex) + '</code>'); }
+    return PH + idx + PH;
+  });
+  // Inline math $...$
+  raw = raw.replace(/\$([^\$\n]+?)\$/g, function(_, tex) {
+    var idx = latexBlocks.length;
+    try { latexBlocks.push(katex.renderToString(tex.trim(), { displayMode: false, throwOnError: false, trust: true })); }
+    catch(e) { latexBlocks.push('<code>' + esc(tex) + '</code>'); }
+    return PH + idx + PH;
+  });
+  let h = esc(raw)
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
     .replace(/^# (.+)$/gm,   '<h1>$1</h1>')
@@ -178,5 +196,8 @@ function renderTextCell(cellId) {
     .replace(/\*(.+?)\*/g,     '<em>$1</em>')
     .replace(/`(.+?)`/g,       '<code>$1</code>')
     .replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+  // Restore LaTeX blocks
+  var phRe = new RegExp(PH + '(\\d+)' + PH, 'g');
+  h = h.replace(phRe, function(_, idx) { return latexBlocks[parseInt(idx)]; });
   out.innerHTML = '<div class="md-out"><p>' + h + '</p></div>';
 }

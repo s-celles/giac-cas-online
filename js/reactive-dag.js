@@ -482,7 +482,9 @@ function runAllReactive() {
     }
     // Register all cells in the DAG — Observable will evaluate them
     cells.forEach(function(c) {
-      if (c.type !== 'text') {
+      if (c.type === 'text') {
+        renderTextCell(c.id);
+      } else {
         var expr = getXcasExpr(c.id);
         if (expr) registerCell(c.id, expr);
       }

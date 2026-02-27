@@ -4,13 +4,14 @@
 // SECTION 5 — CELL MANAGEMENT (functions)
 // ─────────────────────────────────────────────────────────────
 
-function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJson = null) {
+function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJson = null, i18nKeys = null) {
   cellCounter++;
   const id = 'cell-' + cellCounter;
   const nb = document.getElementById('notebook');
   const div = document.createElement('div');
   div.className = 'cell'; div.id = id; div.dataset.type = type;
   div.dataset.cellId = id; div.dataset.defines = ''; div.dataset.references = '';
+  if (i18nKeys) div.dataset.i18nContent = i18nKeys;
 
   const badge = { math:'cellMath', raw:'cellRaw', text:'cellText' }[type];
   const idx   = type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;
