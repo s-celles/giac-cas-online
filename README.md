@@ -8,14 +8,14 @@ An interactive, browser-based computer algebra notebook powered by [Giac/Xcas](h
 
 - **Reactive DAG execution** — Cells automatically re-evaluate when their dependencies change, powered by [Observable Runtime](https://github.com/nicklockwood/runtime)
 - **Visual math input** — LaTeX-style editing with [MathLive](https://mathlive.io/) and a custom virtual keyboard (fractions, integrals, sums, products, Greek letters)
-- **MathJSON conversion** — Transparent pipeline: LaTeX (MathLive) -> MathJSON (CortexJS) -> Xcas syntax (Giac)
+- **MathJSON-first pipeline** — Math cells use MathJSON internally: MathField -> MathJSON -> Xcas (Giac), LaTeX used only for display
 - **Interactive 2D plots** — `plot(sin(x))`, `plotfunc`, `plotparam`, `plotpolar`, `plotimplicit`, `plotfield`, `plotcontour`, `plotode`, `plotseq` rendered with [JSXGraph](https://jsxgraph.org/) (zoom, pan, coordinates)
 - **3D surface plots** — `plotfunc(x^2+y^2,[x,y])` rendered with WebGL
 - **Statistical charts** — `histogram`, `barplot`, `camembert`, `boxwhisker`, `scatterplot`
 - **Geometry** — `circle`, `segment`, `point` and more
 - **LaTeX output** — Results rendered with [KaTeX](https://katex.org/)
-- **Internationalization** — English, French, Spanish, German
-- **Export/Import** — Save and reload notebooks as JSON (v2 format with dependency metadata)
+- **Internationalization** — 9 languages: English, French, Spanish, German, Arabic (RTL), Hindi, Russian, Chinese, Japanese
+- **Export/Import** — Save and reload notebooks as JSON (v3 format with MathJSON, backward-compatible with v2)
 - **Reactive/Manual toggle** — Switch between automatic cascade and manual cell-by-cell execution
 
 ## Getting Started
@@ -39,7 +39,7 @@ index.html              HTML shell (header, toolbar, notebook container)
 css/
   notebook.css          All styles
 js/
-  i18n.js               Internationalization (4 locales)
+  i18n.js               Internationalization (9 locales)
   giac-init.js          CortexJS Compute Engine + Giac initialization
   mathjson-xcas.js      MathJSON -> Xcas string converter
   state.js              Shared application state
@@ -86,6 +86,15 @@ The notebook comes pre-loaded with demo cells covering:
 - **JSXGraph** — Interactive 2D plots
 - **Observable Runtime** — Reactive dependency graph
 - No build step, no bundler — pure browser ES2020+
+
+## Related Projects
+
+- [Giac/Xcas](https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html) — Computer algebra system by Bernard Parisse
+- [KaTeX](https://katex.org/) — Fast LaTeX math rendering for the web
+- [JSXGraph](https://jsxgraph.org/) — Interactive geometry and function plotting in the browser
+- [Observable Runtime](https://github.com/observablehq/runtime) — Reactive dataflow runtime for dependency graphs
+- [MathLive](https://mathlive.io/) — Web component for math input editing
+- [CortexJS Compute Engine](https://cortexjs.io/compute-engine/) — LaTeX/MathJSON parsing and symbolic computation
 
 ## Credits
 
