@@ -128,7 +128,8 @@ function showAboutDialog() {
     { name: 'KaTeX', author: 'Khan Academy', license: 'MIT', url: 'https://katex.org/' },
     { name: 'JSXGraph', author: 'Alfred Wassermann et al.', license: 'LGPL/MIT', url: 'https://jsxgraph.org/' },
     { name: 'Observable Runtime', author: 'Observable Inc.', license: 'ISC', url: 'https://github.com/observablehq/runtime' },
-    { name: 'Lit', author: 'Google', license: 'BSD-3-Clause', url: 'https://lit.dev/' }
+    { name: 'Lit', author: 'Google', license: 'BSD-3-Clause', url: 'https://lit.dev/' },
+    { name: '@cheprasov/qrcode', author: 'Alexander Cheprasov', license: 'MIT', url: 'https://github.com/cheprasov/js-qrcode' }
   ];
   var rows = libs.map(function(l) {
     return '<tr><td><a href="' + l.url + '" target="_blank" rel="noopener">' + l.name + '</a></td><td>' + l.author + '</td><td>' + l.license + '</td></tr>';
@@ -150,11 +151,20 @@ function showAboutDialog() {
       '<p>' + t('aboutKeyboardCredit') + '</p>' +
       '<h3>' + t('aboutLicense') + '</h3>' +
       '<p>' + t('aboutLicenseText') + '</p>' +
+      '<h3>' + t('aboutShareQR') + '</h3>' +
+      '<div class="about-qr"><div id="about-qr-container"></div><p class="about-qr-url">' + location.href + '</p></div>' +
     '</div>';
   overlay.addEventListener('click', function(e) {
     if (e.target === overlay) hideAboutDialog();
   });
   document.body.appendChild(overlay);
+  // Generate QR code SVG via @cheprasov/qrcode (ESM)
+  import('https://cdn.jsdelivr.net/npm/@cheprasov/qrcode/+esm').then(function(mod) {
+    var QRCodeSVG = mod.QRCodeSVG;
+    var qr = new QRCodeSVG(location.href, { level: 'M' });
+    var container = document.getElementById('about-qr-container');
+    if (container) container.innerHTML = qr.toString();
+  }).catch(function(e) { console.warn('QR code generation failed:', e); });
   document.addEventListener('keydown', _aboutEscHandler);
 }
 function hideAboutDialog() {
