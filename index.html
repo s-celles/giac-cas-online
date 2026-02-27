@@ -193,6 +193,9 @@ var UI = {
   .stale-banner button{font-family:var(--mono);font-size:.7rem;padding:3px 10px;border:1px solid var(--warning);border-radius:4px;background:transparent;color:var(--warning);cursor:pointer}
   .stale-banner button:hover{background:var(--warning);color:#fff}
 
+  /* ═══════ Virtual keyboard — icons on the left ═══════ */
+  math-field::part(container){flex-direction:row-reverse}
+
   /* ═══════ Bottom bar ═══════ */
   .bottombar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:.4rem 1.5rem;font-family:var(--mono);font-size:.63rem;color:var(--text-muted);display:flex;gap:1.4rem;align-items:center;z-index:10}
   .bottombar kbd{background:#eeede8;padding:1px 5px;border-radius:3px;border:1px solid var(--border);font-size:.62rem}
@@ -237,7 +240,6 @@ var UI = {
 </div></div>
 
 <div class="notebook" id="notebook"></div>
-
 <div class="bottombar">
   <span><kbd>Shift</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRun">Run</span></span>
   <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRunNew">Run + new cell</span></span>
@@ -519,7 +521,7 @@ function initGiac() {
 
 const SYMBOL_MAP = {
   Pi: 'pi', ExponentialE: 'e', ImaginaryUnit: 'i',
-  Infinity: '+infinity', NegativeInfinity: '-infinity',
+  Infinity: '+infinity', PositiveInfinity: '+infinity', NegativeInfinity: '-infinity',
   True: 'true', False: 'false', Nothing: 'undef', Half: '1/2',
 };
 
@@ -565,14 +567,37 @@ function mathJsonToXcas(expr) {
   switch (head) {
 
     // ══════ Arithmetic ══════
-    case 'Add': case 'Sum':
+    case 'Add':
       return w(all().join('+'));
+    case 'Sum': {
+      // Summation with bounds: ["Sum", body, ["Limits", var, lo, hi]]
+      var limIdx = args.findIndex(function(a) { return Array.isArray(a) && a[0] === 'Limits'; });
+      if (limIdx >= 0) {
+        var lim = args[limIdx];
+        var v = mathJsonToXcas(lim[1]), lo = mathJsonToXcas(lim[2]), hi = mathJsonToXcas(lim[3]);
+        var body = mathJsonToXcas(args[0]);
+        return 'sum(' + body + ',' + v + ',' + lo + ',' + hi + ')';
+      }
+      // No bounds — treat as addition
+      return w(all().join('+'));
+    }
     case 'Subtract':
       return args.length === 1 ? '(-' + w(c(0)) + ')' : w(c(0) + '-' + w(c(1)));
     case 'Negate':
       return '(-' + w(c(0)) + ')';
     case 'Multiply':
       return w(all().join('*'));
+    case 'Product': {
+      // Product with bounds: ["Product", body, ["Limits", var, lo, hi]]
+      var limIdx = args.findIndex(function(a) { return Array.isArray(a) && a[0] === 'Limits'; });
+      if (limIdx >= 0) {
+        var lim = args[limIdx];
+        var v = mathJsonToXcas(lim[1]), lo = mathJsonToXcas(lim[2]), hi = mathJsonToXcas(lim[3]);
+        var body = mathJsonToXcas(args[0]);
+        return 'product(' + body + ',' + v + ',' + lo + ',' + hi + ')';
+      }
+      return w(all().join('*'));
+    }
     case 'Divide':
       return '(' + w(c(0)) + '/' + w(c(1)) + ')';
     case 'Rational':
@@ -787,7 +812,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '') {
   if (type === 'math') {
     const mf = document.createElement('math-field');
     mf.value = initialLatex || '';
-    mf.setAttribute('virtual-keyboard-mode', 'manual');
+    mf.setAttribute('virtual-keyboard-mode', 'onfocus');
     mf.addEventListener('input', () => updateDebug(id));
     mf.addEventListener('keydown', (e) => cellKey(e, id, 'math'));
     inp.appendChild(mf);
@@ -873,7 +898,7 @@ function setCellMode(cellId, mode) {
     inp.innerHTML = '';
     const mf = document.createElement('math-field');
     mf.value = ta ? ta.value : '';
-    mf.setAttribute('virtual-keyboard-mode', 'manual');
+    mf.setAttribute('virtual-keyboard-mode', 'onfocus');
     mf.addEventListener('input', () => updateDebug(cellId));
     mf.addEventListener('keydown', (e) => cellKey(e, cellId, 'math'));
     inp.appendChild(mf);
@@ -1191,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setLocale(detectLocale());
   initGiac();
 
+
   // Demo cells
   addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'));
 
@@ -1203,6 +1229,18 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('math', '\\int \\frac{1}{x^2+1}\\, dx');
   addCell('math', '\\frac{d}{dx}\\left(\\sin(x)\\cdot e^x\\right)');
   addCell('math', '\\lim_{x \\to 0} \\frac{\\sin(x)}{x}');
+
+  // Finite sums and products
+  addCell('math', '\\sum_{k=1}^{10} k^2');
+  addCell('math', '\\prod_{k=1}^{5} k');
+  addCell('math', '\\sum_{k=1}^{100} \\frac{1}{k^2}');
+  addCell('math', '\\prod_{k=1}^{8} k');
+
+  // Infinite sums
+  addCell('math', '\\sum_{n=1}^{\\infty} \\frac{1}{n^2}');
+  addCell('math', '\\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1}');
+  addCell('math', '\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}');
+
   addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
   addCell('raw',  '', 'eigenvalues([[1,2],[3,4]])');
   addCell('raw',  '', 'plot(sin(x))');
