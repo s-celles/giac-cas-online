@@ -1,4 +1,4 @@
-# Xcas Reactive Notebook
+# rnGIAC — Reactive Notebook GIAC
 
 An interactive, browser-based computer algebra notebook powered by [Giac/Xcas](https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html) with reactive cell evaluation.
 

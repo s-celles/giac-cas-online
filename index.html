@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xcas Reactive Notebook</title>
+<title>rnGIAC — Reactive Notebook GIAC</title>
 
 <!-- ═══════════════════════════════════════════════════
   External dependencies (loaded from CDN)
@@ -83,8 +83,8 @@ var UI = {
 
 <div class="header"><div class="header-inner">
   <div class="header-left">
-    <h1>📓 <span data-i18n="title">Xcas Notebook</span></h1>
-    <p data-i18n="subtitle">Reactive CAS — MathJSON ↔ Giac via WebAssembly</p>
+    <h1>📓 <span data-i18n="title">rnGIAC</span></h1>
+    <p data-i18n="subtitle">Reactive Notebook GIAC — MathJSON ↔ Giac via WebAssembly</p>
     <a href="https://github.com/s-celles/giac-cas-online" target="_blank" rel="noopener" style="font-size:.85rem;opacity:.7;text-decoration:none;color:inherit"><svg height="16" width="16" viewBox="0 0 24 24" style="vertical-align:text-bottom;margin-right:.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Source code</a>
   </div>
   <div class="header-right">
@@ -118,6 +118,8 @@ var UI = {
   <button onclick="importNotebook()" data-i18n="importBtn">📂 Import</button>
   <div class="sep"></div>
   <label class="reactive-toggle"><input type="checkbox" id="reactive-toggle" checked onchange="toggleReactiveMode(this.checked)"><span class="reactive-label" data-i18n="reactiveToggle">Reactive</span></label>
+  <div class="sep"></div>
+  <button id="report-view-btn" onclick="toggleReportView()" data-i18n="reportView">Report view</button>
 </div></div>
 
 <div class="notebook" id="notebook"></div>
@@ -125,6 +127,7 @@ var UI = {
   <span><kbd>Shift</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRun">Run</span></span>
   <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRunNew">Run + new cell</span></span>
   <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> Run (no cascade)</span>
+  <span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>H</kbd>/<kbd>D</kbd>/<kbd>L</kbd> Hide/Disable/Lock</span>
   <label><input type="checkbox" id="toggle-debug" onchange="toggleAllDebug(this.checked)">
     <span data-i18n="showMathJSON">Show MathJSON</span></label>
 </div>
