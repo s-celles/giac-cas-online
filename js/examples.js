@@ -55,7 +55,11 @@ var EXAMPLE_DATA = {
       { type: 'raw', content: 'boxwhisker([1,2,3,4,5,6,7,8,9,10])' },
       { type: 'raw', content: 'scatterplot([1,2,3,4,5],[2,4,5,4,5])' },
       { type: 'raw', content: 'circle(0,2); segment([0,0],[2,0]); point(1,1)' },
-      { type: 'raw', content: 'plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])' }
+      { type: 'raw', content: 'plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])' },
+      { type: 'text', i18n: 'exFullDemoSliders', suffix: '\n\n@bind(a, 0.1, 5, 0.1, 1, "sliderFreqX")\n@bind(b, 0.1, 5, 0.1, 1, "sliderFreqY")', hidden: true },
+      { type: 'raw', content: 'plotfunc(sin(a*x)*cos(b*y),[x,y])' },
+      { type: 'text', content: '@bind(fc, 1, 20, 0.5, 5, "sliderCarrierFreq")\n@bind(fm, 0.1, 5, 0.1, 1, "sliderModFreq")\n@bind(m, 0, 1, 0.01, 0.5, "sliderModDepth")' },
+      { type: 'raw', content: 'plot(sin(2*pi*fc*x)*(1+m*sin(2*pi*fm*x)), x=0..2)' }
     ]
   },
 
