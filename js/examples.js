@@ -330,6 +330,13 @@ var EXAMPLE_DATA = {
       { type: 'raw', content: 'plotparam3d([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u=0..6.28,v=-1.57..1.57])' }
     ]
   },
+  '3d-curve': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'ex3dCurveTitle', suffix: '\n\n@bind(n, 1, 10, 0.5, 3, "sliderHelixTurns")', hidden: true },
+      { type: 'raw', content: 'plotparam3d([cos(2*pi*n*t),sin(2*pi*n*t),t],[t=0..1])' }
+    ]
+  },
   '3d-sliders': {
     version: 2, reactiveMode: true,
     cells: [
@@ -364,6 +371,7 @@ var EXAMPLES = [
   { id: 'quadratic-equation',    i18nName: 'exampleQuadratic' },
   { id: '3d-surface',             i18nName: 'example3dSurface' },
   { id: '3d-parametric',          i18nName: 'example3dParametric' },
+  { id: '3d-curve',                i18nName: 'example3dCurve' },
   { id: '3d-sliders',             i18nName: 'example3dSliders' },
   { id: 'amplitude-modulation',  i18nName: 'exampleAM' },
   { id: 'frequency-modulation',  i18nName: 'exampleFM' },

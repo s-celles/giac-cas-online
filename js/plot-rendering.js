@@ -1553,6 +1553,15 @@ function parse3DExpression(expr) {
     var exprList = splitTopLevel(firstArg.slice(1, -1));
     if (exprList.length < 3) return null;
     varInfo = parseVarList(lastArg);
+    if (varInfo.vars.length === 1) {
+      // Single parameter → 3D parametric curve (trajectory)
+      return {
+        type: 'curve',
+        expressions: [exprList[0].trim(), exprList[1].trim(), exprList[2].trim()],
+        tVar: varInfo.vars[0],
+        tRange: varInfo.ranges[0] ? [varInfo.ranges[0].min, varInfo.ranges[0].max] : [0, 6.28]
+      };
+    }
     if (varInfo.vars.length < 2) return null;
     return {
       type: 'parametric',
@@ -1662,6 +1671,49 @@ function renderJSXGraph3D(outputEl, config) {
       );
       view.create('parametricsurface3d', [fns[0], fns[1], fns[2], xR, yR], {
         stepsU: config.stepsU, stepsV: config.stepsV, strokeWidth: 0.5
+      });
+
+    } else if (config.type === 'curve') {
+      // 3D parametric curve: single parameter t → (x(t), y(t), z(t))
+      var tR = config.tRange;
+      var tVarStr = config.tVar;
+      var curveFns = [];
+      for (var c = 0; c < 3; c++) {
+        var resolved = config.expressions[c];
+        try {
+          var evaled = caseval('eval(' + resolved + ')');
+          if (evaled && evaled !== resolved) resolved = evaled;
+        } catch(e) {}
+        var cf = null;
+        try { cf = board.jc.snippet(resolved, true, tVarStr); } catch(e) {}
+        if (!cf) cf = giacExprToJSFunc(resolved, [config.tVar]);
+        if (!cf) {
+          wrapper.innerHTML = '<div class="plot-3d-msg">' + t('plot3dExprError') + '</div>';
+          return false;
+        }
+        curveFns.push(cf);
+      }
+      // Estimate bounding box by sampling along t
+      var curveRanges = []; // [xRange, yRange, zRange]
+      for (var d = 0; d < 3; d++) {
+        var lo = Infinity, hi = -Infinity, steps = 60;
+        for (var i = 0; i <= steps; i++) {
+          var tv = tR[0] + (tR[1] - tR[0]) * i / steps;
+          try {
+            var val = curveFns[d](tv);
+            if (isFinite(val)) { if (val < lo) lo = val; if (val > hi) hi = val; }
+          } catch(e) {}
+        }
+        if (!isFinite(lo) || !isFinite(hi)) { lo = -5; hi = 5; }
+        var pad = (hi - lo) * 0.15 || 1;
+        curveRanges.push([lo - pad, hi + pad]);
+      }
+      var view = board.create('view3d',
+        [[-6, -3], [8, 8], curveRanges],
+        { xPlaneRear: { visible: false }, yPlaneRear: { visible: false }, projection: 'central' }
+      );
+      view.create('curve3d', [curveFns[0], curveFns[1], curveFns[2], tR], {
+        numberPointsHigh: 200, strokeWidth: 2
       });
     }
 
