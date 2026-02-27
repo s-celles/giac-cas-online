@@ -28,6 +28,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
   const idx   = type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;
 
   div.innerHTML = `
+    <div class="cell-insert-zone" onclick="insertCellAt('${id}',-1)" title="${t('insertAbove')}"><span>+</span></div>
     <div class="cell-head">
       <span class="drag-handle" title="${t('dragToReorder')}">⠿</span>
       <span class="cell-idx">${idx}</span>
@@ -50,7 +51,8 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     </div>
     <div class="cell-input"></div>
     <div class="cell-debug ${showDebug?'visible':''}"></div>
-    <div class="cell-output" id="${id}-output"></div>`;
+    <div class="cell-output" id="${id}-output"></div>
+    <div class="cell-insert-zone" onclick="insertCellAt('${id}',1)" title="${t('insertBelow')}"><span>+</span></div>`;
 
   nb.appendChild(div);
   const inp = div.querySelector('.cell-input');

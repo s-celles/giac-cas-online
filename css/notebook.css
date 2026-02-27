@@ -58,6 +58,12 @@
   .cell-actions button:hover{background:#eee;color:var(--text)}
   .cell-actions button.del:hover{background:#fee;color:var(--error)}
 
+  /* ═══════ Insert Cell Zones ═══════ */
+  .cell-insert-zone{display:flex;justify-content:center;align-items:center;height:12px;cursor:pointer;margin:-6px 0;position:relative;z-index:2}
+  .cell-insert-zone span{opacity:0;font-size:.75rem;font-family:var(--mono);color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:50%;width:22px;height:22px;line-height:20px;text-align:center;box-shadow:var(--shadow-sm);transition:opacity .15s}
+  .cell-insert-zone:hover span{opacity:1}
+  .cell-insert-zone:hover span:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
   /* ═══════ Input ═══════ */
   .cell-input{padding:.65rem .8rem;min-height:46px}
   .cell-input math-field{width:100%;font-size:1.2rem;border:none;outline:none;--caret-color:var(--accent);--selection-background-color:rgba(37,99,235,.12)}
