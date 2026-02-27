@@ -10,3 +10,7 @@
 !package-lock.json
 !package.json
 !README.md
+!js/
+!js/*.js
+!css/
+!css/*.css
