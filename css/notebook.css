@@ -97,6 +97,26 @@
   .gl3d-container canvas{max-width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:4px;cursor:grab}
   .gl3d-container canvas:active{cursor:grabbing}
 
+  /* ═══════ Cell Controls (hide, disable, lock) ═══════ */
+  .cell-hidden > .cell-input,
+  .cell-hidden > .cell-debug{display:none}
+  .cell-hidden-placeholder{padding:.25rem .8rem;background:#f7f6f2;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:.4rem;min-height:8px}
+  .cell-hidden-placeholder:hover{background:var(--accent-light)}
+  .cell-hidden-placeholder span{font-family:var(--mono);font-size:.6rem;color:var(--text-muted)}
+  .cell-disabled{opacity:.45}
+  .cell-disabled .cell-badge{text-decoration:line-through}
+  .cell-disabled .cell-input{pointer-events:none}
+  .cell-locked .cell-input{position:relative}
+  .cell-locked .cell-input::after{content:'';position:absolute;inset:0;cursor:not-allowed}
+  .cell-lock-indicator{font-family:var(--mono);font-size:.58rem;color:var(--text-muted);margin-inline-start:.3rem}
+  .cell-controls{display:flex;gap:2px;margin-inline-end:.3rem}
+  .cell-controls button{font-size:.6rem;padding:1px 5px;border:none;border-radius:3px;background:transparent;color:var(--text-muted);cursor:pointer;font-family:var(--mono);line-height:1.4}
+  .cell-controls button:hover{background:#eee;color:var(--text)}
+  .cell-controls button.active{color:var(--accent);font-weight:600}
+  .report-view .cell-input,
+  .report-view .cell-debug{display:none}
+  .report-view .cell-hidden-placeholder{display:none}
+
   /* ═══════ Reactive DAG ═══════ */
   .cell.dep-upstream{border-color:#7c3aed;box-shadow:0 0 0 2px rgba(124,58,237,.15)}
   .cell.dep-downstream{border-color:#059669;box-shadow:0 0 0 2px rgba(5,150,105,.15)}

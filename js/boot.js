@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMathKeyboard();
 
   // Demo cells (i18n-bound: content refreshes when locale changes)
-  addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody');
+  addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody', { hidden: true });
 
   // Reactive DAG demo cells
   addCell('raw', '', 'p := 5');
@@ -188,6 +188,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Auto-render all text cells (no CAS needed, all scripts loaded at this point)
   cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
+
+  // Global keyboard shortcut for report view toggle
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'R' || e.key === 'r')) {
+      e.preventDefault();
+      toggleReportView();
+    }
+  });
 
   // Show reactive consent banner on boot (reactive mode is default)
   var notebook = document.getElementById('notebook');

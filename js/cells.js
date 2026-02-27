@@ -4,7 +4,7 @@
 // SECTION 5 — CELL MANAGEMENT (functions)
 // ─────────────────────────────────────────────────────────────
 
-function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJson = null, i18nKeys = null) {
+function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJson = null, i18nKeys = null, opts = {}) {
   cellCounter++;
   const id = 'cell-' + cellCounter;
   const nb = document.getElementById('notebook');
@@ -12,6 +12,17 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
   div.className = 'cell'; div.id = id; div.dataset.type = type;
   div.dataset.cellId = id; div.dataset.defines = ''; div.dataset.references = '';
   if (i18nKeys) div.dataset.i18nContent = i18nKeys;
+
+  // Cell control states (default false)
+  var isHidden   = opts.hidden   === true;
+  var isDisabled = opts.disabled === true;
+  var isLocked   = opts.locked   === true;
+  div.dataset.hidden   = isHidden   ? 'true' : 'false';
+  div.dataset.disabled = isDisabled ? 'true' : 'false';
+  div.dataset.locked   = isLocked   ? 'true' : 'false';
+  if (isHidden)   div.classList.add('cell-hidden');
+  if (isDisabled) div.classList.add('cell-disabled');
+  if (isLocked)   div.classList.add('cell-locked');
 
   const badge = { math:'cellMath', raw:'cellRaw', text:'cellText' }[type];
   const idx   = type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;
@@ -24,6 +35,11 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
         <button class="active" onclick="setCellMode('${id}','math')" title="${t('modeVisual')}">𝑓(𝑥)</button>
         <button onclick="setCellMode('${id}','raw')" title="${t('modeRaw')}">{ }</button>
       </div>` : ''}
+      <div class="cell-controls">
+        <button onclick="toggleCellHidden('${id}')" title="${isHidden ? t('showCode') : t('hideCode')}" class="${isHidden ? 'active' : ''}">👁</button>
+        <button onclick="toggleCellDisabled('${id}')" title="${isDisabled ? t('enableCell') : t('disableCell')}" class="${isDisabled ? 'active' : ''}">⊘</button>
+        <button onclick="toggleCellLocked('${id}')" title="${isLocked ? t('unlockCell') : t('lockCell')}" class="${isLocked ? 'active' : ''}">🔒</button>
+      </div>
       <div class="cell-actions">
         <button onclick="runSingleCell('${id}')" title="${t('runCell')}">▶</button>
         <button onclick="moveCell('${id}',-1)" title="${t('moveUp')}">↑</button>
@@ -59,6 +75,23 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     inp.appendChild(ta);
   }
 
+  // Apply locked state to input elements
+  if (isLocked) {
+    var lockMf = div.querySelector('math-field');
+    var lockTa = div.querySelector('textarea');
+    if (lockMf) lockMf.readOnly = true;
+    if (lockTa) lockTa.readOnly = true;
+  }
+
+  // Hidden placeholder: show a clickable bar when hidden and no output
+  if (isHidden) {
+    var ph = document.createElement('div');
+    ph.className = 'cell-hidden-placeholder';
+    ph.innerHTML = '<span>' + t('showCode') + '</span>';
+    ph.onclick = function() { toggleCellHidden(id); };
+    div.querySelector('.cell-input').insertAdjacentElement('afterend', ph);
+  }
+
   // Dependency highlighting on focus/blur
   div.addEventListener('focusin', function() { if (reactiveMode) highlightDeps(id); });
   div.addEventListener('focusout', function() { clearDepHighlights(); });
@@ -78,6 +111,10 @@ function cellKey(e, id, type) {
   if (e.key === 'Enter' && e.ctrlKey && e.shiftKey) { e.preventDefault(); runSingleCell(id, true); return; }
   if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); runSingleCell(id); }
   if (e.key === 'Enter' && e.ctrlKey)  { e.preventDefault(); runSingleCell(id); addCell(type === 'text' ? 'text' : 'math'); }
+  // Cell control shortcuts
+  if (e.ctrlKey && e.shiftKey && (e.key === 'H' || e.key === 'h')) { e.preventDefault(); toggleCellHidden(id); }
+  if (e.ctrlKey && e.shiftKey && (e.key === 'D' || e.key === 'd')) { e.preventDefault(); toggleCellDisabled(id); }
+  if (e.ctrlKey && e.shiftKey && (e.key === 'L' || e.key === 'l')) { e.preventDefault(); toggleCellLocked(id); }
 }
 
 
@@ -127,6 +164,8 @@ function setCellMode(cellId, mode) {
     inp.appendChild(ta);
     cell.dataset.mode = 'raw';
     btns[0].classList.remove('active'); btns[1].classList.add('active');
+    // Reapply lock state after mode switch
+    if (cell.dataset.locked === 'true') ta.readOnly = true;
   } else {
     const ta = cell.querySelector('textarea');
     inp.innerHTML = '';
@@ -138,6 +177,8 @@ function setCellMode(cellId, mode) {
     inp.appendChild(mf);
     cell.dataset.mode = 'math';
     btns[0].classList.add('active'); btns[1].classList.remove('active');
+    // Reapply lock state after mode switch
+    if (cell.dataset.locked === 'true') mf.readOnly = true;
     setTimeout(() => updateDebug(cellId), 100);
   }
 }

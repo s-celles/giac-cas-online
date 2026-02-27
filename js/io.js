@@ -5,7 +5,7 @@
 
 function exportNotebook() {
   const data = {
-    version: 3,
+    version: 4,
     locale: currentLocale,
     reactiveMode: reactiveMode,
     cells: cells.map(c => {
@@ -18,7 +18,10 @@ function exportNotebook() {
         type: el.dataset.type,
         mode,
         defines: cellInfo ? cellInfo.defines : [],
-        references: cellInfo ? cellInfo.references : []
+        references: cellInfo ? cellInfo.references : [],
+        hidden: el.dataset.hidden === 'true',
+        disabled: el.dataset.disabled === 'true',
+        locked: el.dataset.locked === 'true'
       };
       if (mode === 'math' && mf) {
         cell.mathjson = mf.expression.json;
@@ -57,25 +60,31 @@ function importNotebook() {
         var cellItems = Array.isArray(data) ? data : data.cells;
         cellItems.forEach(item => {
           var cid;
+          // Cell state flags (v4+, default false for older formats)
+          var cellOpts = {
+            hidden: item.hidden === true,
+            disabled: item.disabled === true,
+            locked: item.locked === true
+          };
           if (item.type === 'math') {
             if (item.mathjson && fileVersion >= 3) {
-              // v3: MathJSON is the canonical representation
-              cid = addCell('math', '', '', item.mathjson);
+              // v3+: MathJSON is the canonical representation
+              cid = addCell('math', '', '', item.mathjson, null, cellOpts);
             } else if (item.content) {
               // v2/v1: LaTeX content — convert to MathJSON
               try {
                 var mjson = ce.parse(item.content, { canonical: false }).json;
-                cid = addCell('math', '', '', mjson);
+                cid = addCell('math', '', '', mjson, null, cellOpts);
               } catch (e) {
                 // Fallback: unparseable LaTeX → import as raw cell with warning
                 console.warn('v2 import: unparseable LaTeX, importing as raw cell:', item.content, e);
-                cid = addCell('raw', '', item.content);
+                cid = addCell('raw', '', item.content, null, null, cellOpts);
               }
             } else {
-              cid = addCell('math');
+              cid = addCell('math', '', '', null, null, cellOpts);
             }
           } else {
-            cid = addCell(item.type, '', item.content);
+            cid = addCell(item.type, '', item.content, null, null, cellOpts);
           }
           // Register in reactive graph if needed
           if (reactiveMode && observableModule && item.type !== 'text') {

@@ -326,6 +326,9 @@ function scheduleCellRender(cellId, expr, rawResult) {
     cell.classList.add('cell-error');
   }
   cell.classList.remove('running');
+  // Hide placeholder if cell is hidden and now has output
+  var ph = cell.querySelector('.cell-hidden-placeholder');
+  if (ph && out.innerHTML.trim()) ph.style.display = 'none';
 }
 
 /** Show a duplicate variable warning */
@@ -482,6 +485,9 @@ function runAllReactive() {
     }
     // Register all cells in the DAG — Observable will evaluate them
     cells.forEach(function(c) {
+      var el = document.getElementById(c.id);
+      // Skip disabled cells
+      if (el && el.dataset.disabled === 'true') return;
       if (c.type === 'text') {
         renderTextCell(c.id);
       } else {

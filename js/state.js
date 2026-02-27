@@ -9,3 +9,4 @@ let observableRuntime = null;
 let observableModule = null;
 let cellVariableMap = new Map();   // cellId → { variable, defines, references }
 let variableOwnerMap = new Map();  // variableName → cellId
+let viewMode = 'code';             // 'code' | 'report'

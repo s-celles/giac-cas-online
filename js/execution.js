@@ -6,6 +6,7 @@
 function getXcasExpr(cellId) {
   const cell = document.getElementById(cellId);
   if (!cell || cell.dataset.type === 'text') return '';
+  if (cell.dataset.disabled === 'true') return '';
   const mode = cell.dataset.mode || cell.dataset.type;
   if (cell.dataset.type === 'raw' || mode === 'raw') {
     return cell.querySelector('textarea')?.value.trim() || '';
@@ -19,6 +20,8 @@ function getXcasExpr(cellId) {
 function runSingleCell(cellId, forceManual) {
   const cell = document.getElementById(cellId);
   if (!cell) return;
+  // Skip disabled cells
+  if (cell.dataset.disabled === 'true') return;
   if (cell.dataset.type === 'text') { renderTextCell(cellId); return; }
 
   const expr = getXcasExpr(cellId);
@@ -161,6 +164,9 @@ function runSingleCell(cellId, forceManual) {
       out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
     }
     cell.classList.remove('running');
+    // Hide placeholder if cell is hidden and now has output
+    var ph = cell.querySelector('.cell-hidden-placeholder');
+    if (ph && out.innerHTML.trim()) ph.style.display = 'none';
   }, 10);
 }
 
@@ -200,4 +206,7 @@ function renderTextCell(cellId) {
   var phRe = new RegExp(PH + '(\\d+)' + PH, 'g');
   h = h.replace(phRe, function(_, idx) { return latexBlocks[parseInt(idx)]; });
   out.innerHTML = '<div class="md-out"><p>' + h + '</p></div>';
+  // Hide placeholder if cell is hidden and now has output
+  var ph = cell.querySelector('.cell-hidden-placeholder');
+  if (ph && out.innerHTML.trim()) ph.style.display = 'none';
 }
