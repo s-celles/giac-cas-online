@@ -3,6 +3,8 @@
 // SECTION 12 — BOOT
 // ─────────────────────────────────────────────────────────────
 
+var APP_VERSION = '0.1.0';
+
 /** Set up MathLive virtual keyboard layouts with localized tooltips */
 function setupMathKeyboard() {
   if (typeof mathVirtualKeyboard === 'undefined') return;
@@ -114,6 +116,53 @@ function setupMathKeyboard() {
     "alphabetic",
     "greek"
   ];
+}
+
+/** Show About dialog */
+function showAboutDialog() {
+  if (document.getElementById('about-overlay')) return;
+  var libs = [
+    { name: 'Giac/Xcas', author: 'Bernard Parisse', license: 'GPL-3.0', url: 'https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html' },
+    { name: 'MathLive', author: 'Arno Gourdol', license: 'MIT', url: 'https://mathlive.io/' },
+    { name: 'CortexJS Compute Engine', author: 'Arno Gourdol', license: 'MIT', url: 'https://cortexjs.io/compute-engine/' },
+    { name: 'KaTeX', author: 'Khan Academy', license: 'MIT', url: 'https://katex.org/' },
+    { name: 'JSXGraph', author: 'Alfred Wassermann et al.', license: 'LGPL/MIT', url: 'https://jsxgraph.org/' },
+    { name: 'Observable Runtime', author: 'Observable Inc.', license: 'ISC', url: 'https://github.com/observablehq/runtime' }
+  ];
+  var rows = libs.map(function(l) {
+    return '<tr><td><a href="' + l.url + '" target="_blank" rel="noopener">' + l.name + '</a></td><td>' + l.author + '</td><td>' + l.license + '</td></tr>';
+  }).join('');
+  var overlay = document.createElement('div');
+  overlay.id = 'about-overlay';
+  overlay.className = 'about-overlay';
+  overlay.innerHTML =
+    '<div class="about-dialog">' +
+      '<button class="about-close" onclick="hideAboutDialog()">&times;</button>' +
+      '<h2>' + t('aboutTitle') + '</h2>' +
+      '<p class="about-version">v' + APP_VERSION + '</p>' +
+      '<p class="about-author">' + t('aboutAuthor') + '</p>' +
+      '<p>' + t('aboutDesc') + '</p>' +
+      '<h3>' + t('aboutLibraries') + '</h3>' +
+      '<table><thead><tr><th>' + t('aboutColLib') + '</th><th>' + t('aboutColAuthor') + '</th><th>' + t('aboutColLicense') + '</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table>' +
+      '<h3>' + t('aboutCredits') + '</h3>' +
+      '<p>' + t('aboutKeyboardCredit') + '</p>' +
+      '<h3>' + t('aboutLicense') + '</h3>' +
+      '<p>' + t('aboutLicenseText') + '</p>' +
+    '</div>';
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) hideAboutDialog();
+  });
+  document.body.appendChild(overlay);
+  document.addEventListener('keydown', _aboutEscHandler);
+}
+function hideAboutDialog() {
+  var el = document.getElementById('about-overlay');
+  if (el) el.remove();
+  document.removeEventListener('keydown', _aboutEscHandler);
+}
+function _aboutEscHandler(e) {
+  if (e.key === 'Escape') hideAboutDialog();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

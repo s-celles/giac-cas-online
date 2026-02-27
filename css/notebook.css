@@ -41,6 +41,22 @@
   .examples-menu button{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
   .examples-menu button:hover{background:var(--accent);color:#fff}
 
+  /* ═══════ About Dialog ═══════ */
+  .about-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:1rem}
+  .about-dialog{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,.18);padding:2rem 2.2rem;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;font-family:var(--body);color:var(--text)}
+  .about-dialog h2{font-family:var(--mono);font-size:1.2rem;font-weight:600;margin-bottom:.1rem}
+  .about-dialog .about-version{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);margin-bottom:.2rem}
+  .about-dialog .about-author{font-size:.82rem;color:var(--text-muted);margin-bottom:.8rem}
+  .about-dialog h3{font-family:var(--mono);font-size:.85rem;font-weight:500;margin-top:1.2rem;margin-bottom:.4rem;color:var(--accent)}
+  .about-dialog p{font-size:.85rem;line-height:1.6;margin-bottom:.5rem}
+  .about-dialog table{width:100%;border-collapse:collapse;font-size:.78rem;margin:.4rem 0 .8rem}
+  .about-dialog th{text-align:left;font-family:var(--mono);font-weight:500;padding:5px 8px;border-bottom:2px solid var(--border);font-size:.72rem;color:var(--text-muted)}
+  .about-dialog td{padding:5px 8px;border-bottom:1px solid var(--border)}
+  .about-dialog a{color:var(--accent);text-decoration:none}
+  .about-dialog a:hover{text-decoration:underline}
+  .about-close{position:absolute;top:.7rem;right:.9rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);line-height:1}
+  .about-close:hover{color:var(--text)}
+
   /* ═══════ Notebook ═══════ */
   .notebook{max-width:960px;margin:1.2rem auto;padding:0 1rem 5rem}
 
