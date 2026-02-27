@@ -177,6 +177,11 @@ function registerCell(cellId, expr) {
     return variableOwnerMap.has(name);
   });
 
+  // Regex to detect plot commands — these are handled by tryDirectJSXGraph
+  // which manages canvas setup and caseval internally.
+  // Calling caseval before canvas setup corrupts WebGL state for 3D plots.
+  var plotExprRe = /(?:^|;\s*)(plot|plotfunc|plotparam|plotpolar|plotimplicit|plotfield|plotcontour|plotode|plotseq|plotparam3d|plot3d|camembert|barplot|histogram|boxwhisker|scatterplot|circle|segment|point|triangle)\s*\(/;
+
   if (definedName) {
     variable.define(definedName, activeInputs, function() {
       var result = caseval(evalExpr);
@@ -187,6 +192,12 @@ function registerCell(cellId, expr) {
   } else {
     // Anonymous cell — observes references but doesn't define a name
     variable.define(null, activeInputs, function() {
+      // For plot commands, defer evaluation to scheduleCellRender/tryDirectJSXGraph
+      // to avoid double caseval and WebGL canvas conflicts
+      if (plotExprRe.test(evalExpr)) {
+        scheduleCellRender(evalCellId, evalExpr, null);
+        return null;
+      }
       var result = caseval(evalExpr);
       scheduleCellRender(evalCellId, evalExpr, result);
       return result;
@@ -265,11 +276,12 @@ function scheduleCellRender(cellId, expr, rawResult) {
   out.innerHTML = '';
 
   try {
-    // Try direct JSXGraph rendering
+    // Try direct JSXGraph rendering (handles its own caseval for 3D plots)
     if (jsxGraphAvailable() && tryDirectJSXGraph(expr, out)) {
       // Done
     } else {
-      var raw = rawResult;
+      // Lazy-evaluate if no pre-computed result (plot commands skip caseval upstream)
+      var raw = rawResult != null ? rawResult : caseval(expr);
       var plotFmt = detectPlotFormat(raw);
 
       if (plotFmt === 'svg') {

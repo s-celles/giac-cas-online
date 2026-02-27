@@ -1073,7 +1073,9 @@ function renderJSXPieChart(outputEl, pairs) {
   if (total <= 0) return;
   var colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628', '#f781bf', '#999999'];
   var bbox = { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5 };
-  var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: true, axis: false });
+  var ortho = false;
+  try { ortho = caseval('gl_ortho').trim() === '1'; } catch(e) {}
+  var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: ortho, axis: false });
   var angle = 0;
   pairs.forEach(function(p, idx) {
     var sweep = (p.value / total) * 2 * Math.PI;
