@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 var STATIC_QR_THRESHOLD = 2200;
-var DEFAULT_FPS = 5;
+var DEFAULT_FPS = 2;
 var DEFAULT_CHUNK_SIZE = 300;
 var QR_PROTOCOL_VERSION = 1;
 
