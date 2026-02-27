@@ -144,6 +144,21 @@ function showAboutDialog() {
       '<p class="about-version">v' + APP_VERSION + '</p>' +
       '<p class="about-author">' + t('aboutAuthor') + '</p>' +
       '<p>' + t('aboutDesc') + '</p>' +
+      '<h3>' + t('aboutShareQR') + '</h3>' +
+      '<div class="about-qr"><div id="about-qr-container"></div><p class="about-qr-url">' + location.href + '</p></div>' +
+      '<div class="about-share-buttons">' +
+        (navigator.share ? '<button class="share-primary" onclick="aboutNativeShare()" title="' + t('shareNative') + '">📤 ' + t('shareNative') + '</button>' : '') +
+        '<button onclick="aboutCopyLink()" id="about-copy-btn" title="' + t('shareCopy') + '">📋 ' + t('shareCopy') + '</button>' +
+        '<a href="mailto:?subject=rnGIAC&body=' + encodeURIComponent(location.href) + '" title="Email">✉️ Email</a>' +
+        '<a href="https://wa.me/?text=' + encodeURIComponent('rnGIAC ' + location.href) + '" target="_blank" rel="noopener" title="WhatsApp">💬 WhatsApp</a>' +
+        '<a href="https://t.me/share/url?url=' + encodeURIComponent(location.href) + '&text=rnGIAC" target="_blank" rel="noopener" title="Telegram">➤ Telegram</a>' +
+        '<a href="https://x.com/intent/tweet?url=' + encodeURIComponent(location.href) + '&text=rnGIAC" target="_blank" rel="noopener" title="X">𝕏 X</a>' +
+        '<a href="https://bsky.app/intent/compose?text=' + encodeURIComponent('rnGIAC ' + location.href) + '" target="_blank" rel="noopener" title="Bluesky">🦋 Bluesky</a>' +
+        '<a href="https://mastodonshare.com/?text=' + encodeURIComponent('rnGIAC ' + location.href) + '" target="_blank" rel="noopener" title="Mastodon">🐘 Mastodon</a>' +
+        '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(location.href) + '" target="_blank" rel="noopener" title="LinkedIn">💼 LinkedIn</a>' +
+        '<a href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href) + '" target="_blank" rel="noopener" title="Facebook">👤 Facebook</a>' +
+        '<a href="https://www.reddit.com/submit?url=' + encodeURIComponent(location.href) + '&title=rnGIAC" target="_blank" rel="noopener" title="Reddit">🔗 Reddit</a>' +
+      '</div>' +
       '<h3>' + t('aboutLibraries') + '</h3>' +
       '<table><thead><tr><th>' + t('aboutColLib') + '</th><th>' + t('aboutColAuthor') + '</th><th>' + t('aboutColLicense') + '</th></tr></thead>' +
       '<tbody>' + rows + '</tbody></table>' +
@@ -151,8 +166,6 @@ function showAboutDialog() {
       '<p>' + t('aboutKeyboardCredit') + '</p>' +
       '<h3>' + t('aboutLicense') + '</h3>' +
       '<p>' + t('aboutLicenseText') + '</p>' +
-      '<h3>' + t('aboutShareQR') + '</h3>' +
-      '<div class="about-qr"><div id="about-qr-container"></div><p class="about-qr-url">' + location.href + '</p></div>' +
     '</div>';
   overlay.addEventListener('click', function(e) {
     if (e.target === overlay) hideAboutDialog();
@@ -160,12 +173,23 @@ function showAboutDialog() {
   document.body.appendChild(overlay);
   // Generate QR code SVG via @cheprasov/qrcode (ESM)
   import('https://cdn.jsdelivr.net/npm/@cheprasov/qrcode/+esm').then(function(mod) {
-    var QRCodeSVG = mod.QRCodeSVG;
+    var lib = mod.default || mod;
+    var QRCodeSVG = lib.QRCodeSVG || mod.QRCodeSVG;
+    if (!QRCodeSVG) { console.warn('QRCodeSVG not found in module:', Object.keys(mod), Object.keys(lib)); return; }
     var qr = new QRCodeSVG(location.href, { level: 'M' });
     var container = document.getElementById('about-qr-container');
     if (container) container.innerHTML = qr.toString();
   }).catch(function(e) { console.warn('QR code generation failed:', e); });
   document.addEventListener('keydown', _aboutEscHandler);
+}
+function aboutCopyLink() {
+  navigator.clipboard.writeText(location.href).then(function() {
+    var btn = document.getElementById('about-copy-btn');
+    if (btn) { btn.textContent = '✓ ' + t('shareCopied'); setTimeout(function() { btn.textContent = '📋 ' + t('shareCopy'); }, 2000); }
+  });
+}
+function aboutNativeShare() {
+  navigator.share({ title: 'rnGIAC', url: location.href }).catch(function() {});
 }
 function hideAboutDialog() {
   var el = document.getElementById('about-overlay');
