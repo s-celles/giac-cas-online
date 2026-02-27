@@ -7,6 +7,10 @@
 // Ported from giacsimple.js with adaptations for the notebook.
 // ─────────────────────────────────────────────────────────────
 
+// Giac config flags extracted from multi-command prefix (e.g. "gl_ortho=1; camembert(…)")
+// Set during multi-command split, consumed by chart renderers.
+var _plotGlOrtho = false;
+
 const PLOT_COLORS = [
   'black','red','green','yellow','blue','magenta','cyan','white',
   'silver','gray','maroon','purple','fuchsia','lime','olive','navy',
@@ -459,9 +463,11 @@ function tryDirectJSXGraph(expr, outputEl) {
       // Check if the last command is a known plot function (but not geometry — handled below)
       var plotRe = /^(plot|plotfunc|camembert|barplot|histogram|boxwhisker|scatterplot|plotimplicit|plotfield|plotcontour|plotode|plotseq|plotparam|plotpolar)\s*\(/;
       if (plotRe.test(lastCmd)) {
-        // Evaluate all preceding commands for side effects
+        // Evaluate prefix commands and track Giac config flags
+        _plotGlOrtho = false;
         for (var i = 0; i < cmds.length - 1; i++) {
           caseval(cmds[i]);
+          if (/gl_ortho\s*[:=]+\s*1/.test(cmds[i])) _plotGlOrtho = true;
         }
         // Recurse with only the plot command
         return tryDirectJSXGraph(lastCmd, outputEl);
@@ -1073,9 +1079,8 @@ function renderJSXPieChart(outputEl, pairs) {
   if (total <= 0) return;
   var colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628', '#f781bf', '#999999'];
   var bbox = { xmin: -1.5, xmax: 1.5, ymin: -1.5, ymax: 1.5 };
-  var ortho = false;
-  try { ortho = caseval('gl_ortho').trim() === '1'; } catch(e) {}
-  var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: ortho, axis: false });
+  var board = createJSXBoard(outputEl, bbox, { keepAspectRatio: _plotGlOrtho, axis: false });
+  _plotGlOrtho = false; // consume after use
   var angle = 0;
   pairs.forEach(function(p, idx) {
     var sweep = (p.value / total) * 2 * Math.PI;
