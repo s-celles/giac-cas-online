@@ -3,6 +3,11 @@
 // SECTION 9 — GLOBAL ACTIONS
 // ─────────────────────────────────────────────────────────────
 
+function updateEmptyState() {
+  var el = document.getElementById('empty-notebook');
+  if (el) el.style.display = cells.length === 0 ? '' : 'none';
+}
+
 function runAll() {
   if (reactiveMode) {
     runAllReactive();
@@ -31,6 +36,7 @@ function deleteCell(id) {
   }
   document.getElementById(id)?.remove();
   cells = cells.filter(c => c.id !== id);
+  updateEmptyState();
 }
 // ─────────────────────────────────────────────────────────────
 // CELL CONTROL TOGGLES (hide, disable, lock, report view)

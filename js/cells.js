@@ -103,6 +103,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
   div.addEventListener('focusout', function() { clearDepHighlights(); });
 
   cells.push({ id, type, element: div });
+  updateEmptyState();
   return id;
 }
 

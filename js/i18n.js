@@ -67,6 +67,8 @@ const LOCALES = {
     dragToReorder: 'Drag to reorder',
     insertAbove: 'Insert cell above', insertBelow: 'Insert cell below',
     changeType: 'Click to change cell type',
+    emptyNotebook: 'No cells yet.', addFirstCell: '+ Add your first cell',
+    emptyHint: 'Click the type badge (Math / Xcas / Text) to change the cell type.',
     // Cell controls
     hideCode: 'Hide code', showCode: 'Show code',
     disableCell: 'Disable cell', enableCell: 'Enable cell',
@@ -131,6 +133,8 @@ const LOCALES = {
     dragToReorder: 'Glisser pour réordonner',
     insertAbove: 'Insérer une cellule au-dessus', insertBelow: 'Insérer une cellule en dessous',
     changeType: 'Cliquer pour changer le type',
+    emptyNotebook: 'Aucune cellule.', addFirstCell: '+ Ajouter votre première cellule',
+    emptyHint: 'Cliquez sur le badge de type (Math / Xcas / Texte) pour changer le type de cellule.',
     // Cell controls
     hideCode: 'Masquer le code', showCode: 'Afficher le code',
     disableCell: 'Désactiver la cellule', enableCell: 'Activer la cellule',
@@ -195,6 +199,8 @@ const LOCALES = {
     dragToReorder: 'Arrastrar para reordenar',
     insertAbove: 'Insertar celda arriba', insertBelow: 'Insertar celda abajo',
     changeType: 'Clic para cambiar el tipo',
+    emptyNotebook: 'Sin celdas aún.', addFirstCell: '+ Añadir primera celda',
+    emptyHint: 'Haga clic en la insignia de tipo (Math / Xcas / Texto) para cambiar el tipo de celda.',
     // Cell controls
     hideCode: 'Ocultar código', showCode: 'Mostrar código',
     disableCell: 'Desactivar celda', enableCell: 'Activar celda',
@@ -259,6 +265,8 @@ const LOCALES = {
     dragToReorder: 'Zum Umsortieren ziehen',
     insertAbove: 'Zelle oberhalb einfügen', insertBelow: 'Zelle unterhalb einfügen',
     changeType: 'Klicken zum Typwechsel',
+    emptyNotebook: 'Noch keine Zellen.', addFirstCell: '+ Erste Zelle hinzufügen',
+    emptyHint: 'Klicken Sie auf das Typ-Badge (Math / Xcas / Text), um den Zelltyp zu ändern.',
     // Cell controls
     hideCode: 'Code ausblenden', showCode: 'Code anzeigen',
     disableCell: 'Zelle deaktivieren', enableCell: 'Zelle aktivieren',
@@ -323,6 +331,8 @@ const LOCALES = {
     dragToReorder: 'اسحب لإعادة الترتيب',
     insertAbove: 'إدراج خلية أعلى', insertBelow: 'إدراج خلية أسفل',
     changeType: 'انقر لتغيير النوع',
+    emptyNotebook: 'لا توجد خلايا بعد.', addFirstCell: '+ أضف أول خلية',
+    emptyHint: 'انقر على شارة النوع (Math / Xcas / نص) لتغيير نوع الخلية.',
     // Cell controls
     hideCode: 'إخفاء الكود', showCode: 'إظهار الكود',
     disableCell: 'تعطيل الخلية', enableCell: 'تفعيل الخلية',
@@ -387,6 +397,8 @@ const LOCALES = {
     dragToReorder: 'क्रम बदलने के लिए खींचें',
     insertAbove: 'ऊपर सेल डालें', insertBelow: 'नीचे सेल डालें',
     changeType: 'प्रकार बदलने के लिए क्लिक करें',
+    emptyNotebook: 'अभी कोई सेल नहीं।', addFirstCell: '+ पहली सेल जोड़ें',
+    emptyHint: 'सेल प्रकार बदलने के लिए टाइप बैज (Math / Xcas / Text) पर क्लिक करें।',
     // Cell controls
     hideCode: 'कोड छुपाएँ', showCode: 'कोड दिखाएँ',
     disableCell: 'सेल अक्षम करें', enableCell: 'सेल सक्षम करें',
@@ -451,6 +463,8 @@ const LOCALES = {
     dragToReorder: 'Перетащите для перемещения',
     insertAbove: 'Вставить ячейку выше', insertBelow: 'Вставить ячейку ниже',
     changeType: 'Нажмите для смены типа',
+    emptyNotebook: 'Ячеек пока нет.', addFirstCell: '+ Добавить первую ячейку',
+    emptyHint: 'Нажмите на значок типа (Math / Xcas / Текст), чтобы изменить тип ячейки.',
     // Cell controls
     hideCode: 'Скрыть код', showCode: 'Показать код',
     disableCell: 'Отключить ячейку', enableCell: 'Включить ячейку',
@@ -515,6 +529,8 @@ const LOCALES = {
     dragToReorder: '拖动以重新排序',
     insertAbove: '在上方插入单元格', insertBelow: '在下方插入单元格',
     changeType: '点击更改类型',
+    emptyNotebook: '暂无单元格。', addFirstCell: '+ 添加第一个单元格',
+    emptyHint: '点击类型标签（Math / Xcas / 文本）更改单元格类型。',
     // Cell controls
     hideCode: '隐藏代码', showCode: '显示代码',
     disableCell: '禁用单元格', enableCell: '启用单元格',
@@ -579,6 +595,8 @@ const LOCALES = {
     dragToReorder: 'ドラッグして並べ替え',
     insertAbove: '上にセルを挿入', insertBelow: '下にセルを挿入',
     changeType: 'クリックでタイプ変更',
+    emptyNotebook: 'セルはまだありません。', addFirstCell: '+ 最初のセルを追加',
+    emptyHint: 'タイプバッジ（Math / Xcas / テキスト）をクリックしてセルタイプを変更。',
     // Cell controls
     hideCode: 'コードを非表示', showCode: 'コードを表示',
     disableCell: 'セルを無効化', enableCell: 'セルを有効化',

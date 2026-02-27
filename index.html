@@ -107,10 +107,6 @@ var UI = {
 </div></div>
 
 <div class="toolbar-wrap"><div class="toolbar">
-  <button onclick="addCell('math')" data-i18n="addMath">+ Math</button>
-  <button onclick="addCell('raw')" data-i18n="addRaw">+ Xcas raw</button>
-  <button onclick="addCell('text')" data-i18n="addText">+ Text</button>
-  <div class="sep"></div>
   <button class="primary" onclick="runAll()" data-i18n="runAll">▶ Run all</button>
   <button onclick="clearAllOutputs()" data-i18n="clearOutputs">✕ Clear outputs</button>
   <div class="sep"></div>
@@ -122,7 +118,13 @@ var UI = {
   <button id="report-view-btn" onclick="toggleReportView()" data-i18n="reportView">Report view</button>
 </div></div>
 
-<div class="notebook" id="notebook"></div>
+<div class="notebook" id="notebook">
+  <div id="empty-notebook" class="empty-notebook">
+    <p data-i18n="emptyNotebook">No cells yet.</p>
+    <button onclick="addCell('math')" data-i18n="addFirstCell">+ Add your first cell</button>
+    <p class="empty-hint" data-i18n="emptyHint">Click the type badge (Math / Xcas / Text) to change the cell type.</p>
+  </div>
+</div>
 <div class="bottombar">
   <span><kbd>Shift</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRun">Run</span></span>
   <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRunNew">Run + new cell</span></span>

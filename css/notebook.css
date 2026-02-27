@@ -40,6 +40,13 @@
   /* ═══════ Notebook ═══════ */
   .notebook{max-width:960px;margin:1.2rem auto;padding:0 1rem 5rem}
 
+  /* ═══════ Empty Notebook ═══════ */
+  .empty-notebook{text-align:center;padding:3rem 1rem;color:var(--text-muted);font-family:var(--mono)}
+  .empty-notebook p{font-size:1rem;margin-bottom:1rem}
+  .empty-notebook button{font-size:.9rem;padding:.5rem 1.2rem;border:1.5px dashed var(--border);border-radius:var(--radius);background:transparent;color:var(--accent);cursor:pointer;font-family:var(--mono);transition:all .15s}
+  .empty-notebook button:hover{background:var(--accent-light);border-color:var(--accent)}
+  .empty-notebook .empty-hint{font-size:.75rem;margin-top:1rem;opacity:.7}
+
   /* ═══════ Cell ═══════ */
   .cell{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:.6rem;box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
   .cell:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
