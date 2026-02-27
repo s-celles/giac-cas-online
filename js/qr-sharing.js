@@ -34,9 +34,11 @@ function serializeNotebook() {
     var content = '';
     if (type === 'math') {
       var mf = el.querySelector('math-field');
-      if (mf) {
-        try { content = mathJsonToXcas(mf.expression.json); } catch(e) { content = mf.value; }
-      }
+      if (mf) content = mf.value; // LaTeX — round-trips via ce.parse()
+    } else if (type === 'slider') {
+      // Serialize slider expression as raw Xcas
+      code = 'X';
+      content = el.dataset.expression || '';
     } else {
       var ta = el.querySelector('textarea');
       if (ta) content = ta.value;
@@ -448,12 +450,10 @@ function _scanEscHandler(e) {
 
 function _loadDeserializedCells(cellData) {
   // Build a loadNotebookData-compatible object
+  // version: 2 so math cells go through ce.parse(LaTeX) path
   var data = {
-    version: 4,
+    version: 2,
     cells: cellData.map(function(c) {
-      if (c.type === 'math') {
-        return { type: 'math', content: c.content };
-      }
       return { type: c.type, content: c.content };
     })
   };
