@@ -123,70 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Custom virtual keyboard layouts (inspired by B. Parisse's math2d.html)
   setupMathKeyboard();
 
-  // Demo cells (i18n-bound: content refreshes when locale changes)
+  // Minimal default notebook: just a welcome cell
   addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody', { hidden: true });
-
-  // Reactive DAG demo cells
-  addCell('raw', '', 'p := 5');
-  addCell('raw', '', 'p^2');
-  addCell('raw', '', 'q := p + 3');
-
-  addCell('math', '\\frac{x^4-1}{x^2+1}');
-  addCell('math', '\\int \\frac{1}{x^2+1}\\, dx');
-  addCell('math', '\\frac{d}{dx}\\left(\\sin(x)\\cdot e^x\\right)');
-  addCell('math', '\\lim_{x \\to 0} \\frac{\\sin(x)}{x}');
-
-  // Finite sums and products
-  addCell('math', '\\sum_{k=1}^{n} k');
-  addCell('math', '\\prod_{k=1}^{n} k');
-  addCell('math', '\\sum_{k=1}^{10} k^2');
-  addCell('math', '\\prod_{k=1}^{5} k');
-  addCell('math', '\\sum_{k=1}^{100} \\frac{1}{k^2}');
-  addCell('math', '\\prod_{k=1}^{8} k');
-
-  // Infinite sums
-  addCell('math', '\\sum_{n=1}^{\\infty} \\frac{1}{n^2}');
-  addCell('math', '\\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1}');
-  addCell('math', '\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}');
-
-  // One-sided limits
-  addCell('math', '\\lim_{x \\to 0^-} \\frac{1}{x}');
-  addCell('math', '\\lim_{x \\to 0^+} \\frac{1}{x}');
-  addCell('math', '\\lim_{x \\to 0^-} \\frac{|x|}{x}');
-  addCell('math', '\\lim_{x \\to 0^+} \\frac{|x|}{x}');
-
-  // Matrix demo cells (math-type: entered via MathLive visual editor)
-  addCell('math', '\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}');
-  addCell('math', '\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}');
-  addCell('math', '\\det\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}');
-  addCell('math', '\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}');
-
-  // Matrix operations (raw-type: no LaTeX trigger in CortexJS)
-  addCell('raw',  '', 'eigenvalues([[1,2],[3,4]])');
-  addCell('raw',  '', 'tran([[1,2],[3,4]])');
-  addCell('raw',  '', 'eigenvalues([[a,b],[c,d]])');
-
-  addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
-  addCell('raw',  '', 'plot(sin(x))');
-  addCell('raw',  '', 'plotfunc([sin(x),cos(x)],x)');
-  addCell('raw',  '', 'plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)');
-
-  // Demo cells for all plot categories (pre-filled, not auto-executed)
-  addCell('raw',  '', 'plotfunc(x^2+y^2,[x,y])');
-  addCell('raw',  '', 'plotimplicit(x^2+y^2-1,x,y)');
-  addCell('raw',  '', 'plotfield(sin(x*y),[x,y])');
-  addCell('raw',  '', 'plotcontour(x^2+y^2,[x=-3..3,y=-3..3])');
-  addCell('raw',  '', 'plotode(sin(t*y),[t,y],[0,1])');
-  addCell('raw',  '', 'plotseq(cos(x),0.5,5)');
-  addCell('raw',  '', 'histogram(seq(rand(100),k,1,200))');
-  addCell('raw',  '', 'barplot([3,5,2,8,1])');
-  addCell('raw',  '', 'gl_ortho=1; camembert([["Maths",35],["Physique",25],["Chimie",20],["Info",20]])');
-  addCell('raw',  '', 'boxwhisker([1,2,3,4,5,6,7,8,9,10])');
-  addCell('raw',  '', 'scatterplot([1,2,3,4,5],[2,4,5,4,5])');
-  addCell('raw',  '', 'circle(0,2); segment([0,0],[2,0]); point(1,1)');
-  addCell('raw',  '', 'plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])');
-
-  // Auto-render all text cells (no CAS needed, all scripts loaded at this point)
   cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
 
   // Global keyboard shortcut for report view toggle

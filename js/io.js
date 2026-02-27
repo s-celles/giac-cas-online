@@ -39,6 +39,59 @@ function exportNotebook() {
   URL.revokeObjectURL(a.href);
 }
 
+function loadNotebookData(data, opts) {
+  opts = opts || {};
+  if (data.locale && LOCALES[data.locale]) setLocale(data.locale);
+  // Clear reactive graph
+  cellVariableMap.forEach(function(info, cid) { unregisterCell(cid); });
+  cellVariableMap.clear();
+  variableOwnerMap.clear();
+  // Preserve empty-notebook and notebook-footer elements
+  var nb = document.getElementById('notebook');
+  var empty = document.getElementById('empty-notebook');
+  var footer = document.getElementById('notebook-footer');
+  nb.innerHTML = '';
+  if (empty) nb.appendChild(empty);
+  if (footer) nb.appendChild(footer);
+  cells = []; cellCounter = 0;
+  if (!opts.keepReactiveMode && data.reactiveMode !== undefined) toggleReactiveMode(data.reactiveMode);
+  var fileVersion = data.version || 1;
+  var cellItems = Array.isArray(data) ? data : data.cells;
+  cellItems.forEach(function(item) {
+    var cid;
+    // Cell state flags (v4+, default false for older formats)
+    var cellOpts = {
+      hidden: item.hidden === true,
+      disabled: item.disabled === true,
+      locked: item.locked === true
+    };
+    if (item.type === 'math') {
+      if (item.mathjson && fileVersion >= 3) {
+        cid = addCell('math', '', '', item.mathjson, null, cellOpts);
+      } else if (item.content) {
+        try {
+          var mjson = ce.parse(item.content, { canonical: false }).json;
+          cid = addCell('math', '', '', mjson, null, cellOpts);
+        } catch (e) {
+          console.warn('v2 import: unparseable LaTeX, importing as raw cell:', item.content, e);
+          cid = addCell('raw', '', item.content, null, null, cellOpts);
+        }
+      } else {
+        cid = addCell('math', '', '', null, null, cellOpts);
+      }
+    } else {
+      cid = addCell(item.type, '', item.content, null, null, cellOpts);
+    }
+    if (reactiveMode && observableModule && item.type !== 'text') {
+      var expr = getXcasExpr(cid);
+      if (expr) registerCell(cid, expr);
+    }
+  });
+  updateEmptyState();
+  // Auto-render text cells
+  cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
+}
+
 function importNotebook() {
   const inp = document.createElement('input');
   inp.type = 'file'; inp.accept = '.json';
@@ -47,51 +100,7 @@ function importNotebook() {
     const r = new FileReader();
     r.onload = (ev) => {
       try {
-        const data = JSON.parse(ev.target.result);
-        if (data.locale && LOCALES[data.locale]) setLocale(data.locale);
-        // Clear reactive graph
-        cellVariableMap.forEach(function(info, cid) { unregisterCell(cid); });
-        cellVariableMap.clear();
-        variableOwnerMap.clear();
-        document.getElementById('notebook').innerHTML = '';
-        cells = []; cellCounter = 0;
-        if (data.reactiveMode !== undefined) toggleReactiveMode(data.reactiveMode);
-        var fileVersion = data.version || 1;
-        var cellItems = Array.isArray(data) ? data : data.cells;
-        cellItems.forEach(item => {
-          var cid;
-          // Cell state flags (v4+, default false for older formats)
-          var cellOpts = {
-            hidden: item.hidden === true,
-            disabled: item.disabled === true,
-            locked: item.locked === true
-          };
-          if (item.type === 'math') {
-            if (item.mathjson && fileVersion >= 3) {
-              // v3+: MathJSON is the canonical representation
-              cid = addCell('math', '', '', item.mathjson, null, cellOpts);
-            } else if (item.content) {
-              // v2/v1: LaTeX content — convert to MathJSON
-              try {
-                var mjson = ce.parse(item.content, { canonical: false }).json;
-                cid = addCell('math', '', '', mjson, null, cellOpts);
-              } catch (e) {
-                // Fallback: unparseable LaTeX → import as raw cell with warning
-                console.warn('v2 import: unparseable LaTeX, importing as raw cell:', item.content, e);
-                cid = addCell('raw', '', item.content, null, null, cellOpts);
-              }
-            } else {
-              cid = addCell('math', '', '', null, null, cellOpts);
-            }
-          } else {
-            cid = addCell(item.type, '', item.content, null, null, cellOpts);
-          }
-          // Register in reactive graph if needed
-          if (reactiveMode && observableModule && item.type !== 'text') {
-            var expr = getXcasExpr(cid);
-            if (expr) registerCell(cid, expr);
-          }
-        });
+        loadNotebookData(JSON.parse(ev.target.result));
       } catch(err) { alert(t('invalidJson')); }
     };
     r.readAsText(f);

@@ -6,6 +6,8 @@
 function updateEmptyState() {
   var el = document.getElementById('empty-notebook');
   if (el) el.style.display = cells.length === 0 ? '' : 'none';
+  var ft = document.getElementById('notebook-footer');
+  if (ft) ft.style.display = cells.length > 0 ? '' : 'none';
 }
 
 function runAll() {
@@ -222,8 +224,12 @@ function setCellType(id, newType) {
 
 function rebuildNotebookDOM() {
   var nb = document.getElementById('notebook');
+  var empty = document.getElementById('empty-notebook');
+  var footer = document.getElementById('notebook-footer');
   nb.innerHTML = '';
+  if (empty) nb.appendChild(empty);
   cells.forEach(function(c) { nb.appendChild(c.element); });
+  if (footer) nb.appendChild(footer);
 }
 
 function insertCellAt(refId, dir) {

@@ -54,7 +54,8 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     <div class="cell-output" id="${id}-output"></div>
     <div class="cell-insert-zone" onclick="insertCellAt('${id}',1)" title="${t('insertBelow')}"><span>+</span></div>`;
 
-  nb.appendChild(div);
+  var footer = document.getElementById('notebook-footer');
+  if (footer) nb.insertBefore(div, footer); else nb.appendChild(div);
   const inp = div.querySelector('.cell-input');
 
   if (type === 'math') {

@@ -37,6 +37,10 @@
   .toolbar button.primary:hover{background:var(--accent-hover)}
   .toolbar .sep{width:1px;height:20px;background:var(--border);margin:0 .15rem}
 
+  .examples-menu{position:absolute;top:100%;left:0;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.12);padding:.3rem;min-width:180px}
+  .examples-menu button{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
+  .examples-menu button:hover{background:var(--accent);color:#fff}
+
   /* ═══════ Notebook ═══════ */
   .notebook{max-width:960px;margin:1.2rem auto;padding:0 1rem 5rem}
 
@@ -46,6 +50,9 @@
   .empty-notebook button{font-size:.9rem;padding:.5rem 1.2rem;border:1.5px dashed var(--border);border-radius:var(--radius);background:transparent;color:var(--accent);cursor:pointer;font-family:var(--mono);transition:all .15s}
   .empty-notebook button:hover{background:var(--accent-light);border-color:var(--accent)}
   .empty-notebook .empty-hint{font-size:.75rem;margin-top:1rem;opacity:.7}
+
+  .notebook-footer{text-align:center;padding:1rem;color:var(--text-muted);font-family:var(--mono)}
+  .notebook-footer .empty-hint{font-size:.75rem;opacity:.7}
 
   /* ═══════ Cell ═══════ */
   .cell{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:.6rem;box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
