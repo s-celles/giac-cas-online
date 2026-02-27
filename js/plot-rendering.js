@@ -1684,9 +1684,7 @@ function renderJSXGraph3D(outputEl, config) {
           var evaled = caseval('eval(' + resolved + ')');
           if (evaled && evaled !== resolved) resolved = evaled;
         } catch(e) {}
-        var cf = null;
-        try { cf = board.jc.snippet(resolved, true, tVarStr); } catch(e) {}
-        if (!cf) cf = giacExprToJSFunc(resolved, [config.tVar]);
+        var cf = giacExprToJSFunc(resolved, [config.tVar]);
         if (!cf) {
           wrapper.innerHTML = '<div class="plot-3d-msg">' + t('plot3dExprError') + '</div>';
           return false;
