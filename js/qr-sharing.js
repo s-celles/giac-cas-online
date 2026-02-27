@@ -506,7 +506,8 @@ function _handleFountainPacket(data) {
     if (statusEl && progress.total > 0) {
       statusEl.textContent = t('decodedProgress')
         .replace('{decoded}', progress.decoded)
-        .replace('{total}', progress.total);
+        .replace('{total}', progress.total) +
+        ' (' + progress.received + ' ' + t('received') + ')';
     }
     if (fillEl && progress.total > 0) {
       fillEl.style.width = Math.round((progress.decoded / progress.total) * 100) + '%';

@@ -118,6 +118,7 @@ function createFountainEncoder(data, blockSize) {
 function FountainDecoder() {
   this.k = 0;
   this.decodedCount = 0;
+  this.receivedCount = 0;
   this.complete = false;
   this._decoder = null;
   this._result = null;
@@ -152,6 +153,8 @@ FountainDecoder.prototype.addPacket = function(frameStr) {
       data: parsed.data
     };
 
+    self.receivedCount++;
+
     try {
       var isComplete = self._decoder.addBlock(block);
       self.decodedCount = self._decoder.decodedCount || 0;
@@ -165,7 +168,7 @@ FountainDecoder.prototype.addPacket = function(frameStr) {
       console.warn('Fountain decode error:', e.message);
     }
 
-    return { decoded: self.decodedCount, total: self.k, complete: self.complete };
+    return { decoded: self.decodedCount, received: self.receivedCount, total: self.k, complete: self.complete };
   });
 };
 
