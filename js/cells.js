@@ -29,6 +29,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
 
   div.innerHTML = `
     <div class="cell-head">
+      <span class="drag-handle" title="${t('dragToReorder')}">⠿</span>
       <span class="cell-idx">${idx}</span>
       <span class="cell-badge ${type}" data-i18n="${badge}">${t(badge)}</span>
       ${type === 'math' ? `<div class="mode-toggle">
@@ -91,6 +92,9 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     ph.onclick = function() { toggleCellHidden(id); };
     div.querySelector('.cell-input').insertAdjacentElement('afterend', ph);
   }
+
+  // Drag-and-drop reordering
+  initCellDrag(div);
 
   // Dependency highlighting on focus/blur
   div.addEventListener('focusin', function() { if (reactiveMode) highlightDeps(id); });

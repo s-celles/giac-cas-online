@@ -64,6 +64,7 @@ const LOCALES = {
     kbReals: 'Reals', kbNaturals: 'Natural numbers', kbIntegers: 'Integers', kbRationals: 'Rationals',
     kbForAll: 'For all', kbExists: 'There exists',
     kbLogicalAnd: 'Logical and', kbLogicalOr: 'Logical or', kbNegation: 'Negation',
+    dragToReorder: 'Drag to reorder',
     // Cell controls
     hideCode: 'Hide code', showCode: 'Show code',
     disableCell: 'Disable cell', enableCell: 'Enable cell',
@@ -125,6 +126,7 @@ const LOCALES = {
     kbReals: 'Réels', kbNaturals: 'Entiers naturels', kbIntegers: 'Entiers relatifs', kbRationals: 'Rationnels',
     kbForAll: 'Pour tout', kbExists: 'Il existe',
     kbLogicalAnd: 'Et logique', kbLogicalOr: 'Ou logique', kbNegation: 'Négation',
+    dragToReorder: 'Glisser pour réordonner',
     // Cell controls
     hideCode: 'Masquer le code', showCode: 'Afficher le code',
     disableCell: 'Désactiver la cellule', enableCell: 'Activer la cellule',
@@ -186,6 +188,7 @@ const LOCALES = {
     kbReals: 'Reales', kbNaturals: 'Naturales', kbIntegers: 'Enteros', kbRationals: 'Racionales',
     kbForAll: 'Para todo', kbExists: 'Existe',
     kbLogicalAnd: 'Y lógico', kbLogicalOr: 'O lógico', kbNegation: 'Negación',
+    dragToReorder: 'Arrastrar para reordenar',
     // Cell controls
     hideCode: 'Ocultar código', showCode: 'Mostrar código',
     disableCell: 'Desactivar celda', enableCell: 'Activar celda',
@@ -247,6 +250,7 @@ const LOCALES = {
     kbReals: 'Reelle Zahlen', kbNaturals: 'Natürliche Zahlen', kbIntegers: 'Ganze Zahlen', kbRationals: 'Rationale Zahlen',
     kbForAll: 'Für alle', kbExists: 'Es existiert',
     kbLogicalAnd: 'Logisches Und', kbLogicalOr: 'Logisches Oder', kbNegation: 'Negation',
+    dragToReorder: 'Zum Umsortieren ziehen',
     // Cell controls
     hideCode: 'Code ausblenden', showCode: 'Code anzeigen',
     disableCell: 'Zelle deaktivieren', enableCell: 'Zelle aktivieren',
@@ -308,6 +312,7 @@ const LOCALES = {
     kbReals: 'الأعداد الحقيقية', kbNaturals: 'الأعداد الطبيعية', kbIntegers: 'الأعداد الصحيحة', kbRationals: 'الأعداد النسبية',
     kbForAll: 'لكل', kbExists: 'يوجد',
     kbLogicalAnd: 'و منطقي', kbLogicalOr: 'أو منطقي', kbNegation: 'نفي',
+    dragToReorder: 'اسحب لإعادة الترتيب',
     // Cell controls
     hideCode: 'إخفاء الكود', showCode: 'إظهار الكود',
     disableCell: 'تعطيل الخلية', enableCell: 'تفعيل الخلية',
@@ -369,6 +374,7 @@ const LOCALES = {
     kbReals: 'वास्तविक संख्याएँ', kbNaturals: 'प्राकृतिक संख्याएँ', kbIntegers: 'पूर्णांक', kbRationals: 'परिमेय संख्याएँ',
     kbForAll: 'सभी के लिए', kbExists: 'अस्तित्व है',
     kbLogicalAnd: 'तार्किक और', kbLogicalOr: 'तार्किक या', kbNegation: 'निषेध',
+    dragToReorder: 'क्रम बदलने के लिए खींचें',
     // Cell controls
     hideCode: 'कोड छुपाएँ', showCode: 'कोड दिखाएँ',
     disableCell: 'सेल अक्षम करें', enableCell: 'सेल सक्षम करें',
@@ -430,6 +436,7 @@ const LOCALES = {
     kbReals: 'Вещественные числа', kbNaturals: 'Натуральные числа', kbIntegers: 'Целые числа', kbRationals: 'Рациональные числа',
     kbForAll: 'Для всех', kbExists: 'Существует',
     kbLogicalAnd: 'Логическое И', kbLogicalOr: 'Логическое ИЛИ', kbNegation: 'Отрицание',
+    dragToReorder: 'Перетащите для перемещения',
     // Cell controls
     hideCode: 'Скрыть код', showCode: 'Показать код',
     disableCell: 'Отключить ячейку', enableCell: 'Включить ячейку',
@@ -491,6 +498,7 @@ const LOCALES = {
     kbReals: '实数', kbNaturals: '自然数', kbIntegers: '整数', kbRationals: '有理数',
     kbForAll: '对所有', kbExists: '存在',
     kbLogicalAnd: '逻辑与', kbLogicalOr: '逻辑或', kbNegation: '否定',
+    dragToReorder: '拖动以重新排序',
     // Cell controls
     hideCode: '隐藏代码', showCode: '显示代码',
     disableCell: '禁用单元格', enableCell: '启用单元格',
@@ -552,6 +560,7 @@ const LOCALES = {
     kbReals: '実数', kbNaturals: '自然数', kbIntegers: '整数', kbRationals: '有理数',
     kbForAll: 'すべてに対して', kbExists: '存在する',
     kbLogicalAnd: '論理積', kbLogicalOr: '論理和', kbNegation: '否定',
+    dragToReorder: 'ドラッグして並べ替え',
     // Cell controls
     hideCode: 'コードを非表示', showCode: 'コードを表示',
     disableCell: 'セルを無効化', enableCell: 'セルを有効化',

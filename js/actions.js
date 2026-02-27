@@ -125,13 +125,86 @@ function toggleReportView() {
   }
 }
 
+function rebuildNotebookDOM() {
+  var nb = document.getElementById('notebook');
+  nb.innerHTML = '';
+  cells.forEach(function(c) { nb.appendChild(c.element); });
+}
+
 function moveCell(id, dir) {
   const i = cells.findIndex(c => c.id === id);
   if (i < 0) return;
   const j = i + dir;
   if (j < 0 || j >= cells.length) return;
   [cells[i], cells[j]] = [cells[j], cells[i]];
-  const nb = document.getElementById('notebook');
-  nb.innerHTML = '';
-  cells.forEach(c => nb.appendChild(c.element));
+  rebuildNotebookDOM();
+}
+
+// ─────────────────────────────────────────────────────────────
+// DRAG-AND-DROP CELL REORDERING
+// ─────────────────────────────────────────────────────────────
+
+var _draggedCellId = null;
+
+function initCellDrag(cellDiv) {
+  cellDiv.setAttribute('draggable', 'true');
+
+  cellDiv.addEventListener('dragstart', function(e) {
+    // Only allow drag from the handle
+    if (!e.target.closest('.drag-handle')) {
+      e.preventDefault();
+      return;
+    }
+    _draggedCellId = cellDiv.id;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', cellDiv.id);
+    setTimeout(function() { cellDiv.classList.add('cell-dragging'); }, 0);
+  });
+
+  cellDiv.addEventListener('dragend', function() {
+    cellDiv.classList.remove('cell-dragging');
+    _draggedCellId = null;
+    document.querySelectorAll('.cell-drag-over-top,.cell-drag-over-bottom').forEach(function(el) {
+      el.classList.remove('cell-drag-over-top', 'cell-drag-over-bottom');
+    });
+  });
+
+  cellDiv.addEventListener('dragover', function(e) {
+    if (!_draggedCellId || _draggedCellId === cellDiv.id) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    var rect = cellDiv.getBoundingClientRect();
+    var midY = rect.top + rect.height / 2;
+    cellDiv.classList.toggle('cell-drag-over-top', e.clientY < midY);
+    cellDiv.classList.toggle('cell-drag-over-bottom', e.clientY >= midY);
+  });
+
+  cellDiv.addEventListener('dragleave', function() {
+    cellDiv.classList.remove('cell-drag-over-top', 'cell-drag-over-bottom');
+  });
+
+  cellDiv.addEventListener('drop', function(e) {
+    e.preventDefault();
+    cellDiv.classList.remove('cell-drag-over-top', 'cell-drag-over-bottom');
+    if (!_draggedCellId || _draggedCellId === cellDiv.id) return;
+
+    var fromIdx = cells.findIndex(function(c) { return c.id === _draggedCellId; });
+    var toIdx = cells.findIndex(function(c) { return c.id === cellDiv.id; });
+    if (fromIdx < 0 || toIdx < 0) return;
+
+    // Determine insert position based on cursor half
+    var rect = cellDiv.getBoundingClientRect();
+    var insertAfter = e.clientY >= rect.top + rect.height / 2;
+    var targetIdx = insertAfter ? toIdx : toIdx;
+
+    // Remove from old position and insert at new
+    var moved = cells.splice(fromIdx, 1)[0];
+    // Recalculate target after splice (index may have shifted)
+    var newIdx = cells.findIndex(function(c) { return c.id === cellDiv.id; });
+    if (insertAfter) newIdx++;
+    cells.splice(newIdx, 0, moved);
+
+    rebuildNotebookDOM();
+    _draggedCellId = null;
+  });
 }
