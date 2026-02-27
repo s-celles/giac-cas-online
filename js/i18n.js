@@ -66,6 +66,7 @@ const LOCALES = {
     kbLogicalAnd: 'Logical and', kbLogicalOr: 'Logical or', kbNegation: 'Negation',
     dragToReorder: 'Drag to reorder',
     insertAbove: 'Insert cell above', insertBelow: 'Insert cell below',
+    changeType: 'Click to change cell type',
     // Cell controls
     hideCode: 'Hide code', showCode: 'Show code',
     disableCell: 'Disable cell', enableCell: 'Enable cell',
@@ -129,6 +130,7 @@ const LOCALES = {
     kbLogicalAnd: 'Et logique', kbLogicalOr: 'Ou logique', kbNegation: 'Négation',
     dragToReorder: 'Glisser pour réordonner',
     insertAbove: 'Insérer une cellule au-dessus', insertBelow: 'Insérer une cellule en dessous',
+    changeType: 'Cliquer pour changer le type',
     // Cell controls
     hideCode: 'Masquer le code', showCode: 'Afficher le code',
     disableCell: 'Désactiver la cellule', enableCell: 'Activer la cellule',
@@ -192,6 +194,7 @@ const LOCALES = {
     kbLogicalAnd: 'Y lógico', kbLogicalOr: 'O lógico', kbNegation: 'Negación',
     dragToReorder: 'Arrastrar para reordenar',
     insertAbove: 'Insertar celda arriba', insertBelow: 'Insertar celda abajo',
+    changeType: 'Clic para cambiar el tipo',
     // Cell controls
     hideCode: 'Ocultar código', showCode: 'Mostrar código',
     disableCell: 'Desactivar celda', enableCell: 'Activar celda',
@@ -255,6 +258,7 @@ const LOCALES = {
     kbLogicalAnd: 'Logisches Und', kbLogicalOr: 'Logisches Oder', kbNegation: 'Negation',
     dragToReorder: 'Zum Umsortieren ziehen',
     insertAbove: 'Zelle oberhalb einfügen', insertBelow: 'Zelle unterhalb einfügen',
+    changeType: 'Klicken zum Typwechsel',
     // Cell controls
     hideCode: 'Code ausblenden', showCode: 'Code anzeigen',
     disableCell: 'Zelle deaktivieren', enableCell: 'Zelle aktivieren',
@@ -318,6 +322,7 @@ const LOCALES = {
     kbLogicalAnd: 'و منطقي', kbLogicalOr: 'أو منطقي', kbNegation: 'نفي',
     dragToReorder: 'اسحب لإعادة الترتيب',
     insertAbove: 'إدراج خلية أعلى', insertBelow: 'إدراج خلية أسفل',
+    changeType: 'انقر لتغيير النوع',
     // Cell controls
     hideCode: 'إخفاء الكود', showCode: 'إظهار الكود',
     disableCell: 'تعطيل الخلية', enableCell: 'تفعيل الخلية',
@@ -381,6 +386,7 @@ const LOCALES = {
     kbLogicalAnd: 'तार्किक और', kbLogicalOr: 'तार्किक या', kbNegation: 'निषेध',
     dragToReorder: 'क्रम बदलने के लिए खींचें',
     insertAbove: 'ऊपर सेल डालें', insertBelow: 'नीचे सेल डालें',
+    changeType: 'प्रकार बदलने के लिए क्लिक करें',
     // Cell controls
     hideCode: 'कोड छुपाएँ', showCode: 'कोड दिखाएँ',
     disableCell: 'सेल अक्षम करें', enableCell: 'सेल सक्षम करें',
@@ -444,6 +450,7 @@ const LOCALES = {
     kbLogicalAnd: 'Логическое И', kbLogicalOr: 'Логическое ИЛИ', kbNegation: 'Отрицание',
     dragToReorder: 'Перетащите для перемещения',
     insertAbove: 'Вставить ячейку выше', insertBelow: 'Вставить ячейку ниже',
+    changeType: 'Нажмите для смены типа',
     // Cell controls
     hideCode: 'Скрыть код', showCode: 'Показать код',
     disableCell: 'Отключить ячейку', enableCell: 'Включить ячейку',
@@ -507,6 +514,7 @@ const LOCALES = {
     kbLogicalAnd: '逻辑与', kbLogicalOr: '逻辑或', kbNegation: '否定',
     dragToReorder: '拖动以重新排序',
     insertAbove: '在上方插入单元格', insertBelow: '在下方插入单元格',
+    changeType: '点击更改类型',
     // Cell controls
     hideCode: '隐藏代码', showCode: '显示代码',
     disableCell: '禁用单元格', enableCell: '启用单元格',
@@ -570,6 +578,7 @@ const LOCALES = {
     kbLogicalAnd: '論理積', kbLogicalOr: '論理和', kbNegation: '否定',
     dragToReorder: 'ドラッグして並べ替え',
     insertAbove: '上にセルを挿入', insertBelow: '下にセルを挿入',
+    changeType: 'クリックでタイプ変更',
     // Cell controls
     hideCode: 'コードを非表示', showCode: 'コードを表示',
     disableCell: 'セルを無効化', enableCell: 'セルを有効化',

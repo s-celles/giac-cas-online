@@ -32,7 +32,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     <div class="cell-head">
       <span class="drag-handle" title="${t('dragToReorder')}">⠿</span>
       <span class="cell-idx">${idx}</span>
-      <span class="cell-badge ${type}" data-i18n="${badge}">${t(badge)}</span>
+      <span class="cell-badge ${type}" data-i18n="${badge}" onclick="cycleCellType('${id}')" title="${t('changeType')}">${t(badge)}</span>
       ${type === 'math' ? `<div class="mode-toggle">
         <button class="active" onclick="setCellMode('${id}','math')" title="${t('modeVisual')}">𝑓(𝑥)</button>
         <button onclick="setCellMode('${id}','raw')" title="${t('modeRaw')}">{ }</button>

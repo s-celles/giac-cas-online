@@ -125,6 +125,95 @@ function toggleReportView() {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// CELL TYPE SWITCHING
+// ─────────────────────────────────────────────────────────────
+
+var _cellTypeOrder = ['math', 'raw', 'text'];
+
+function cycleCellType(id) {
+  var cell = document.getElementById(id);
+  if (!cell) return;
+  var current = cell.dataset.type;
+  var idx = _cellTypeOrder.indexOf(current);
+  var next = _cellTypeOrder[(idx + 1) % _cellTypeOrder.length];
+  setCellType(id, next);
+}
+
+function setCellType(id, newType) {
+  var cell = document.getElementById(id);
+  if (!cell) return;
+  var oldType = cell.dataset.type;
+  if (oldType === newType) return;
+
+  // Extract current content
+  var content = '';
+  var mf = cell.querySelector('math-field');
+  var ta = cell.querySelector('textarea');
+  if (oldType === 'math' && mf) {
+    try { content = mathJsonToXcas(mf.expression.json); } catch(e) { content = mf.value; }
+  } else if (ta) {
+    content = ta.value;
+  }
+
+  // Update type
+  cell.dataset.type = newType;
+  var cellObj = cells.find(function(c) { return c.id === id; });
+  if (cellObj) cellObj.type = newType;
+
+  // Update badge
+  var badgeKey = { math:'cellMath', raw:'cellRaw', text:'cellText' }[newType];
+  var badge = cell.querySelector('.cell-badge');
+  if (badge) {
+    badge.className = 'cell-badge ' + newType;
+    badge.setAttribute('data-i18n', badgeKey);
+    badge.textContent = t(badgeKey);
+  }
+
+  // Show/hide mode toggle (only for math cells)
+  var modeToggle = cell.querySelector('.mode-toggle');
+  if (newType === 'math') {
+    if (!modeToggle) {
+      modeToggle = document.createElement('div');
+      modeToggle.className = 'mode-toggle';
+      modeToggle.innerHTML =
+        '<button class="active" onclick="setCellMode(\'' + id + '\',\'math\')" title="' + t('modeVisual') + '">𝑓(𝑥)</button>' +
+        '<button onclick="setCellMode(\'' + id + '\',\'raw\')" title="' + t('modeRaw') + '">{ }</button>';
+      badge.insertAdjacentElement('afterend', modeToggle);
+    }
+    modeToggle.style.display = '';
+  } else if (modeToggle) {
+    modeToggle.style.display = 'none';
+  }
+
+  // Swap input element
+  var inp = cell.querySelector('.cell-input');
+  inp.innerHTML = '';
+  if (newType === 'math') {
+    var newMf = document.createElement('math-field');
+    newMf.value = content || '';
+    newMf.setAttribute('virtual-keyboard-mode', 'onfocus');
+    newMf.addEventListener('input', function() { updateDebug(id); });
+    newMf.addEventListener('keydown', function(e) { cellKey(e, id, 'math'); });
+    inp.appendChild(newMf);
+    if (cell.dataset.locked === 'true') newMf.readOnly = true;
+    cell.dataset.mode = 'math';
+    setTimeout(function() { updateDebug(id); }, 100);
+  } else {
+    var ph = newType === 'raw' ? t('placeholderRaw') : t('placeholderText');
+    var newTa = mkTextarea(ph, content);
+    newTa.rows = newType === 'text' ? 3 : 2;
+    newTa.addEventListener('keydown', function(e) { cellKey(e, id, newType); });
+    inp.appendChild(newTa);
+    if (cell.dataset.locked === 'true') newTa.readOnly = true;
+    delete cell.dataset.mode;
+  }
+
+  // Update debug panel visibility
+  var dbg = cell.querySelector('.cell-debug');
+  if (dbg) dbg.classList.toggle('visible', newType === 'math' && showDebug);
+}
+
 function rebuildNotebookDOM() {
   var nb = document.getElementById('notebook');
   nb.innerHTML = '';
