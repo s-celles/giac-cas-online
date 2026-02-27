@@ -145,13 +145,18 @@ function moveCell(id, dir) {
 // ─────────────────────────────────────────────────────────────
 
 var _draggedCellId = null;
+var _dragFromHandle = false;
 
 function initCellDrag(cellDiv) {
   cellDiv.setAttribute('draggable', 'true');
 
+  // Track whether mousedown originated on the drag handle
+  cellDiv.addEventListener('mousedown', function(e) {
+    _dragFromHandle = !!e.target.closest('.drag-handle');
+  });
+
   cellDiv.addEventListener('dragstart', function(e) {
-    // Only allow drag from the handle
-    if (!e.target.closest('.drag-handle')) {
+    if (!_dragFromHandle) {
       e.preventDefault();
       return;
     }
@@ -163,6 +168,7 @@ function initCellDrag(cellDiv) {
 
   cellDiv.addEventListener('dragend', function() {
     cellDiv.classList.remove('cell-dragging');
+    _dragFromHandle = false;
     _draggedCellId = null;
     document.querySelectorAll('.cell-drag-over-top,.cell-drag-over-bottom').forEach(function(el) {
       el.classList.remove('cell-drag-over-top', 'cell-drag-over-bottom');
