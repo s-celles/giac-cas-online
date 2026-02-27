@@ -230,6 +230,10 @@
   .share-qr-close{position:absolute;top:.5rem;right:.5rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);line-height:1}
   .share-qr-close:hover{color:var(--text)}
   .share-qr-dialog h2{font-family:var(--mono);font-size:1.1rem;margin-bottom:1rem}
+  .encoding-mode-toggle{margin-bottom:1rem}
+  .encoding-mode-toggle label{display:block;font-family:var(--mono);font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
+  .encoding-mode-toggle select{width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:.8rem;background:var(--surface);color:var(--text);cursor:pointer}
+  .encoding-mode-toggle select:focus{outline:none;border-color:var(--border-focus)}
   .share-password-group{margin-bottom:1rem}
   .share-password-group label{display:block;font-family:var(--mono);font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem}
   .share-password-group input{width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:.8rem}

@@ -194,6 +194,53 @@ function stopAnimatedQR() {
   _animatedState.active = false;
 }
 
+// ── Fountain QR Animation ────────────────────────────────────
+
+var _fountainState = {
+  encoder: null,
+  intervalId: null,
+  active: false,
+  fps: DEFAULT_FPS,
+  packetCount: 0
+};
+
+function startFountainQR(encoder, fps) {
+  _fountainState.encoder = encoder;
+  _fountainState.fps = fps || DEFAULT_FPS;
+  _fountainState.packetCount = 0;
+  _fountainState.active = true;
+
+  var container = document.getElementById('share-qr-code');
+  var progress = document.getElementById('share-qr-progress');
+  if (!container) return;
+
+  function showFrame() {
+    var frame = _fountainState.encoder.next();
+    _fountainState.packetCount++;
+    generateStaticQR(frame, 'L').then(function(svg) {
+      if (!_fountainState.active) return;
+      container.innerHTML = svg;
+      if (progress) {
+        progress.textContent = t('frameProgress')
+          .replace('{current}', _fountainState.packetCount)
+          .replace('{total}', _fountainState.encoder.k)
+          .replace('{cycle}', Math.ceil(_fountainState.packetCount / _fountainState.encoder.k));
+      }
+    });
+  }
+
+  showFrame();
+  _fountainState.intervalId = setInterval(showFrame, 1000 / _fountainState.fps);
+}
+
+function stopFountainQR() {
+  if (_fountainState.intervalId) {
+    clearInterval(_fountainState.intervalId);
+    _fountainState.intervalId = null;
+  }
+  _fountainState.active = false;
+}
+
 // ── Encryption (Web Crypto API) ──────────────────────────────
 
 function _deriveKey(password, salt) {
@@ -336,7 +383,15 @@ function startScanLoop(jsQR, video, canvas) {
   _scanAnimFrame = requestAnimationFrame(tick);
 }
 
+var _fountainDecoder = null;
+
 function handleDecodedQR(data) {
+  // Fountain QR frame (auto-detect: XCAS:F: prefix)
+  if (data.indexOf('XCAS:F:') === 0) {
+    _handleFountainPacket(data);
+    return;
+  }
+
   // Static QR URL
   if (data.indexOf('#nb=') !== -1) {
     var nbData = data.split('#nb=')[1];
@@ -430,6 +485,70 @@ function handleDecodedQR(data) {
   }
 }
 
+function _handleFountainPacket(data) {
+  if (!_fountainDecoder) {
+    _fountainDecoder = new FountainDecoder();
+  }
+
+  // Reset decoder if k changed (different encoding session)
+  var parsed = parseFountainFrame(data);
+  if (parsed && _fountainDecoder.k && parsed.k !== _fountainDecoder.k) {
+    _fountainDecoder = new FountainDecoder();
+  }
+
+  _fountainDecoder.addPacket(data).then(function(progress) {
+    // Haptic feedback on new valid packet
+    if (navigator.vibrate) navigator.vibrate(30);
+
+    // Update progress UI
+    var statusEl = document.getElementById('scan-status');
+    var fillEl = document.getElementById('scan-progress-fill');
+    if (statusEl && progress.total > 0) {
+      statusEl.textContent = t('decodedProgress')
+        .replace('{decoded}', progress.decoded)
+        .replace('{total}', progress.total);
+    }
+    if (fillEl && progress.total > 0) {
+      fillEl.style.width = Math.round((progress.decoded / progress.total) * 100) + '%';
+    }
+
+    // Check completion
+    if (progress.complete) {
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      if (statusEl) statusEl.textContent = t('scanComplete');
+
+      var resultBytes = _fountainDecoder.getResult();
+      closeScanQR();
+
+      if (!resultBytes) { alert(t('corruptData')); return; }
+
+      // Convert Uint8Array back to string
+      var payload = new TextDecoder().decode(resultBytes);
+
+      // Try decompression (unencrypted flow)
+      decompressNotebook(payload).then(function(text) {
+        if (text) {
+          var cellData = deserializeNotebook(text);
+          if (!cellData) { alert(t('corruptData')); return; }
+          _loadDeserializedCells(cellData);
+        } else {
+          // Decompression failed — payload might be encrypted
+          _showPasswordPrompt(function(password) {
+            decryptData(payload, password).then(function(compressed) {
+              return decompressNotebook(compressed).then(function(text2) {
+                if (!text2) { alert(t('corruptData')); return; }
+                var cellData2 = deserializeNotebook(text2);
+                if (!cellData2) { alert(t('corruptData')); return; }
+                _loadDeserializedCells(cellData2);
+              });
+            }).catch(function() { alert(t('wrongPassword')); });
+          });
+        }
+      });
+    }
+  });
+}
+
 function closeScanQR() {
   if (_scanAnimFrame) {
     cancelAnimationFrame(_scanAnimFrame);
@@ -442,6 +561,7 @@ function closeScanQR() {
   var el = document.getElementById('scan-qr-overlay');
   if (el) el.remove();
   _scanSession = null;
+  _fountainDecoder = null;
   document.removeEventListener('keydown', _scanEscHandler);
 }
 
@@ -491,6 +611,24 @@ function showShareQR(opts) {
 
     var title = document.createElement('h2');
     title.textContent = t('shareQR');
+
+    // Encoding mode toggle
+    var encodingGroup = document.createElement('div');
+    encodingGroup.className = 'encoding-mode-toggle';
+    var encodingLabel = document.createElement('label');
+    encodingLabel.textContent = t('encodingMode');
+    var encodingSelect = document.createElement('select');
+    encodingSelect.id = 'encoding-mode-select';
+    var optFountain = document.createElement('option');
+    optFountain.value = 'fountain';
+    optFountain.textContent = t('encodingFountain');
+    var optSequential = document.createElement('option');
+    optSequential.value = 'sequential';
+    optSequential.textContent = t('encodingSequential');
+    encodingSelect.appendChild(optFountain);
+    encodingSelect.appendChild(optSequential);
+    encodingGroup.appendChild(encodingLabel);
+    encodingGroup.appendChild(encodingSelect);
 
     // Password field
     var passwordGroup = document.createElement('div');
@@ -550,6 +688,7 @@ function showShareQR(opts) {
 
     dialog.appendChild(closeBtn);
     dialog.appendChild(title);
+    dialog.appendChild(encodingGroup);
     dialog.appendChild(passwordGroup);
     dialog.appendChild(qrContainer);
     dialog.appendChild(progressEl);
@@ -573,20 +712,20 @@ function showShareQR(opts) {
     if (fpsSlider) {
       fpsSlider.oninput = function() {
         document.getElementById('qr-fps-value').textContent = this.value + ' fps';
-        if (_animatedState.active) {
+        if (_fountainState.active || _animatedState.active) {
+          stopFountainQR();
           stopAnimatedQR();
-          var newFrames = buildFrames(compressed, parseInt(chunkSlider.value, 10));
-          startAnimatedQR(newFrames, parseInt(this.value, 10));
+          _generateAndDisplayQR(compressed, passwordInput.value);
         }
       };
     }
     if (chunkSlider) {
       chunkSlider.oninput = function() {
         document.getElementById('qr-chunk-value').textContent = this.value + ' B';
-        if (_animatedState.active) {
+        if (_fountainState.active || _animatedState.active) {
+          stopFountainQR();
           stopAnimatedQR();
-          var newFrames = buildFrames(compressed, parseInt(this.value, 10));
-          startAnimatedQR(newFrames, parseInt(fpsSlider.value, 10));
+          _generateAndDisplayQR(compressed, passwordInput.value);
         }
       };
     }
@@ -620,19 +759,31 @@ function _generateAndDisplayQR(compressed, password) {
       urlDisplay.dataset.fullUrl = url;
     }
 
+    // Stop any active animation
+    stopAnimatedQR();
+    stopFountainQR();
+
+    var encodingMode = (document.getElementById('encoding-mode-select') || {}).value || 'fountain';
+    var chunkSize = parseInt((document.getElementById('qr-chunk-slider') || {}).value, 10) || DEFAULT_CHUNK_SIZE;
+    var fps = parseInt((document.getElementById('qr-fps-slider') || {}).value, 10) || DEFAULT_FPS;
+
     if (payload.length < STATIC_QR_THRESHOLD) {
-      // Static QR
+      // Static QR (small enough for a single frame)
       if (controlsEl) controlsEl.style.display = 'none';
       if (progressEl) progressEl.textContent = '';
-      stopAnimatedQR();
       generateStaticQR(url, 'L').then(function(svg) {
         qrContainer.innerHTML = svg;
       });
-    } else {
-      // Animated QR
+    } else if (encodingMode === 'fountain') {
+      // Fountain-coded animated QR
       if (controlsEl) controlsEl.style.display = '';
-      var chunkSize = parseInt((document.getElementById('qr-chunk-slider') || {}).value, 10) || DEFAULT_CHUNK_SIZE;
-      var fps = parseInt((document.getElementById('qr-fps-slider') || {}).value, 10) || DEFAULT_FPS;
+      var payloadBytes = new TextEncoder().encode(payload);
+      createFountainEncoder(payloadBytes, chunkSize).then(function(encoder) {
+        startFountainQR(encoder, fps);
+      });
+    } else {
+      // Legacy sequential animated QR
+      if (controlsEl) controlsEl.style.display = '';
       var frames = buildFrames(payload, chunkSize);
       startAnimatedQR(frames, fps);
     }
@@ -651,9 +802,15 @@ function _generateAndDisplayQR(compressed, password) {
 
 function toggleAnimatedQR() {
   var btn = document.getElementById('qr-stop-btn');
-  if (_animatedState.active) {
+  if (_fountainState.active) {
+    stopFountainQR();
+    if (btn) btn.textContent = t('resumeAnimation');
+  } else if (_animatedState.active) {
     stopAnimatedQR();
     if (btn) btn.textContent = t('resumeAnimation');
+  } else if (_fountainState.encoder) {
+    startFountainQR(_fountainState.encoder, _fountainState.fps);
+    if (btn) btn.textContent = t('stopAnimation');
   } else if (_animatedState.frames) {
     startAnimatedQR(_animatedState.frames, _animatedState.fps);
     if (btn) btn.textContent = t('stopAnimation');
@@ -675,6 +832,7 @@ function copyNotebookURL() {
 
 function closeShareQR() {
   stopAnimatedQR();
+  stopFountainQR();
   if (_shareQRWakeLock) {
     _shareQRWakeLock.release().catch(function() {});
     _shareQRWakeLock = null;

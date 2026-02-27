@@ -134,6 +134,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 Share QR', scanQR: '📷 Scan QR',
     copyUrl: 'Copy URL', urlCopied: 'Copied!', generateQR: 'Generate QR',
+    encodingMode: 'Encoding', encodingFountain: 'Fountain', encodingSequential: 'Sequential', decodedProgress: 'Decoded {decoded}/{total}',
     sharePassword: 'Password (optional)', passwordPrompt: 'Enter password to open notebook',
     passwordError: 'Decryption failed', wrongPassword: 'Wrong password. Please try again.',
     corruptData: 'Could not load notebook: data appears corrupted.',
@@ -265,6 +266,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 Partager QR', scanQR: '📷 Scanner QR',
     copyUrl: 'Copier l\'URL', urlCopied: 'Copié !', generateQR: 'Générer QR',
+    encodingMode: 'Encodage', encodingFountain: 'Fountain', encodingSequential: 'Séquentiel', decodedProgress: 'Décodé {decoded}/{total}',
     sharePassword: 'Mot de passe (optionnel)', passwordPrompt: 'Entrez le mot de passe pour ouvrir le notebook',
     passwordError: 'Échec du déchiffrement', wrongPassword: 'Mot de passe incorrect. Veuillez réessayer.',
     corruptData: 'Impossible de charger le notebook : données corrompues.',
@@ -396,6 +398,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 Compartir QR', scanQR: '📷 Escanear QR',
     copyUrl: 'Copiar URL', urlCopied: '¡Copiado!', generateQR: 'Generar QR',
+    encodingMode: 'Codificación', encodingFountain: 'Fountain', encodingSequential: 'Secuencial', decodedProgress: 'Decodificado {decoded}/{total}',
     sharePassword: 'Contraseña (opcional)', passwordPrompt: 'Introduzca la contraseña para abrir el cuaderno',
     passwordError: 'Error de descifrado', wrongPassword: 'Contraseña incorrecta. Inténtelo de nuevo.',
     corruptData: 'No se pudo cargar el cuaderno: datos corruptos.',
@@ -527,6 +530,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 QR teilen', scanQR: '📷 QR scannen',
     copyUrl: 'URL kopieren', urlCopied: 'Kopiert!', generateQR: 'QR generieren',
+    encodingMode: 'Kodierung', encodingFountain: 'Fountain', encodingSequential: 'Sequentiell', decodedProgress: 'Dekodiert {decoded}/{total}',
     sharePassword: 'Passwort (optional)', passwordPrompt: 'Passwort eingeben, um das Notebook zu öffnen',
     passwordError: 'Entschlüsselung fehlgeschlagen', wrongPassword: 'Falsches Passwort. Bitte erneut versuchen.',
     corruptData: 'Notebook konnte nicht geladen werden: Daten beschädigt.',
@@ -658,6 +662,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 مشاركة QR', scanQR: '📷 مسح QR',
     copyUrl: 'نسخ الرابط', urlCopied: 'تم النسخ!', generateQR: 'إنشاء QR',
+    encodingMode: 'الترميز', encodingFountain: 'Fountain', encodingSequential: 'تسلسلي', decodedProgress: 'تم فك {decoded}/{total}',
     sharePassword: 'كلمة المرور (اختياري)', passwordPrompt: 'أدخل كلمة المرور لفتح الدفتر',
     passwordError: 'فشل فك التشفير', wrongPassword: 'كلمة مرور خاطئة. حاول مرة أخرى.',
     corruptData: 'تعذر تحميل الدفتر: البيانات تالفة.',
@@ -789,6 +794,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 QR साझा करें', scanQR: '📷 QR स्कैन करें',
     copyUrl: 'URL कॉपी करें', urlCopied: 'कॉपी हो गया!', generateQR: 'QR बनाएं',
+    encodingMode: 'एन्कोडिंग', encodingFountain: 'Fountain', encodingSequential: 'अनुक्रमिक', decodedProgress: 'डिकोड {decoded}/{total}',
     sharePassword: 'पासवर्ड (वैकल्पिक)', passwordPrompt: 'नोटबुक खोलने के लिए पासवर्ड दर्ज करें',
     passwordError: 'डिक्रिप्शन विफल', wrongPassword: 'गलत पासवर्ड। कृपया पुनः प्रयास करें।',
     corruptData: 'नोटबुक लोड नहीं हो सका: डेटा दूषित है।',
@@ -920,6 +926,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 Поделиться QR', scanQR: '📷 Сканировать QR',
     copyUrl: 'Копировать URL', urlCopied: 'Скопировано!', generateQR: 'Создать QR',
+    encodingMode: 'Кодирование', encodingFountain: 'Fountain', encodingSequential: 'Последовательное', decodedProgress: 'Декодировано {decoded}/{total}',
     sharePassword: 'Пароль (необязательно)', passwordPrompt: 'Введите пароль для открытия тетради',
     passwordError: 'Ошибка расшифровки', wrongPassword: 'Неверный пароль. Попробуйте снова.',
     corruptData: 'Не удалось загрузить тетрадь: данные повреждены.',
@@ -1051,6 +1058,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 共享二维码', scanQR: '📷 扫描二维码',
     copyUrl: '复制链接', urlCopied: '已复制！', generateQR: '生成二维码',
+    encodingMode: '编码方式', encodingFountain: 'Fountain', encodingSequential: '顺序', decodedProgress: '已解码 {decoded}/{total}',
     sharePassword: '密码（可选）', passwordPrompt: '请输入密码以打开笔记本',
     passwordError: '解密失败', wrongPassword: '密码错误，请重试。',
     corruptData: '无法加载笔记本：数据已损坏。',
@@ -1182,6 +1190,7 @@ const LOCALES = {
     // QR Sharing
     shareQR: '📤 QR共有', scanQR: '📷 QRスキャン',
     copyUrl: 'URLをコピー', urlCopied: 'コピー済み！', generateQR: 'QR生成',
+    encodingMode: 'エンコード', encodingFountain: 'Fountain', encodingSequential: 'シーケンシャル', decodedProgress: 'デコード済み {decoded}/{total}',
     sharePassword: 'パスワード（任意）', passwordPrompt: 'ノートブックを開くためのパスワードを入力',
     passwordError: '復号に失敗しました', wrongPassword: 'パスワードが間違っています。もう一度お試しください。',
     corruptData: 'ノートブックを読み込めません：データが破損しています。',
