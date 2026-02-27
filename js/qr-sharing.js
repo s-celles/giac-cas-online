@@ -358,10 +358,13 @@ function handleDecodedQR(data) {
     if (nbeData) {
       closeScanQR();
       _showPasswordPrompt(function(password) {
-        decryptData(nbeData, password).then(function(text) {
-          var cellData = deserializeNotebook(text);
-          if (!cellData) { alert(t('corruptData')); return; }
-          _loadDeserializedCells(cellData);
+        decryptData(nbeData, password).then(function(compressed) {
+          return decompressNotebook(compressed).then(function(text) {
+            if (!text) { alert(t('corruptData')); return; }
+            var cellData = deserializeNotebook(text);
+            if (!cellData) { alert(t('corruptData')); return; }
+            _loadDeserializedCells(cellData);
+          });
         }).catch(function() { alert(t('wrongPassword')); });
       });
       return;
@@ -799,11 +802,14 @@ function loadFromURLHash() {
   if (hash.indexOf('#nbe=') === 0) {
     var encData = hash.substring(5);
     _showPasswordPrompt(function(password) {
-      decryptData(encData, password).then(function(text) {
-        var cellData = deserializeNotebook(text);
-        if (!cellData) { alert(t('corruptData')); return; }
-        _loadDeserializedCells(cellData);
-        history.replaceState(null, '', location.pathname);
+      decryptData(encData, password).then(function(compressed) {
+        return decompressNotebook(compressed).then(function(text) {
+          if (!text) { alert(t('corruptData')); return; }
+          var cellData = deserializeNotebook(text);
+          if (!cellData) { alert(t('corruptData')); return; }
+          _loadDeserializedCells(cellData);
+          history.replaceState(null, '', location.pathname);
+        });
       }).catch(function() {
         alert(t('wrongPassword'));
       });
