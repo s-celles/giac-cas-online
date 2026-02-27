@@ -238,6 +238,47 @@ function registerCell(cellId, expr) {
   return variable;
 }
 
+/** Register a slider parameter as an Observable variable.
+ *  This allows other cells to reference slider params by name. */
+function registerSliderParam(cellId, paramName, paramValue) {
+  if (!observableModule) return;
+  var key = cellId + '::' + paramName;
+
+  // If this param is already owned by another cell, reuse its variable
+  var existingOwnerKey = variableOwnerMap.get(paramName);
+  if (existingOwnerKey && existingOwnerKey !== key) {
+    var existingInfo = cellVariableMap.get(existingOwnerKey);
+    if (existingInfo && existingInfo.variable) {
+      existingInfo.variable.define(paramName, [], function() {
+        try { caseval(paramName + ':=' + paramValue); } catch(e) {}
+        return paramValue;
+      });
+      existingInfo.expr = paramName + ':=' + paramValue;
+      return;
+    }
+  }
+
+  // First registration or re-registration from same cell
+  var prev = cellVariableMap.get(key);
+  var variable;
+  if (prev && prev.variable) {
+    variable = prev.variable;
+  } else {
+    variable = observableModule.variable({ pending: function(){}, fulfilled: function(){}, rejected: function(){} });
+  }
+  variable.define(paramName, [], function() {
+    try { caseval(paramName + ':=' + paramValue); } catch(e) {}
+    return paramValue;
+  });
+  variableOwnerMap.set(paramName, key);
+  cellVariableMap.set(key, {
+    variable: variable,
+    defines: [paramName],
+    references: [],
+    expr: paramName + ':=' + paramValue
+  });
+}
+
 /** Unregister a cell from the reactive graph */
 function unregisterCell(cellId) {
   var info = cellVariableMap.get(cellId);
@@ -489,7 +530,16 @@ function runAllReactive() {
       // Skip disabled cells
       if (el && el.dataset.disabled === 'true') return;
       if (c.type === 'text') {
+        // renderTextCell handles @bind: registers variables in DAG + Giac
         renderTextCell(c.id);
+      } else if (c.type === 'slider') {
+        // Legacy slider cells — register params and trigger evaluation
+        if (el && el._sliderParams) {
+          el._sliderParams.forEach(function(p) {
+            registerSliderParam(c.id, p.name, p.value);
+          });
+        }
+        if (el && el._evaluateSlider) el._evaluateSlider();
       } else {
         var expr = getXcasExpr(c.id);
         if (expr) registerCell(c.id, expr);

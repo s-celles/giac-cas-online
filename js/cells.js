@@ -24,8 +24,8 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
   if (isDisabled) div.classList.add('cell-disabled');
   if (isLocked)   div.classList.add('cell-locked');
 
-  const badge = { math:'cellMath', raw:'cellRaw', text:'cellText' }[type];
-  const idx   = type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;
+  const badge = { math:'cellMath', raw:'cellRaw', text:'cellText', slider:'cellSlider' }[type] || 'cellRaw';
+  const idx   = type === 'slider' ? `Slider[${cellCounter}]` : type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;
 
   div.innerHTML = `
     <div class="cell-insert-zone" onclick="insertCellAt('${id}',-1)" title="${t('insertAbove')}"><span>+</span></div>
@@ -58,7 +58,111 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
   if (footer) nb.insertBefore(div, footer); else nb.appendChild(div);
   const inp = div.querySelector('.cell-input');
 
-  if (type === 'math') {
+  if (type === 'slider') {
+    div.dataset.expression = opts.expression || '';
+    div.dataset.plotType = opts.plotType || 'plot';
+    var sliderParams = opts.params || [];
+    var sliderArea = document.createElement('div');
+    sliderArea.className = 'slider-params';
+
+    if (customElements.get('slider-param')) {
+      sliderParams.forEach(function(p) {
+        var sp = document.createElement('slider-param');
+        sp.setAttribute('name', p.name);
+        sp.setAttribute('label', t(p.label) || p.label);
+        sp.setAttribute('min', p.min);
+        sp.setAttribute('max', p.max);
+        sp.setAttribute('step', p.step);
+        sp.setAttribute('value', p.value);
+        sliderArea.appendChild(sp);
+      });
+    } else {
+      var warn = document.createElement('div');
+      warn.className = 'slider-fallback';
+      warn.textContent = t('sliderUnavailable');
+      sliderArea.appendChild(warn);
+      sliderParams.forEach(function(p) {
+        var d = document.createElement('div');
+        d.className = 'slider-static';
+        d.textContent = (t(p.label) || p.label) + ': ' + p.value;
+        sliderArea.appendChild(d);
+      });
+    }
+    inp.appendChild(sliderArea);
+
+    // Code display area — shows the Giac expression with current param values
+    var codeArea = document.createElement('div');
+    codeArea.className = 'slider-code';
+    inp.appendChild(codeArea);
+
+    // Evaluate and render the slider expression
+    var sliderCellId = id;
+    var sliderExpression = opts.expression || '';
+    function updateCodeDisplay() {
+      var exprDisplay = sliderExpression;
+      sliderParams.forEach(function(p) {
+        var re = new RegExp('\\b' + p.name + '\\b', 'g');
+        exprDisplay = exprDisplay.replace(re, p.value);
+      });
+      codeArea.innerHTML = '<code class="slider-expr-template">' + esc(sliderExpression) + '</code>' +
+        '<code class="slider-expr-resolved">' + esc(exprDisplay) + '</code>';
+    }
+    function evaluateSliderCell() {
+      var assigns = sliderParams.map(function(p) {
+        var sp = sliderArea.querySelector('slider-param[name="' + p.name + '"]');
+        var val = sp ? sp.value : p.value;
+        p.value = val;
+        return p.name + ':=' + val;
+      }).join('; ');
+      try { caseval(assigns); } catch(e) { /* ignore */ }
+      updateCodeDisplay();
+      var out = document.getElementById(sliderCellId + '-output');
+      if (!out) return;
+      if (typeof cleanupJSXGraphInElement === 'function') cleanupJSXGraphInElement(out);
+      out.innerHTML = '';
+      try {
+        if (typeof jsxGraphAvailable === 'function' && jsxGraphAvailable() && typeof tryDirectJSXGraph === 'function' && tryDirectJSXGraph(sliderExpression, out)) {
+          // plot rendered
+        } else {
+          var raw = caseval(sliderExpression);
+          var plotFmt = typeof detectPlotFormat === 'function' ? detectPlotFormat(raw) : 'text';
+          if (plotFmt === 'svg') {
+            renderSvgPlot(out, stripQuotes(raw));
+          } else if (plotFmt === 'gr2d') {
+            var jsxDone = false;
+            if (typeof jsxGraphAvailable === 'function' && jsxGraphAvailable()) {
+              try {
+                var plotData = parseGr2dLogoData(raw);
+                if (plotData && plotData.curves.length > 0) { renderJSXGraphPlot(out, plotData); jsxDone = true; }
+              } catch(e) {}
+            }
+            if (!jsxDone) renderGr2dPlot(out, raw);
+          } else {
+            out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
+          }
+        }
+      } catch(err) {
+        out.innerHTML = '<span class="err">' + esc(String(err)) + '</span>';
+      }
+    }
+
+    // Listen for slider changes with debounce
+    var _sliderTimer = null;
+    sliderArea.addEventListener('slider-change', function(e) {
+      var param = sliderParams.find(function(p) { return p.name === e.detail.name; });
+      if (param) param.value = e.detail.value;
+      // Register/update the param in Observable DAG
+      if (typeof registerSliderParam === 'function') {
+        registerSliderParam(sliderCellId, e.detail.name, e.detail.value);
+      }
+      if (_sliderTimer) cancelAnimationFrame(_sliderTimer);
+      _sliderTimer = requestAnimationFrame(evaluateSliderCell);
+    });
+
+    // Store evaluation function on the cell element for later use
+    div._evaluateSlider = evaluateSliderCell;
+    div._sliderParams = sliderParams;
+  } else if (type === 'math') {
     const mf = document.createElement('math-field');
     if (initialMathJson) {
       inp.appendChild(mf);

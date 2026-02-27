@@ -127,7 +127,8 @@ function showAboutDialog() {
     { name: 'CortexJS Compute Engine', author: 'Arno Gourdol', license: 'MIT', url: 'https://cortexjs.io/compute-engine/' },
     { name: 'KaTeX', author: 'Khan Academy', license: 'MIT', url: 'https://katex.org/' },
     { name: 'JSXGraph', author: 'Alfred Wassermann et al.', license: 'LGPL/MIT', url: 'https://jsxgraph.org/' },
-    { name: 'Observable Runtime', author: 'Observable Inc.', license: 'ISC', url: 'https://github.com/observablehq/runtime' }
+    { name: 'Observable Runtime', author: 'Observable Inc.', license: 'ISC', url: 'https://github.com/observablehq/runtime' },
+    { name: 'Lit', author: 'Google', license: 'BSD-3-Clause', url: 'https://lit.dev/' }
   ];
   var rows = libs.map(function(l) {
     return '<tr><td><a href="' + l.url + '" target="_blank" rel="noopener">' + l.name + '</a></td><td>' + l.author + '</td><td>' + l.license + '</td></tr>';

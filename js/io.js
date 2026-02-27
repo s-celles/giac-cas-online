@@ -23,7 +23,14 @@ function exportNotebook() {
         disabled: el.dataset.disabled === 'true',
         locked: el.dataset.locked === 'true'
       };
-      if (mode === 'math' && mf) {
+      if (el.dataset.type === 'slider') {
+        cell.params = (el._sliderParams || []).map(function(p) {
+          var sp = el.querySelector('slider-param[name="' + p.name + '"]');
+          return { name: p.name, label: p.label, min: p.min, max: p.max, step: p.step, value: sp ? sp.value : p.value };
+        });
+        cell.expression = el.dataset.expression || '';
+        cell.plotType = el.dataset.plotType || 'plot';
+      } else if (mode === 'math' && mf) {
         cell.mathjson = mf.expression.json;
       } else {
         cell.content = ta ? ta.value : '';
@@ -65,7 +72,13 @@ function loadNotebookData(data, opts) {
       disabled: item.disabled === true,
       locked: item.locked === true
     };
-    if (item.type === 'math') {
+    if (item.type === 'slider') {
+      cid = addCell('slider', '', '', null, null, Object.assign(cellOpts, {
+        params: item.params || [],
+        expression: item.expression || '',
+        plotType: item.plotType || 'plot'
+      }));
+    } else if (item.type === 'math') {
       if (item.mathjson && fileVersion >= 3) {
         cid = addCell('math', '', '', item.mathjson, null, cellOpts);
       } else if (item.content) {

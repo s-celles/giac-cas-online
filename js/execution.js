@@ -177,9 +177,54 @@ function renderTextCell(cellId) {
   const out = document.getElementById(cellId + '-output');
   if (!ta || !ta.value.trim()) { out.innerHTML = ''; return; }
   var raw = ta.value;
-  // Extract LaTeX blocks before escaping to protect them from HTML escaping
+
+  // ── @bind directives ──────────────────────────────────────
+  // Syntax: @bind(name, min, max, step, value)
+  //     or: @bind(name, min, max, step, value, "label")
+  var bindDirectives = [];
+  var BIND_PH = '\u0003BIND';
+  raw = raw.replace(/@bind\(([^)]+)\)/g, function(match, args) {
+    var idx = bindDirectives.length;
+    var parts = [];
+    var remaining = args;
+    while (remaining.length > 0) {
+      remaining = remaining.trim();
+      if (!remaining) break;
+      if (remaining[0] === '"') {
+        var end = remaining.indexOf('"', 1);
+        if (end > 0) {
+          parts.push(remaining.substring(1, end));
+          remaining = remaining.substring(end + 1).replace(/^\s*,?\s*/, '');
+        } else break;
+      } else {
+        var comma = remaining.indexOf(',');
+        if (comma >= 0) {
+          parts.push(remaining.substring(0, comma).trim());
+          remaining = remaining.substring(comma + 1);
+        } else {
+          parts.push(remaining.trim());
+          remaining = '';
+        }
+      }
+    }
+    // parts: [name, min, max, step, value] or [name, min, max, step, value, label]
+    if (parts.length >= 5) {
+      var labelKey = parts[5] || parts[0];
+      bindDirectives.push({
+        name: parts[0],
+        min: parseFloat(parts[1]),
+        max: parseFloat(parts[2]),
+        step: parseFloat(parts[3]),
+        value: parseFloat(parts[4]),
+        label: t(labelKey) || labelKey
+      });
+    }
+    return BIND_PH + idx + BIND_PH;
+  });
+
+  // ── LaTeX blocks ──────────────────────────────────────────
   var latexBlocks = [];
-  var PH = '\u0002LATEX';  // safe placeholder (browsers strip \x00)
+  var PH = '\u0002LATEX';
   // Display math $$...$$ (must come before inline $...$)
   raw = raw.replace(/\$\$([\s\S]+?)\$\$/g, function(_, tex) {
     var idx = latexBlocks.length;
@@ -194,6 +239,8 @@ function renderTextCell(cellId) {
     catch(e) { latexBlocks.push('<code>' + esc(tex) + '</code>'); }
     return PH + idx + PH;
   });
+
+  // ── Markdown processing ───────────────────────────────────
   let h = esc(raw)
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
@@ -205,7 +252,65 @@ function renderTextCell(cellId) {
   // Restore LaTeX blocks
   var phRe = new RegExp(PH + '(\\d+)' + PH, 'g');
   h = h.replace(phRe, function(_, idx) { return latexBlocks[parseInt(idx)]; });
+
+  // ── Restore @bind → <slider-param> elements ───────────────
+  if (bindDirectives.length > 0) {
+    var bindRe = new RegExp(BIND_PH + '(\\d+)' + BIND_PH, 'g');
+    h = h.replace(bindRe, function(_, idx) {
+      var b = bindDirectives[parseInt(idx)];
+      if (!b) return '';
+      if (customElements.get('slider-param')) {
+        return '</p><slider-param name="' + esc(b.name) + '" label="' + esc(b.label) +
+          '" min="' + b.min + '" max="' + b.max + '" step="' + b.step +
+          '" value="' + b.value + '"></slider-param><p>';
+      }
+      // Graceful fallback when Lit.js unavailable
+      return '</p><div class="bind-fallback">' + esc(b.label) + ': ' + b.value + '</div><p>';
+    });
+    // Clean up empty <p></p> tags produced by block-level insertion
+    h = h.replace(/<p>\s*<\/p>/g, '');
+  }
+
   out.innerHTML = '<div class="md-out"><p>' + h + '</p></div>';
+
+  // ── Set up @bind event delegation ─────────────────────────
+  if (bindDirectives.length > 0) {
+    // Remove previous handler if re-rendering
+    if (out._bindHandler) {
+      out.removeEventListener('slider-change', out._bindHandler);
+    }
+    out._bindHandler = function(e) {
+      var name = e.detail.name;
+      var value = e.detail.value;
+      // Sync all other slider-param elements bound to the same variable
+      document.querySelectorAll('slider-param[name="' + name + '"]').forEach(function(sp) {
+        if (sp !== e.target && parseFloat(sp.value) !== value) {
+          sp.value = value;
+        }
+      });
+      // Update Giac variable
+      try { caseval(name + ':=' + value); } catch(err) { /* ignore */ }
+      // Register/update in Observable DAG
+      if (typeof registerSliderParam === 'function') {
+        registerSliderParam(cellId, name, value);
+      }
+    };
+    out.addEventListener('slider-change', out._bindHandler);
+
+    // Initialize variables with default values
+    bindDirectives.forEach(function(b) {
+      try { caseval(b.name + ':=' + b.value); } catch(err) { /* ignore */ }
+      if (typeof registerSliderParam === 'function') {
+        registerSliderParam(cellId, b.name, b.value);
+      }
+    });
+
+    // Store bind info on cell for export and DAG
+    cell._bindDirectives = bindDirectives;
+  } else {
+    cell._bindDirectives = null;
+  }
+
   // Hide placeholder if cell is hidden and now has output
   var ph = cell.querySelector('.cell-hidden-placeholder');
   if (ph && out.innerHTML.trim()) ph.style.display = 'none';

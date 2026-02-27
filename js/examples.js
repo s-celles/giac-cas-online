@@ -293,40 +293,87 @@ var EXAMPLE_DATA = {
       { type: 'raw', content: 'simplify(ilaplace(laplace(exp(-2*t)*cos(3*t), t, s), s, t))' },
       { type: 'raw', content: 'simplify(invztrans(ztrans((1/2)^n, n, z), z, n))' }
     ]
+  },
+  'quadratic-equation': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'exQuadTitle', suffix: '\n\n@bind(a, -5, 5, 0.1, 1, "sliderCoeffA")\n@bind(b, -10, 10, 0.1, -3, "sliderCoeffB")\n@bind(c, -10, 10, 0.1, 2, "sliderCoeffC")', hidden: true },
+      { type: 'text', i18n: 'exQuadDiscriminant', hidden: true },
+      { type: 'raw', content: 'Delta := b^2 - 4*a*c' },
+      { type: 'text', i18n: 'exQuadRoots', hidden: true },
+      { type: 'raw', content: 'solve(a*x^2 + b*x + c = 0, x)' },
+      { type: 'text', i18n: 'exQuadVertex', hidden: true },
+      { type: 'raw', content: '-b/(2*a)' },
+      { type: 'raw', content: 'a*(-b/(2*a))^2 + b*(-b/(2*a)) + c' },
+      { type: 'text', i18n: 'exQuadFactored', hidden: true },
+      { type: 'raw', content: 'factor(a*x^2 + b*x + c)' },
+      { type: 'text', i18n: 'exQuadGraph', hidden: true },
+      { type: 'raw', content: 'plot(a*x^2 + b*x + c, x=-10..10)' },
+      { type: 'text', content: '@bind(a, -5, 5, 0.1, 1, "sliderCoeffA")\n@bind(b, -10, 10, 0.1, -3, "sliderCoeffB")\n@bind(c, -10, 10, 0.1, 2, "sliderCoeffC")' }
+    ]
+  },
+  'amplitude-modulation': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'exAMTitle', suffix: '\n\n@bind(fc, 1, 20, 0.5, 5, "sliderCarrierFreq")\n@bind(fm, 0.1, 5, 0.1, 1, "sliderModFreq")\n@bind(m, 0, 1, 0.01, 0.5, "sliderModDepth")', hidden: true },
+      { type: 'raw', content: 'plot(sin(2*pi*fc*x)*(1+m*sin(2*pi*fm*x)), x=0..2)' }
+    ]
+  },
+  'frequency-modulation': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'exFMTitle', suffix: '\n\n@bind(fc, 1, 20, 0.5, 5, "sliderCarrierFreq")\n@bind(fm, 0.1, 5, 0.1, 1, "sliderModFreq")\n@bind(beta, 0, 10, 0.1, 2, "sliderModIndex")', hidden: true },
+      { type: 'raw', content: 'plot(sin(2*pi*fc*x+beta*sin(2*pi*fm*x)), x=0..2)' }
+    ]
   }
 };
 
 var EXAMPLES = [
-  { id: 'arithmetic',        i18nName: 'exampleArithmetic' },
-  { id: 'algebra',           i18nName: 'exampleAlgebra' },
-  { id: 'calculus',          i18nName: 'exampleCalculus' },
-  { id: 'sums-series',       i18nName: 'exampleSumsSeries' },
-  { id: 'linear-algebra',    i18nName: 'exampleLinearAlgebra' },
-  { id: 'plots',             i18nName: 'examplePlots' },
-  { id: 'reactive-dag',      i18nName: 'exampleReactive' },
-  { id: 'physics-mechanics',  i18nName: 'exampleMechanics' },
-  { id: 'physics-waves',      i18nName: 'exampleWaves' },
-  { id: 'signal-processing', i18nName: 'exampleSignal' },
-  { id: 'full-demo',         i18nName: 'exampleFullDemo' }
+  { id: 'arithmetic',            i18nName: 'exampleArithmetic' },
+  { id: 'algebra',               i18nName: 'exampleAlgebra' },
+  { id: 'calculus',              i18nName: 'exampleCalculus' },
+  { id: 'sums-series',           i18nName: 'exampleSumsSeries' },
+  { id: 'linear-algebra',        i18nName: 'exampleLinearAlgebra' },
+  { id: 'plots',                 i18nName: 'examplePlots' },
+  { id: 'reactive-dag',          i18nName: 'exampleReactive' },
+  { id: 'quadratic-equation',    i18nName: 'exampleQuadratic' },
+  { id: 'amplitude-modulation',  i18nName: 'exampleAM' },
+  { id: 'frequency-modulation',  i18nName: 'exampleFM' },
+  { id: 'physics-mechanics',     i18nName: 'exampleMechanics' },
+  { id: 'physics-waves',         i18nName: 'exampleWaves' },
+  { id: 'signal-processing',     i18nName: 'exampleSignal' },
+  { id: 'full-demo',             i18nName: 'exampleFullDemo' }
 ];
 
 function loadExample(id) {
   var data = EXAMPLE_DATA[id];
   if (!data) return;
   if (cells.length > 0 && !confirm(t('loadExampleConfirm'))) return;
-  // Resolve i18n keys in text cells
+  // Resolve i18n keys in text cells; append @bind suffix if present
   var resolved = JSON.parse(JSON.stringify(data));
   resolved.cells.forEach(function(item) {
     if (item.i18n) {
-      item.content = t(item.i18n);
+      item.content = t(item.i18n) + (item.suffix || '');
       delete item.i18n;
+      delete item.suffix;
     }
   });
-  try {
-    loadNotebookData(resolved);
-  } catch (err) {
-    console.error('Failed to load example:', err);
-    alert(err.message);
+  // If example has @bind directives, wait for Lit.js slider-param component
+  var hasBinds = resolved.cells.some(function(c) {
+    return c.type === 'text' && c.content && c.content.indexOf('@bind(') >= 0;
+  });
+  function doLoad() {
+    try {
+      loadNotebookData(resolved);
+    } catch (err) {
+      console.error('Failed to load example:', err);
+      alert(err.message);
+    }
+  }
+  if (hasBinds && window._litReady) {
+    window._litReady.then(doLoad);
+  } else {
+    doLoad();
   }
   hideExamplesMenu();
 }
