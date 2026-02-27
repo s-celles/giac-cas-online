@@ -206,6 +206,7 @@ var EXAMPLE_DATA = {
       { type: 'raw', content: 'x := v0*t + (1/2)*a*t^2' },
       { type: 'text', i18n: 'exMechFreeFall', hidden: true },
       { type: 'raw', content: 'solve(v0*t - (1/2)*g*t^2 = 0, t)' },
+      { type: 'raw', content: 'solve(v0 - g*t = 0, t)' },
       { type: 'text', i18n: 'exMechEnergy', hidden: true },
       { type: 'raw', content: 'm := 2' },
       { type: 'raw', content: 'Ec := (1/2)*m*v^2' },
@@ -213,7 +214,17 @@ var EXAMPLE_DATA = {
       { type: 'raw', content: 'Ep := m*9.81*h' },
       { type: 'raw', content: 'Em := Ec + Ep' },
       { type: 'text', i18n: 'exMechTrajectory', hidden: true },
-      { type: 'raw', content: 'plotfunc(10*x - 4.905*x^2, x=0..2.1)' }
+      { type: 'raw', content: 'plotfunc(10*x - 4.905*x^2, x=0..2.1)' },
+      { type: 'text', i18n: 'exMechNewton', hidden: true },
+      { type: 'raw', content: 'desolve(m*y\'\' = -m*g, y)' },
+      { type: 'raw', content: 'desolve(m*y\'\' + k*y = 0, y)' },
+      { type: 'text', i18n: 'exMechFriction', hidden: true },
+      { type: 'raw', content: 'desolve(m*y\'\' = -m*g - f*y\', y)' },
+      { type: 'text', i18n: 'exMechCircular', hidden: true },
+      { type: 'raw', content: 'R := 5' },
+      { type: 'raw', content: 'omega := 2*pi' },
+      { type: 'raw', content: 'ac := omega^2 * R' },
+      { type: 'raw', content: 'plot([R*cos(omega*t), R*sin(omega*t)], t=0..1)' }
     ]
   },
 
@@ -234,7 +245,53 @@ var EXAMPLE_DATA = {
       { type: 'raw', content: 'plot(exp(-0.3*t)*cos(5*t), t=0..10)' },
       { type: 'text', i18n: 'exWavesODE', hidden: true },
       { type: 'raw', content: 'desolve(y\'\' + 4*y = 0, y)' },
-      { type: 'raw', content: 'desolve(y\'\' + 0.5*y\' + 4*y = 0, y)' }
+      { type: 'raw', content: 'desolve(y\'\' + 0.5*y\' + 4*y = 0, y)' },
+      { type: 'text', i18n: 'exWavesStanding', hidden: true },
+      { type: 'raw', content: 'plot(sin(3*x)*cos(5*t), t=0..2*pi)' },
+      { type: 'text', i18n: 'exWavesFourier', hidden: true },
+      { type: 'raw', content: 'taylor(periodic(x,-pi,pi), x=0, 10)' },
+      { type: 'raw', content: 'plot([x, sum((-1)^(n+1)*2*sin(n*x)/n, n, 1, 5)], x=-pi..pi)' },
+      { type: 'text', i18n: 'exWavesForced', hidden: true },
+      { type: 'raw', content: 'desolve(y\'\' + 0.2*y\' + 4*y = cos(t), y)' },
+      { type: 'raw', content: 'desolve(y\'\' + 0.2*y\' + 4*y = cos(2*t), y)' }
+    ]
+  },
+
+  'signal-processing': {
+    version: 2, reactiveMode: true,
+    cells: [
+      { type: 'text', i18n: 'exSignalTitle', hidden: true },
+      { type: 'text', i18n: 'exSignalLaplace', hidden: true },
+      { type: 'raw', content: 'laplace(1, t, s)' },
+      { type: 'raw', content: 'laplace(t, t, s)' },
+      { type: 'raw', content: 'laplace(t^2, t, s)' },
+      { type: 'raw', content: 'laplace(exp(-2*t), t, s)' },
+      { type: 'raw', content: 'laplace(sin(3*t), t, s)' },
+      { type: 'raw', content: 'laplace(cos(3*t), t, s)' },
+      { type: 'raw', content: 'laplace(exp(-2*t)*sin(3*t), t, s)' },
+      { type: 'text', i18n: 'exSignalILaplace', hidden: true },
+      { type: 'raw', content: 'ilaplace(1/s, s, t)' },
+      { type: 'raw', content: 'ilaplace(1/(s+2), s, t)' },
+      { type: 'raw', content: 'ilaplace(1/s^2, s, t)' },
+      { type: 'raw', content: 'ilaplace(3/(s^2+9), s, t)' },
+      { type: 'raw', content: 'ilaplace(1/((s+1)*(s+2)), s, t)' },
+      { type: 'text', i18n: 'exSignalTransfer', hidden: true },
+      { type: 'raw', content: 'H := 1/(s^2 + s + 1)' },
+      { type: 'raw', content: 'partfrac(H)' },
+      { type: 'raw', content: 'ilaplace(H, s, t)' },
+      { type: 'raw', content: 'ilaplace(H/s, s, t)' },
+      { type: 'text', i18n: 'exSignalZtrans', hidden: true },
+      { type: 'raw', content: 'ztrans(1, n, z)' },
+      { type: 'raw', content: 'ztrans(n, n, z)' },
+      { type: 'raw', content: 'ztrans((1/2)^n, n, z)' },
+      { type: 'raw', content: 'ztrans(n*(1/2)^n, n, z)' },
+      { type: 'text', i18n: 'exSignalIZtrans', hidden: true },
+      { type: 'raw', content: 'invztrans(z/(z-1), z, n)' },
+      { type: 'raw', content: 'invztrans(z/(z-1/2), z, n)' },
+      { type: 'raw', content: 'invztrans(z/(z-1)^2, z, n)' },
+      { type: 'text', i18n: 'exSignalRoundtrip', hidden: true },
+      { type: 'raw', content: 'simplify(ilaplace(laplace(exp(-2*t)*cos(3*t), t, s), s, t))' },
+      { type: 'raw', content: 'simplify(invztrans(ztrans((1/2)^n, n, z), z, n))' }
     ]
   }
 };
@@ -248,7 +305,8 @@ var EXAMPLES = [
   { id: 'plots',             i18nName: 'examplePlots' },
   { id: 'reactive-dag',      i18nName: 'exampleReactive' },
   { id: 'physics-mechanics',  i18nName: 'exampleMechanics' },
-  { id: 'physics-waves',     i18nName: 'exampleWaves' },
+  { id: 'physics-waves',      i18nName: 'exampleWaves' },
+  { id: 'signal-processing', i18nName: 'exampleSignal' },
   { id: 'full-demo',         i18nName: 'exampleFullDemo' }
 ];
 
