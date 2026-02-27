@@ -90,6 +90,7 @@ The notebook comes pre-loaded with demo cells covering:
 ## Credits
 
 - [Giac/Xcas](https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html) by Bernard Parisse
+- [MathLive](https://mathlive.io/) by Arno Gourdol
 - Virtual keyboard layout inspired by [B. Parisse's math2d.html](https://www-fourier.univ-grenoble-alpes.fr/~parisse/test/math2d.html)
 
 ## License
