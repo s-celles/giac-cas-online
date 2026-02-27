@@ -149,6 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('math', '\\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1}');
   addCell('math', '\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}');
 
+  // One-sided limits
+  addCell('math', '\\lim_{x \\to 0^-} \\frac{1}{x}');
+  addCell('math', '\\lim_{x \\to 0^+} \\frac{1}{x}');
+  addCell('math', '\\lim_{x \\to 0^-} \\frac{|x|}{x}');
+  addCell('math', '\\lim_{x \\to 0^+} \\frac{|x|}{x}');
+
   addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
   addCell('raw',  '', 'eigenvalues([[1,2],[3,4]])');
   addCell('raw',  '', 'plot(sin(x))');
