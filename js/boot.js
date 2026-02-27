@@ -127,9 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'));
 
   // Reactive DAG demo cells
-  addCell('raw', '', 'a := 5');
-  addCell('raw', '', 'a^2');
-  addCell('raw', '', 'b := a + 3');
+  addCell('raw', '', 'p := 5');
+  addCell('raw', '', 'p^2');
+  addCell('raw', '', 'q := p + 3');
 
   addCell('math', '\\frac{x^4-1}{x^2+1}');
   addCell('math', '\\int \\frac{1}{x^2+1}\\, dx');
@@ -155,8 +155,18 @@ document.addEventListener('DOMContentLoaded', () => {
   addCell('math', '\\lim_{x \\to 0^-} \\frac{|x|}{x}');
   addCell('math', '\\lim_{x \\to 0^+} \\frac{|x|}{x}');
 
-  addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
+  // Matrix demo cells (math-type: entered via MathLive visual editor)
+  addCell('math', '\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}');
+  addCell('math', '\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}');
+  addCell('math', '\\det\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}');
+  addCell('math', '\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}');
+
+  // Matrix operations (raw-type: no LaTeX trigger in CortexJS)
   addCell('raw',  '', 'eigenvalues([[1,2],[3,4]])');
+  addCell('raw',  '', 'tran([[1,2],[3,4]])');
+  addCell('raw',  '', 'eigenvalues([[a,b],[c,d]])');
+
+  addCell('raw',  '', 'solve(x^2 - 3*x + 2 = 0, x)');
   addCell('raw',  '', 'plot(sin(x))');
   addCell('raw',  '', 'plotfunc([sin(x),cos(x)],x)');
   addCell('raw',  '', 'plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)');

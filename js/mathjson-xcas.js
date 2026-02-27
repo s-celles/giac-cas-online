@@ -227,13 +227,8 @@ function mathJsonToXcas(expr) {
 
     // ══════ Data structures ══════
     case 'List':   return '[' + all().join(',') + ']';
-    case 'Matrix': {
-      const rows = args.map(r =>
-        Array.isArray(r) && r[0] === 'List'
-          ? '[' + r.slice(1).map(mathJsonToXcas).join(',') + ']'
-          : mathJsonToXcas(r));
-      return '[' + rows.join(',') + ']';
-    }
+    case 'Matrix':
+      return mathJsonToXcas(args[0]);
     case 'Tuple': case 'Triple': case 'Pair': case 'Sequence':
       return all().join(',');
     case 'Set':       return '{' + all().join(',') + '}';
