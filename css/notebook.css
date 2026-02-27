@@ -115,7 +115,7 @@
 
   /* ═══════ Insert Cell Zones ═══════ */
   .cell-insert-zone{display:flex;justify-content:flex-start;align-items:center;height:12px;cursor:pointer;margin:-6px 0;position:relative;z-index:2;padding-inline-start:5%}
-  .cell-insert-zone span{opacity:0;font-size:.75rem;font-family:var(--mono);color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:50%;width:22px;height:22px;line-height:20px;text-align:center;box-shadow:var(--shadow-sm);transition:opacity .15s}
+  .cell-insert-zone span{opacity:.18;font-size:.75rem;font-family:var(--mono);color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:50%;width:22px;height:22px;line-height:20px;text-align:center;box-shadow:var(--shadow-sm);transition:opacity .15s}
   .cell-insert-zone:hover span{opacity:1}
   .cell-insert-zone:hover span:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 
