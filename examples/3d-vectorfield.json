@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "ex3dVectorfieldTitle",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotfield([-y,x,z],[x=-2..2,y=-2..2,z=-2..2])"
+    },
+    {
+      "type": "raw",
+      "content": "plotfield([x,-y,z],[x=-2..2,y=-2..2,z=-2..2])"
+    }
+  ]
+}

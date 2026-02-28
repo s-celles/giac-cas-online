@@ -22,6 +22,7 @@ var EXAMPLES = [
   { id: '3d-parametric',          i18nName: 'example3dParametric' },
   { id: '3d-curve',                i18nName: 'example3dCurve' },
   { id: '3d-sliders',             i18nName: 'example3dSliders' },
+  { id: '3d-vectorfield',        i18nName: 'example3dVectorfield' },
   { id: 'amplitude-modulation',  i18nName: 'exampleAM' },
   { id: 'frequency-modulation',  i18nName: 'exampleFM' },
   { id: 'physics-mechanics',     i18nName: 'exampleMechanics' },

@@ -653,13 +653,30 @@ function tryDirectJSXGraph(expr, outputEl) {
     }
   }
 
-  // ── plotfield(expr, [x,y]) ──
+  // ── plotfield(expr, [x,y]) or plotfield([f1,f2,f3], [x,y,z]) ──
   if (/^plotfield\(/.test(expr)) {
     var inner = expr.slice(10, -1);
     var args = splitTopLevel(inner);
     if (args.length >= 2) {
       var fExpr = args[0].trim();
       var vl = parseVarList(args[1]);
+      // 3D vector field: 3 variables + [f1, f2, f3] components
+      if (vl.vars.length >= 3 && fExpr.charAt(0) === '[' && fExpr.charAt(fExpr.length - 1) === ']') {
+        var components = splitTopLevel(fExpr.slice(1, -1));
+        if (components.length === 3 && jsxGraphAvailable()) {
+          var config = {
+            type: 'vectorfield',
+            expressions: [components[0].trim(), components[1].trim(), components[2].trim()],
+            xVar: vl.vars[0], yVar: vl.vars[1], zVar: vl.vars[2],
+            xRange: vl.ranges[0] ? [vl.ranges[0].min, vl.ranges[0].max] : [-2, 2],
+            yRange: vl.ranges[1] ? [vl.ranges[1].min, vl.ranges[1].max] : [-2, 2],
+            zRange: vl.ranges[2] ? [vl.ranges[2].min, vl.ranges[2].max] : [-2, 2],
+            steps: 5
+          };
+          if (renderJSXGraph3D(outputEl, config)) return true;
+        }
+      }
+      // 2D slope field
       if (vl.vars.length >= 2) {
         var xVar = vl.vars[0], yVar = vl.vars[1];
         var xmin = vl.ranges[0] ? vl.ranges[0].min : -5, xmax = vl.ranges[0] ? vl.ranges[0].max : 5;
@@ -1716,6 +1733,39 @@ function renderJSXGraph3D(outputEl, config) {
       );
       view.create('curve3d', [curveFns[0], curveFns[1], curveFns[2], tR], {
         numberPointsHigh: 200, strokeWidth: 2
+      });
+
+    } else if (config.type === 'vectorfield') {
+      // 3D vector field: [f1(x,y,z), f2(x,y,z), f3(x,y,z)]
+      var zR = config.zRange;
+      var zVar = config.zVar;
+      var vfFns = [];
+      for (var k = 0; k < 3; k++) {
+        var resolved = config.expressions[k];
+        try {
+          var evaled = caseval('eval(' + resolved + ')');
+          if (evaled && evaled !== resolved) resolved = evaled;
+        } catch(e) {}
+        var vf = giacExprToJSFunc(resolved, [config.xVar, config.yVar, zVar]);
+        if (!vf) {
+          wrapper.innerHTML = '<div class="plot-3d-msg">' + t('plot3dExprError') + '</div>';
+          return false;
+        }
+        vfFns.push(vf);
+      }
+      var view = board.create('view3d',
+        [[-6, -3], [8, 8], [xR, yR, zR]],
+        { xPlaneRear: { visible: false }, yPlaneRear: { visible: false }, projection: 'central' }
+      );
+      var nSteps = config.steps || 5;
+      view.create('vectorfield3d', [
+        vfFns,
+        [xR[0], nSteps, xR[1]],
+        [yR[0], nSteps, yR[1]],
+        [zR[0], nSteps, zR[1]]
+      ], {
+        strokeColor: '#e41a1c',
+        scale: 0.3
       });
     }
 
