@@ -184,6 +184,7 @@ function registerCell(cellId, expr) {
 
   if (definedName) {
     variable.define(definedName, activeInputs, function() {
+      giacCaptureStart();
       var result = caseval(evalExpr);
       scheduleCellRender(evalCellId, evalExpr, result);
       // Return the assigned value for downstream cells
@@ -198,6 +199,7 @@ function registerCell(cellId, expr) {
         scheduleCellRender(evalCellId, evalExpr, null);
         return null;
       }
+      giacCaptureStart();
       var result = caseval(evalExpr);
       scheduleCellRender(evalCellId, evalExpr, result);
       return result;
@@ -349,7 +351,7 @@ function scheduleCellRender(cellId, expr, rawResult) {
       } else {
         // Text/LaTeX path
         var latex = '';
-        try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
         if (latex && typeof katex !== 'undefined') {
           var d = document.createElement('div');
           try {
@@ -366,6 +368,8 @@ function scheduleCellRender(cellId, expr, rawResult) {
         }
       }
     }
+    // Show any giac warnings/info messages captured during caseval
+    renderGiacMessages(out);
   } catch(err) {
     out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
     cell.classList.add('cell-error');

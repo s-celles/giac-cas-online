@@ -3,6 +3,36 @@
 // SECTION 8 — EXECUTION
 // ─────────────────────────────────────────────────────────────
 
+// ── Giac message capture ─────────────────────────────────────
+// Module.print / Module.printErr buffer messages during caseval()
+// so we can display warnings/info in the cell output.
+function giacCaptureStart() {
+  Module._giacMessages = [];
+  Module._giacCapture = true;
+}
+
+function giacCaptureFlush() {
+  Module._giacCapture = false;
+  var msgs = Module._giacMessages;
+  Module._giacMessages = [];
+  return msgs;
+}
+
+/** Render captured giac messages as a warning/info block inside a cell output */
+function renderGiacMessages(outEl) {
+  var msgs = giacCaptureFlush();
+  if (!msgs || msgs.length === 0) return;
+  var div = document.createElement('div');
+  div.className = 'giac-messages';
+  msgs.forEach(function(m) {
+    var line = document.createElement('div');
+    line.className = 'giac-msg giac-msg-' + m.type;
+    line.textContent = m.text;
+    div.appendChild(line);
+  });
+  outEl.appendChild(div);
+}
+
 function getXcasExpr(cellId) {
   const cell = document.getElementById(cellId);
   if (!cell || cell.dataset.type === 'text') return '';
@@ -82,6 +112,7 @@ function runSingleCell(cellId, forceManual) {
         }
 
         // Fall back to caseval + format-based pipeline
+        giacCaptureStart();
         const raw = caseval(expr);
         const plotFmt = detectPlotFormat(raw);
 
@@ -147,7 +178,7 @@ function runSingleCell(cellId, forceManual) {
         } else {
           // Text/LaTeX path
           let latex = '';
-          try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+          try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
           if (latex && typeof katex !== 'undefined') {
             const d = document.createElement('div');
             try {
@@ -164,6 +195,8 @@ function runSingleCell(cellId, forceManual) {
             out.appendChild(r);
           }
         }
+        // Show any giac warnings/info messages captured during caseval
+        renderGiacMessages(out);
         // Clean up pre-created gl3d canvas if it wasn't used
         if (preGl3dCanvas && preGl3dContainer) {
           preGl3dContainer.remove();

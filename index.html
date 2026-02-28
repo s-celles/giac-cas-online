@@ -48,8 +48,15 @@ var Module = {
   canvas: document.getElementById('canvas'),
   preRun: [],
   postRun: [],
-  print: function(text) { console.log('giac:', text); },
-  printErr: function(text) { console.warn('giac:', text); },
+  _giacMessages: [],
+  print: function(text) {
+    console.log('giac:', text);
+    if (Module._giacCapture) Module._giacMessages.push({ type: 'info', text: text });
+  },
+  printErr: function(text) {
+    console.warn('giac:', text);
+    if (Module._giacCapture) Module._giacMessages.push({ type: 'warn', text: text });
+  },
   setStatus: function(text) { if (text) console.log('giac status:', text); },
   totalDependencies: 0,
   monitorRunDependencies: function(left) {
