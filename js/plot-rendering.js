@@ -357,9 +357,12 @@ function parseGiacPairList(str) {
 function sampleFuncPoints(funcExpr, varName, xmin, xmax, nPoints) {
   nPoints = nPoints || 500;
   var step = (xmax - xmin) / nPoints;
-  var seqExpr = 'seq(evalf(subst(' + funcExpr + ',' + varName + ',' + xmin + '+k*' + step + ')),k,0,' + nPoints + ')';
+  var seqExpr = 'seq(evalf(subst(' + funcExpr + ',' + varName + ',' + xmin + '+_plt_j_*' + step + ')),_plt_j_,0,' + nPoints + ')';
+  console.log('[sampleFuncPoints] seqExpr:', seqExpr);
   var raw = caseval(seqExpr);
+  console.log('[sampleFuncPoints] raw (first 200 chars):', raw ? raw.substring(0, 200) : raw);
   var ys = parseGiacList(raw);
+  console.log('[sampleFuncPoints] parsed ys:', ys ? ys.length + ' points' : null);
   if (!ys) return null;
   var xs = [];
   for (var i = 0; i < ys.length; i++) xs.push(xmin + i * step);
@@ -488,12 +491,15 @@ function tryDirectJSXGraph(expr, outputEl) {
     var args = splitTopLevel(inner);
     if (args.length >= 1) {
       var funcPart = args[0].trim(), v = (args[1] || 'x').trim();
-      // Detect multi-function: plot([sin(x),cos(x)],x)
+      // Detect multi-function: plot([sin(x),cos(x)],x) or plot([f,g],x=-pi..pi)
       if (funcPart.charAt(0) === '[' && funcPart.charAt(funcPart.length - 1) === ']') {
+        var range = parseRange(v);
+        var varName = range ? range.varName : v;
+        var xmin = range ? range.min : -10, xmax = range ? range.max : 10;
         var funcs = splitTopLevel(funcPart.slice(1, -1));
         var curves = [], allPts = [], colors = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628'];
         for (var i = 0; i < funcs.length; i++) {
-          var pts = sampleFuncPoints(funcs[i].trim(), v, -10, 10);
+          var pts = sampleFuncPoints(funcs[i].trim(), varName, xmin, xmax);
           if (pts) { curves.push({ xs: pts.xs, ys: pts.ys, color: colors[i % colors.length] }); allPts.push(pts); }
         }
         if (curves.length > 0) {
