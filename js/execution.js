@@ -179,6 +179,8 @@ function runSingleCell(cellId, forceManual) {
           // Text/LaTeX path
           let latex = '';
           try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
+          // GIAC wraps multi-line results (function defs, blocks) in \parbox — KaTeX can't render those
+          if (latex && /\\parbox|\\symbol/.test(latex)) { latex = ''; }
           if (latex && typeof katex !== 'undefined') {
             const d = document.createElement('div');
             try {

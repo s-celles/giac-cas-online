@@ -352,6 +352,8 @@ function scheduleCellRender(cellId, expr, rawResult) {
         // Text/LaTeX path
         var latex = '';
         try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        // GIAC wraps multi-line results (function defs, blocks) in \parbox — KaTeX can't render those
+        if (latex && /\\parbox|\\symbol/.test(latex)) { latex = ''; }
         if (latex && typeof katex !== 'undefined') {
           var d = document.createElement('div');
           try {

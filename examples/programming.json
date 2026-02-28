@@ -36,15 +36,15 @@
     },
     {
       "type": "raw",
-      "content": "x := -5"
+      "content": "val := -5"
     },
     {
       "type": "raw",
-      "content": "ifte(x >= 0, x, -x)"
+      "content": "ifte(val >= 0, val, -val)"
     },
     {
       "type": "raw",
-      "content": "if x > 0\nthen \"positive\"\nelif x == 0\nthen \"zero\"\nelse \"negative\"\nend"
+      "content": "if val > 0\nthen \"positive\"\nelif val == 0\nthen \"zero\"\nelse \"negative\"\nend"
     },
     {
       "type": "text",
@@ -140,11 +140,11 @@
     },
     {
       "type": "text",
-      "content": "## Piecewise Functions\n\nDefine a piecewise function and plot it:"
+      "content": "## Piecewise Functions\n\nUse `piecewise(cond1, val1, cond2, val2, ..., default)` for symbolic piecewise definitions (plottable).\n`ifte` is for programming (evaluates condition immediately)."
     },
     {
       "type": "raw",
-      "content": "g(x) := ifte(x < -1, -1, ifte(x <= 1, x^2, 1))"
+      "content": "g(x) := piecewise(x < -1, -1, x <= 1, x^2, 1)"
     },
     {
       "type": "raw",
