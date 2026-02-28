@@ -551,7 +551,7 @@ function runAllReactive() {
         }
         if (el && el._evaluateSlider) el._evaluateSlider();
       } else {
-        var expr = getXcasExpr(c.id);
+        var expr = getGiacExpr(c.id);
         if (expr) registerCell(c.id, expr);
       }
     });

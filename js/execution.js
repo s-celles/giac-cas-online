@@ -33,7 +33,7 @@ function renderGiacMessages(outEl) {
   outEl.appendChild(div);
 }
 
-function getXcasExpr(cellId) {
+function getGiacExpr(cellId) {
   const cell = document.getElementById(cellId);
   if (!cell || cell.dataset.type === 'text') return '';
   if (cell.dataset.disabled === 'true') return '';
@@ -47,10 +47,10 @@ function getXcasExpr(cellId) {
   // because CortexJS may not parse them correctly from MathJSON
   const latex = mf.value;
   if (latex && /\\operatorname/.test(latex)) {
-    return latexToXcas(latex);
+    return latexToGiac(latex);
   }
   const json = mf.expression.json;
-  return mathJsonToXcas(json);
+  return mathJsonToGiac(json);
 }
 
 function runSingleCell(cellId, forceManual) {
@@ -60,7 +60,7 @@ function runSingleCell(cellId, forceManual) {
   if (cell.dataset.disabled === 'true') return;
   if (cell.dataset.type === 'text') { renderTextCell(cellId); return; }
 
-  const expr = getXcasExpr(cellId);
+  const expr = getGiacExpr(cellId);
   const out  = document.getElementById(cellId + '-output');
   if (!expr) { out.innerHTML = ''; return; }
   if (!giacReady) { out.innerHTML = '<span class="err">' + t('giacNotReady') + '</span>'; return; }

@@ -35,6 +35,8 @@ const CAS_SHORTCUTS = {
   'desolve':   '\\operatorname{desolve}',
   'laplace':   '\\operatorname{laplace}',
   'ilaplace':  '\\operatorname{ilaplace}',
+  'ztrans':    '\\operatorname{ztrans}',
+  'invztrans': '\\operatorname{invztrans}',
   // Polynomials
   'degree':    '\\operatorname{degree}',
   'coeff':     '\\operatorname{coeff}',
@@ -74,8 +76,13 @@ const CAS_SHORTCUTS = {
   'lncollect': '\\operatorname{lncollect}',
   'exp2pow':   '\\operatorname{exp2pow}',
   'pow2exp':   '\\operatorname{pow2exp}',
+  // Transforms
+  'fourier':   '\\operatorname{fourier}',
+  'ifourier':  '\\operatorname{ifourier}',
+  'periodic':  '\\operatorname{periodic}',
   // Misc
   'evalf':     '\\operatorname{evalf}',
+  'piecewise': '\\operatorname{piecewise}',
   'exact':     '\\operatorname{exact}',
   'assume':    '\\operatorname{assume}',
   'purge':     '\\operatorname{purge}',

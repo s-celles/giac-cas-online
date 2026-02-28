@@ -36,7 +36,7 @@
 </script>
 
 <!-- ═══════════════════════════════════════════════════
-  Giac/Xcas engine (asm.js) — HOST giac.js LOCALLY
+  Giac engine (asm.js) — HOST giac.js LOCALLY
   Download: https://www-fourier.univ-grenoble-alpes.fr/~parisse/giacjs.tar.gz
   We bypass giacsimple.js and define a minimal Module object
   so giac.js (Emscripten asm.js build) can initialize.
@@ -140,7 +140,7 @@ var UI = {
   <div id="empty-notebook" class="empty-notebook">
     <p data-i18n="emptyNotebook">No cells yet.</p>
     <button onclick="addCell('math')" data-i18n="addFirstCell">+ Add your first cell</button>
-    <p class="empty-hint" data-i18n="emptyHint">Click the type badge (Math / Xcas / Text) to change the cell type.</p>
+    <p class="empty-hint" data-i18n="emptyHint">Click the type badge (Math / GIAC / Text) to change the cell type.</p>
   </div>
   <div id="notebook-footer" class="notebook-footer" style="display:none">
     <p class="empty-hint" data-i18n="addCellHint">Click the + zones between cells to add a cell.</p>
@@ -160,7 +160,7 @@ var UI = {
   ═══════════════════════════════════════════════════ -->
 <script src="js/i18n.js"></script>
 <script src="js/giac-init.js"></script>
-<script src="js/mathjson-xcas.js"></script>
+<script src="js/mathjson-giac.js"></script>
 <script src="js/state.js"></script>
 <script src="js/io.js"></script>
 <script src="js/plot-rendering.js"></script>

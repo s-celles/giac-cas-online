@@ -4,7 +4,7 @@
   "cells": [
     {
       "type": "text",
-      "content": "# Programming in Xcas\n\nThis notebook demonstrates Xcas programming features:\nvariables, conditionals, loops, functions, and recursion.\n\n**Tip:** Programming cells use **Raw** mode (Xcas syntax)."
+      "content": "# Programming in GIAC\n\nThis notebook demonstrates GIAC programming features:\nvariables, conditionals, loops, functions, and recursion.\n\n**Tip:** Programming cells use **Raw** mode (GIAC syntax)."
     },
     {
       "type": "text",
@@ -24,7 +24,7 @@
     },
     {
       "type": "raw",
-      "content": "msg := \"Hello, Xcas!\""
+      "content": "msg := \"Hello, GIAC!\""
     },
     {
       "type": "raw",
@@ -152,7 +152,7 @@
     },
     {
       "type": "text",
-      "content": "## Working with Lists\n\nLists are fundamental in Xcas. Create, manipulate, and apply functions."
+      "content": "## Working with Lists\n\nLists are fundamental in GIAC. Create, manipulate, and apply functions."
     },
     {
       "type": "raw",

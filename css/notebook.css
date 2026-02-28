@@ -136,7 +136,7 @@
   .cell-debug{padding:.3rem .8rem;background:#f7f6f2;border-top:1px dashed var(--border);font-family:var(--mono);font-size:.65rem;color:var(--text-muted);display:none;overflow-x:auto;word-break:break-all}
   .cell-debug.visible{display:block}
   .cell-debug .lbl{font-weight:500;color:var(--accent);margin-inline-end:.3rem}
-  .cell-debug .xcas-out{color:var(--success);margin-inline-start:.4rem}
+  .cell-debug .giac-out{color:var(--success);margin-inline-start:.4rem}
 
   /* ═══════ Output ═══════ */
   .cell-output{padding:.65rem .8rem;background:var(--output-bg);border-top:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);min-height:26px;overflow-x:auto}

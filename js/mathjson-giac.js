@@ -1,14 +1,14 @@
 'use strict';
 
 // ─────────────────────────────────────────────────────────────
-// SECTION 4 — MATHJSON → XCAS CONVERTER
+// SECTION 4 — MATHJSON → GIAC CONVERTER
 //
 // MathJSON (CortexJS) uses PascalCase function names:
 //   ["Add", 1, 2]  →  1+2
 //   ["D", f, x]    →  diff(f, x)
 //
 // The converter walks the AST recursively and emits a
-// Xcas-compatible string for caseval().
+// GIAC-compatible string for caseval().
 // ─────────────────────────────────────────────────────────────
 
 const SYMBOL_MAP = {
@@ -18,11 +18,11 @@ const SYMBOL_MAP = {
 };
 
 /**
- * Convert a MathJSON expression to a Xcas-compatible string.
+ * Convert a MathJSON expression to a GIAC-compatible string.
  * @param {*} expr - MathJSON node (number | string | array | object)
  * @returns {string}
  */
-function mathJsonToXcas(expr) {
+function mathJsonToGiac(expr) {
   if (expr == null) return '';
   if (typeof expr === 'number') return String(expr);
   if (typeof expr === 'string') return SYMBOL_MAP[expr] ?? expr;
@@ -30,17 +30,17 @@ function mathJsonToXcas(expr) {
   // Object literal form: { num, sym, str, fn }
   if (typeof expr === 'object' && !Array.isArray(expr)) {
     if ('num' in expr) return expr.num;
-    if ('sym' in expr) return mathJsonToXcas(expr.sym);
+    if ('sym' in expr) return mathJsonToGiac(expr.sym);
     if ('str' in expr) return '"' + expr.str + '"';
-    if ('fn'  in expr) return mathJsonToXcas(expr.fn);
+    if ('fn'  in expr) return mathJsonToGiac(expr.fn);
     return JSON.stringify(expr);
   }
 
   if (!Array.isArray(expr) || expr.length === 0) return '';
 
   const [head, ...args] = expr;
-  const c   = (i) => mathJsonToXcas(args[i]);
-  const all = ()  => args.map(mathJsonToXcas);
+  const c   = (i) => mathJsonToGiac(args[i]);
+  const all = ()  => args.map(mathJsonToGiac);
   const w   = (s) => '(' + s + ')';
 
   // Helper: unwrap CortexJS ["Function", ["Block", body], var] pattern
@@ -48,8 +48,8 @@ function mathJsonToXcas(expr) {
     if (!Array.isArray(node) || node[0] !== 'Function') return null;
     let body = node[1];
     if (Array.isArray(body) && body[0] === 'Block') body = body[1];
-    const v = node.length >= 3 ? mathJsonToXcas(node[2]) : 'x';
-    return { body: mathJsonToXcas(body), v };
+    const v = node.length >= 3 ? mathJsonToGiac(node[2]) : 'x';
+    return { body: mathJsonToGiac(body), v };
   }
   function isNothing(node) {
     return node == null || node === 'Nothing' ||
@@ -66,8 +66,8 @@ function mathJsonToXcas(expr) {
       var limIdx = args.findIndex(function(a) { return Array.isArray(a) && a[0] === 'Limits'; });
       if (limIdx >= 0) {
         var lim = args[limIdx];
-        var v = mathJsonToXcas(lim[1]), lo = mathJsonToXcas(lim[2]), hi = mathJsonToXcas(lim[3]);
-        var body = mathJsonToXcas(args[0]);
+        var v = mathJsonToGiac(lim[1]), lo = mathJsonToGiac(lim[2]), hi = mathJsonToGiac(lim[3]);
+        var body = mathJsonToGiac(args[0]);
         return 'sum(' + body + ',' + v + ',' + lo + ',' + hi + ')';
       }
       // No bounds — treat as addition
@@ -84,8 +84,8 @@ function mathJsonToXcas(expr) {
       var limIdx = args.findIndex(function(a) { return Array.isArray(a) && a[0] === 'Limits'; });
       if (limIdx >= 0) {
         var lim = args[limIdx];
-        var v = mathJsonToXcas(lim[1]), lo = mathJsonToXcas(lim[2]), hi = mathJsonToXcas(lim[3]);
-        var body = mathJsonToXcas(args[0]);
+        var v = mathJsonToGiac(lim[1]), lo = mathJsonToGiac(lim[2]), hi = mathJsonToGiac(lim[3]);
+        var body = mathJsonToGiac(args[0]);
         return 'product(' + body + ',' + v + ',' + lo + ',' + hi + ')';
       }
       return w(all().join('*'));
@@ -143,7 +143,7 @@ function mathJsonToXcas(expr) {
           if (isNothing(lo) && isNothing(hi)) {
             return 'int(' + intFn.body + ',' + intFn.v + ')';
           }
-          return 'int(' + intFn.body + ',' + intFn.v + ',' + mathJsonToXcas(lo) + ',' + mathJsonToXcas(hi) + ')';
+          return 'int(' + intFn.body + ',' + intFn.v + ',' + mathJsonToGiac(lo) + ',' + mathJsonToGiac(hi) + ')';
         }
         return 'int(' + intFn.body + ',' + intFn.v + ')';
       }
@@ -152,7 +152,7 @@ function mathJsonToXcas(expr) {
       if (Array.isArray(args[1]) &&
           ['Triple','Tuple'].includes(args[1][0]) &&
           args[1].length === 4) {
-        const [, v, lo, hi] = args[1].map(mathJsonToXcas);
+        const [, v, lo, hi] = args[1].map(mathJsonToGiac);
         return 'int(' + c(0) + ',' + v + ',' + lo + ',' + hi + ')';
       }
       if (args.length === 2) return 'int(' + c(0) + ',' + c(1) + ')';
@@ -187,14 +187,14 @@ function mathJsonToXcas(expr) {
       if (limFn) {
         if (args.length >= 2) {
           var ld = extractLimitDir(args[1]);
-          if (ld) return 'limit(' + limFn.body + ',' + limFn.v + ',' + mathJsonToXcas(ld.point) + ',' + ld.dir + ')';
+          if (ld) return 'limit(' + limFn.body + ',' + limFn.v + ',' + mathJsonToGiac(ld.point) + ',' + ld.dir + ')';
           return 'limit(' + limFn.body + ',' + limFn.v + ',' + c(1) + ')';
         }
         return 'limit(' + limFn.body + ',' + limFn.v + ')';
       }
       if (args.length >= 3) {
         var ld2 = extractLimitDir(args[2]);
-        if (ld2) return 'limit(' + c(0) + ',' + c(1) + ',' + mathJsonToXcas(ld2.point) + ',' + ld2.dir + ')';
+        if (ld2) return 'limit(' + c(0) + ',' + c(1) + ',' + mathJsonToGiac(ld2.point) + ',' + ld2.dir + ')';
         return 'limit(' + c(0) + ',' + c(1) + '=' + c(2) + ')';
       }
       if (args.length === 2) return 'limit(' + c(0) + ',' + c(1) + ')';
@@ -228,14 +228,14 @@ function mathJsonToXcas(expr) {
     // ══════ Data structures ══════
     case 'List':   return '[' + all().join(',') + ']';
     case 'Matrix':
-      return mathJsonToXcas(args[0]);
+      return mathJsonToGiac(args[0]);
     case 'Tuple': case 'Triple': case 'Pair': case 'Sequence':
       return all().join(',');
     case 'Set':       return '{' + all().join(',') + '}';
     case 'Range':     return c(0) + '..' + c(1);
     case 'Delimiter':
       return args.length === 1 && Array.isArray(args[0])
-        ? w(mathJsonToXcas(args[0])) : w(all().join(','));
+        ? w(mathJsonToGiac(args[0])) : w(all().join(','));
 
     // ══════ Special functions ══════
     case 'Floor': return 'floor(' + c(0) + ')';
@@ -258,7 +258,7 @@ function mathJsonToXcas(expr) {
     case 'Assign': return c(0) + ':=' + c(1);
     case 'Plot':   return 'plot(' + all().join(',') + ')';
 
-    // ══════ Unknown → attempt direct Xcas call ══════
+    // ══════ Unknown → attempt direct GIAC call ══════
     default: {
       const fn = head.charAt(0).toLowerCase() + head.slice(1);
       return args.length === 0 ? fn : fn + '(' + all().join(',') + ')';
@@ -311,22 +311,22 @@ function extractCasFunctionCall(latex) {
 }
 
 /**
- * Full pipeline: LaTeX (from math-field) → MathJSON → Xcas string.
+ * Full pipeline: LaTeX (from math-field) → MathJSON → GIAC string.
  */
-function latexToXcas(latex) {
+function latexToGiac(latex) {
   // Normalize \operatorname wrapping from MathLive
   latex = normalizeOperatorname(latex);
 
   // Try to extract CAS function call directly (bypass CortexJS)
   var cas = extractCasFunctionCall(latex);
   if (cas) {
-    var xcasArgs = cas.args.map(function(a) { return latexToXcas(a); });
-    return cas.func + '(' + xcasArgs.join(',') + ')';
+    var giacArgs = cas.args.map(function(a) { return latexToGiac(a); });
+    return cas.func + '(' + giacArgs.join(',') + ')';
   }
 
   try {
     const json = ce.parse(latex, { canonical: false }).json;
-    return mathJsonToXcas(json);
+    return mathJsonToGiac(json);
   } catch (e) {
     console.warn('LaTeX→MathJSON error:', e);
     return latex; // Giac can parse some LaTeX directly

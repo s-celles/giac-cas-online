@@ -36,7 +36,7 @@ function serializeNotebook() {
       var mf = el.querySelector('math-field');
       if (mf) content = mf.value; // LaTeX — round-trips via ce.parse()
     } else if (type === 'slider') {
-      // Serialize slider expression as raw Xcas
+      // Serialize slider expression as raw GIAC
       code = 'X';
       content = el.dataset.expression || '';
     } else {
@@ -138,7 +138,7 @@ function buildFrames(compressed, chunkSize) {
   var total = chunks.length;
   return chunks.map(function(chunk, i) {
     var checksum = crc16(chunk);
-    return 'XCAS:' + QR_PROTOCOL_VERSION + ':' + i + ':' + total + ':' + checksum + ':' + chunk;
+    return 'GIAC:' + QR_PROTOCOL_VERSION + ':' + i + ':' + total + ':' + checksum + ':' + chunk;
   });
 }
 
@@ -386,8 +386,8 @@ function startScanLoop(jsQR, video, canvas) {
 var _fountainDecoder = null;
 
 function handleDecodedQR(data) {
-  // Fountain QR frame (auto-detect: XCAS:F: prefix)
-  if (data.indexOf('XCAS:F:') === 0) {
+  // Fountain QR frame (auto-detect: GIAC:F: or legacy XCAS:F: prefix)
+  if (data.indexOf('GIAC:F:') === 0 || data.indexOf('XCAS:F:') === 0) {
     _handleFountainPacket(data);
     return;
   }
@@ -426,8 +426,8 @@ function handleDecodedQR(data) {
     }
   }
 
-  // Animated QR frame
-  if (data.indexOf('XCAS:') === 0) {
+  // Animated QR frame (accept both GIAC: and legacy XCAS: prefix)
+  if (data.indexOf('GIAC:') === 0 || data.indexOf('XCAS:') === 0) {
     var parts = data.split(':');
     if (parts.length < 6) return;
     var frameIndex = parseInt(parts[2], 10);

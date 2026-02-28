@@ -3,7 +3,7 @@
 // FOUNTAIN CODES (LT CODES) FOR QR NOTEBOOK SHARING
 // ─────────────────────────────────────────────────────────────
 // Wraps `luby-transform` CDN library for fountain encoding/decoding.
-// Frame format: XCAS:F:1:{k}:{bytes}:{checksum}:{indices}:{base64data}
+// Frame format: GIAC:F:1:{k}:{bytes}:{checksum}:{indices}:{base64data}
 
 var FOUNTAIN_PROTOCOL_VERSION = 1;
 
@@ -41,7 +41,7 @@ function _base64urlDecode(str) {
 }
 
 // ── Frame Serialization ─────────────────────────────────────
-// Frame: XCAS:F:{version}:{k}:{bytes}:{checksum}:{indices_csv}:{base64data}
+// Frame: GIAC:F:{version}:{k}:{bytes}:{checksum}:{indices_csv}:{base64data}
 // - k: number of source blocks
 // - bytes: compressed data length (used by luby-transform decoder)
 // - checksum: encoder checksum (used by luby-transform decoder)
@@ -49,9 +49,9 @@ function _base64urlDecode(str) {
 // - base64data: base64url-encoded XOR'd block data
 
 function parseFountainFrame(str) {
-  if (str.indexOf('XCAS:F:') !== 0) return null;
+  if (str.indexOf('GIAC:F:') !== 0 && str.indexOf('XCAS:F:') !== 0) return null;
   var parts = str.split(':');
-  // XCAS:F:ver:k:bytes:checksum:indices:base64data => 8 parts minimum
+  // GIAC:F:ver:k:bytes:checksum:indices:base64data => 8 parts minimum
   if (parts.length < 8) return null;
   var version = parseInt(parts[2], 10);
   var k = parseInt(parts[3], 10);
@@ -82,7 +82,7 @@ function buildFountainFrame(block) {
   // block: EncodedBlock {k, bytes, checksum, indices, data}
   var indicesStr = block.indices.join(',');
   var payload = _base64urlEncode(block.data);
-  return 'XCAS:F:' + FOUNTAIN_PROTOCOL_VERSION + ':' +
+  return 'GIAC:F:' + FOUNTAIN_PROTOCOL_VERSION + ':' +
     block.k + ':' + block.bytes + ':' + block.checksum + ':' +
     indicesStr + ':' + payload;
 }

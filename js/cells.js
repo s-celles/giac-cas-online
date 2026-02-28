@@ -245,10 +245,10 @@ function updateDebug(cellId) {
   if (!mf || !dbg) return;
   try {
     const json = mf.expression.json;
-    const xcas = mathJsonToXcas(json);
+    const giac = mathJsonToGiac(json);
     dbg.innerHTML =
       '<span class="lbl">MathJSON:</span><code>' + esc(JSON.stringify(json)) + '</code>' +
-      '<span class="xcas-out">→ Xcas: <code>' + esc(xcas) + '</code></span>';
+      '<span class="giac-out">→ GIAC: <code>' + esc(giac) + '</code></span>';
   } catch (e) {
     dbg.innerHTML = '<span class="lbl">Error:</span> ' + esc(e.message);
   }
@@ -272,9 +272,9 @@ function setCellMode(cellId, mode) {
 
   if (mode === 'raw') {
     const mf = cell.querySelector('math-field');
-    const xcas = mf ? mathJsonToXcas(mf.expression.json) : '';
+    const giacExpr = mf ? mathJsonToGiac(mf.expression.json) : '';
     inp.innerHTML = '';
-    const ta = mkTextarea(t('placeholderRaw'), xcas);
+    const ta = mkTextarea(t('placeholderRaw'), giacExpr);
     ta.addEventListener('keydown', (e) => cellKey(e, cellId, 'raw'));
     inp.appendChild(ta);
     cell.dataset.mode = 'raw';

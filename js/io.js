@@ -6,7 +6,7 @@
 function exportNotebook() {
   const data = {
     version: 4,
-    type: 'xcas-notebook',
+    type: 'giac-notebook',
     created: new Date().toISOString(),
     locale: currentLocale,
     reactiveMode: reactiveMode,
@@ -43,7 +43,7 @@ function exportNotebook() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'notebook.xcas.json';
+  a.download = 'notebook.giac.json';
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -94,7 +94,7 @@ function loadNotebookData(data, opts) {
       cid = addCell(item.type, '', item.content, null, null, cellOpts);
     }
     if (reactiveMode && observableModule && item.type !== 'text') {
-      var expr = getXcasExpr(cid);
+      var expr = getGiacExpr(cid);
       if (expr) registerCell(cid, expr);
     }
   });
@@ -105,14 +105,14 @@ function loadNotebookData(data, opts) {
 
 function importNotebook() {
   const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = '.json,.xcas.json';
+  inp.type = 'file'; inp.accept = '.json,.giac.json,.xcas.json';
   inp.onchange = (e) => {
     const f = e.target.files[0]; if (!f) return;
     const r = new FileReader();
     r.onload = (ev) => {
       try {
         var parsed = JSON.parse(ev.target.result);
-        if (parsed.type && parsed.type !== 'xcas-notebook') {
+        if (parsed.type && parsed.type !== 'giac-notebook' && parsed.type !== 'xcas-notebook') {
           alert(t('invalidJson'));
           return;
         }

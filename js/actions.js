@@ -95,7 +95,7 @@ function toggleCellDisabled(id) {
   } else {
     // Re-enabling — re-register if reactive mode is active
     if (reactiveMode && observableModule) {
-      var expr = getXcasExpr(id);
+      var expr = getGiacExpr(id);
       if (expr && typeof registerCell === 'function') registerCell(id, expr);
     }
   }
@@ -159,7 +159,7 @@ function setCellType(id, newType) {
   var mf = cell.querySelector('math-field');
   var ta = cell.querySelector('textarea');
   if (oldType === 'math' && mf) {
-    try { content = mathJsonToXcas(mf.expression.json); } catch(e) { content = mf.value; }
+    try { content = mathJsonToGiac(mf.expression.json); } catch(e) { content = mf.value; }
   } else if (ta) {
     content = ta.value;
   }

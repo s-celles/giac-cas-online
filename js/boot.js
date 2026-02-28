@@ -122,7 +122,7 @@ function setupMathKeyboard() {
 function showAboutDialog() {
   if (document.getElementById('about-overlay')) return;
   var libs = [
-    { name: 'Giac/Xcas', author: 'Bernard Parisse', license: 'GPL-3.0', url: 'https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html' },
+    { name: 'Giac', author: 'Bernard Parisse', license: 'GPL-3.0', url: 'https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html' },
     { name: 'MathLive', author: 'Arno Gourdol', license: 'MIT', url: 'https://mathlive.io/' },
     { name: 'CortexJS Compute Engine', author: 'Arno Gourdol', license: 'MIT', url: 'https://cortexjs.io/compute-engine/' },
     { name: 'KaTeX', author: 'Khan Academy', license: 'MIT', url: 'https://katex.org/' },
