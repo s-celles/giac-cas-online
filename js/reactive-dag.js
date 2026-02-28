@@ -8,55 +8,80 @@
 // cells re-evaluate automatically in topological order.
 // ─────────────────────────────────────────────────────────────
 
-// Known Giac built-in functions and keywords — NOT notebook variables
-var GIAC_BUILTINS = new Set([
-  'sin','cos','tan','asin','acos','atan','atan2','exp','ln','log','log10',
-  'sqrt','abs','ceil','floor','round','sign','max','min','gcd','lcm','mod',
-  'pi','e','i','true','false','inf','infinity','undef',
-  'solve','fsolve','linsolve','factor','expand','simplify','normal','collect',
-  'diff','integrate','limit','sum','product','series','taylor','laplace','ilaplace',
-  'matrix','det','eigenvalues','eigenvectors','transpose','inv','rref','rank','ker',
-  'plot','plotfunc','plotimplicit','plotfield','plotcontour','plotode','plotseq',
-  'plotparam','plotpolar','plotparam3d','plot3d',
-  'histogram','barplot','camembert','boxwhisker','scatterplot',
-  'circle','segment','point','triangle','line','polygon','arc',
-  'seq','rand','randint','randn','sort','size','length','dim','append','remove',
-  'evalf','latex','lname','VARS','string','expr','subst','assume','purge',
-  'if','then','else','for','while','do','od','fi','proc','return','local',
-  'print','input','nops','op','head','tail','map','apply','select','zip',
-  're','im','conj','arg','real','imag',
-  'irem','iquo','isprime','ifactor','euler','nextprime','prevprime',
-  'quo','rem','gcdex','hermite','smith',
-  'pmin','pmax','fMin','fMax','extrema','implicitplot'
-]);
+/** Check if a Giac expression references a given symbol using has(quote).
+ *  The expression is made safe by replacing ':=' with '==' to prevent
+ *  assignment side effects inside quote().
+ *  Multi-statement expressions (;-separated) are checked per-statement
+ *  because quote() may not wrap across semicolons. Returns {found, error}. */
+function _giacHasSymbol(expr, symbolName) {
+  try {
+    var safeExpr = expr.split(':=').join('==');
+    var stmts = safeExpr.split(';');
+    for (var i = 0; i < stmts.length; i++) {
+      var s = stmts[i].trim();
+      if (!s) continue;
+      var result = caseval('has(quote(' + s + '),quote(' + symbolName + '))');
+      if (result === '1' || result === 'true') return { found: true, error: null };
+    }
+    return { found: false, error: null };
+  } catch(e) {
+    return { found: false, error: String(e) };
+  }
+}
+
+/** Display a dependency extraction error on a cell's output area */
+function _showDepExtractionError(cellId, message) {
+  var out = document.getElementById(cellId + '-output');
+  if (!out) return;
+  var warn = document.createElement('div');
+  warn.className = 'dep-warning broken';
+  warn.textContent = 'Dependency analysis: ' + message;
+  out.prepend(warn);
+}
 
 /** Extract variable definitions (:=) and references from a cell expression.
- *  Uses pure syntactic analysis (regex) — NOT lname() which is state-dependent. */
-function extractCellDependencies(expr) {
+ *  Uses Giac introspection via has(quote()) for reference detection.
+ *  No static builtin list needed — only cell-defined names are checked.
+ *  Errors are reported on the UI via cellId (no regex fallback). */
+function extractCellDependencies(expr, cellId) {
   var defines = [];
   var references = [];
-  if (!expr || !expr.trim()) return { defines: defines, references: references };
+  var errors = [];
+  if (!expr || !expr.trim()) return { defines: defines, references: references, errors: errors };
 
-  // Extract `:=` assignments (Giac assignment operator)
-  var assignRe = /(\w+)\s*:=/g;
-  var m;
-  while ((m = assignRe.exec(expr)) !== null) {
-    if (defines.indexOf(m[1]) === -1) defines.push(m[1]);
-  }
-
-  // Extract all identifiers via regex (state-independent)
-  var idRe = /\b([a-zA-Z_]\w*)\b/g;
-  while ((m = idRe.exec(expr)) !== null) {
-    var name = m[1];
-    if (!GIAC_BUILTINS.has(name)
-        && defines.indexOf(name) === -1
-        && references.indexOf(name) === -1
-        && !/^\d/.test(name)) {
-      references.push(name);
+  // 1. Detect ':=' assignments via string parsing (handles multi-statement)
+  var stmts = expr.split(';');
+  for (var s = 0; s < stmts.length; s++) {
+    var stmt = stmts[s].trim();
+    var aidx = stmt.indexOf(':=');
+    if (aidx > 0) {
+      var left = stmt.substring(0, aidx).trim();
+      // Strip function arguments: f(x,y) → f
+      var parenIdx = left.indexOf('(');
+      var name = parenIdx > 0 ? left.substring(0, parenIdx).trim() : left;
+      if (name && defines.indexOf(name) === -1) defines.push(name);
     }
   }
 
-  return { defines: defines, references: references };
+  // 2. Detect references to cell-defined variables using Giac has(quote())
+  //    Only checks names in variableOwnerMap — builtins naturally excluded.
+  variableOwnerMap.forEach(function(_owner, varName) {
+    if (defines.indexOf(varName) !== -1) return;
+    if (references.indexOf(varName) !== -1) return;
+    var check = _giacHasSymbol(expr, varName);
+    if (check.error) {
+      errors.push('has(' + varName + '): ' + check.error);
+    } else if (check.found) {
+      references.push(varName);
+    }
+  });
+
+  // Display errors on UI if any
+  if (errors.length > 0 && cellId) {
+    errors.forEach(function(msg) { _showDepExtractionError(cellId, msg); });
+  }
+
+  return { defines: defines, references: references, errors: errors };
 }
 
 /** Check if Observable Runtime is available */
@@ -122,7 +147,7 @@ function registerCell(cellId, expr) {
   var cell = document.getElementById(cellId);
   if (!cell) return null;
 
-  var deps = extractCellDependencies(expr);
+  var deps = extractCellDependencies(expr, cellId);
   var definedName = deps.defines.length > 0 ? deps.defines[0] : null;
 
   // Update DOM data attributes
@@ -220,13 +245,11 @@ function registerCell(cellId, expr) {
     deps.defines.forEach(function(newVar) {
       cellVariableMap.forEach(function(info, otherCellId) {
         if (otherCellId === cellId) return;
-        if (info.references && info.references.indexOf(newVar) !== -1) {
-          // This cell references our new variable — check if it was wired
-          var otherInputs = info.references.filter(function(n) { return variableOwnerMap.has(n); });
+        // Use Giac has(quote()) to check if the other cell references our new variable
+        if (info.expr && _giacHasSymbol(info.expr, newVar).found) {
           // Re-register if the active inputs have changed
           var prevInputs = info._activeInputs || [];
-          if (otherInputs.length !== prevInputs.length || otherInputs.some(function(n, i) { return n !== prevInputs[i]; })) {
-            // Schedule re-registration (avoid recursion)
+          if (prevInputs.indexOf(newVar) === -1) {
             setTimeout(function() { registerCell(otherCellId, info.expr); }, 0);
           }
         }
