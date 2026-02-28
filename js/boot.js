@@ -204,6 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
   setLocale(detectLocale());
   initGiac();
 
+  // Show Share button only when Web Share API is available
+  if (navigator.share) {
+    var shareBtn = document.getElementById('share-btn');
+    if (shareBtn) shareBtn.style.display = '';
+  }
+
   // Custom virtual keyboard layouts (inspired by B. Parisse's math2d.html)
   setupMathKeyboard();
 

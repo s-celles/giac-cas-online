@@ -3,8 +3,8 @@
 // SECTION 10 — EXPORT / IMPORT
 // ─────────────────────────────────────────────────────────────
 
-function exportNotebook() {
-  const data = {
+function buildNotebookData() {
+  return {
     version: 4,
     type: 'giac-notebook',
     created: new Date().toISOString(),
@@ -40,12 +40,39 @@ function exportNotebook() {
       return cell;
     })
   };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
+}
+
+function exportNotebook() {
+  var data = buildNotebookData();
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'notebook.giac.json';
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function _shareAsURL() {
+  return compressNotebook().then(function(compressed) {
+    var url = generateNotebookURL(compressed, false);
+    return navigator.share({ title: 'rnGIAC Notebook', url: url });
+  });
+}
+
+function shareNotebook() {
+  if (!navigator.share) return;
+  var data = buildNotebookData();
+  var json = JSON.stringify(data, null, 2);
+  var file = new File([json], 'notebook.giac.json', { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ title: 'rnGIAC Notebook', files: [file] }).catch(function(err) {
+      if (err.name === 'AbortError') return;
+      // File sharing denied — fall back to URL sharing
+      _shareAsURL().catch(function() {});
+    });
+  } else {
+    _shareAsURL().catch(function() {});
+  }
 }
 
 function loadNotebookData(data, opts) {
