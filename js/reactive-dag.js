@@ -8,46 +8,56 @@
 // cells re-evaluate automatically in topological order.
 // ─────────────────────────────────────────────────────────────
 
-/** Check if a Giac expression references a given symbol using has(quote).
- *  The expression is made safe by replacing ':=' with '==' to prevent
- *  assignment side effects inside quote().
- *  Multi-statement expressions (;-separated) are checked per-statement
- *  because quote() may not wrap across semicolons. Returns {found, error}. */
-function _giacHasSymbol(expr, symbolName) {
-  try {
-    var safeExpr = expr.split(':=').join('==');
-    var stmts = safeExpr.split(';');
-    for (var i = 0; i < stmts.length; i++) {
-      var s = stmts[i].trim();
-      if (!s) continue;
-      var result = caseval('has(quote(' + s + '),quote(' + symbolName + '))');
-      if (result === '1' || result === 'true') return { found: true, error: null };
+/** Tokenize a Giac expression and return the set of all identifiers.
+ *  This is a lightweight lexer that extracts variable/function names
+ *  without calling caseval — state-independent and reliable.
+ *  Skips string literals and numeric tokens. */
+function _extractIdentifiers(expr) {
+  var ids = new Set();
+  var i = 0;
+  var len = expr.length;
+  while (i < len) {
+    var ch = expr.charCodeAt(i);
+    // Skip string literals
+    if (ch === 34 || ch === 39) { // " or '
+      var q = ch;
+      i++;
+      while (i < len && expr.charCodeAt(i) !== q) {
+        if (expr.charCodeAt(i) === 92) i++; // backslash escape
+        i++;
+      }
+      i++;
+      continue;
     }
-    return { found: false, error: null };
-  } catch(e) {
-    return { found: false, error: String(e) };
+    // Identifier start: [a-zA-Z_]
+    if ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || ch === 95) {
+      var start = i;
+      i++;
+      while (i < len) {
+        ch = expr.charCodeAt(i);
+        if ((ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 90) ||
+            (ch >= 97 && ch <= 122) || ch === 95) {
+          i++;
+        } else {
+          break;
+        }
+      }
+      ids.add(expr.substring(start, i));
+      continue;
+    }
+    i++;
   }
-}
-
-/** Display a dependency extraction error on a cell's output area */
-function _showDepExtractionError(cellId, message) {
-  var out = document.getElementById(cellId + '-output');
-  if (!out) return;
-  var warn = document.createElement('div');
-  warn.className = 'dep-warning broken';
-  warn.textContent = 'Dependency analysis: ' + message;
-  out.prepend(warn);
+  return ids;
 }
 
 /** Extract variable definitions (:=) and references from a cell expression.
- *  Uses Giac introspection via has(quote()) for reference detection.
- *  No static builtin list needed — only cell-defined names are checked.
- *  Errors are reported on the UI via cellId (no regex fallback). */
+ *  Uses a lightweight tokenizer to extract identifiers, then intersects
+ *  with variableOwnerMap to find references to cell-defined variables.
+ *  No static builtin list needed — only cell-defined names are matched. */
 function extractCellDependencies(expr, cellId) {
   var defines = [];
   var references = [];
-  var errors = [];
-  if (!expr || !expr.trim()) return { defines: defines, references: references, errors: errors };
+  if (!expr || !expr.trim()) return { defines: defines, references: references };
 
   // 1. Detect ':=' assignments via string parsing (handles multi-statement)
   var stmts = expr.split(';');
@@ -63,25 +73,17 @@ function extractCellDependencies(expr, cellId) {
     }
   }
 
-  // 2. Detect references to cell-defined variables using Giac has(quote())
-  //    Only checks names in variableOwnerMap — builtins naturally excluded.
+  // 2. Tokenize expression to extract all identifiers, then intersect
+  //    with variableOwnerMap to find references to cell-defined variables.
+  var exprIds = _extractIdentifiers(expr);
   variableOwnerMap.forEach(function(_owner, varName) {
     if (defines.indexOf(varName) !== -1) return;
-    if (references.indexOf(varName) !== -1) return;
-    var check = _giacHasSymbol(expr, varName);
-    if (check.error) {
-      errors.push('has(' + varName + '): ' + check.error);
-    } else if (check.found) {
+    if (exprIds.has(varName)) {
       references.push(varName);
     }
   });
 
-  // Display errors on UI if any
-  if (errors.length > 0 && cellId) {
-    errors.forEach(function(msg) { _showDepExtractionError(cellId, msg); });
-  }
-
-  return { defines: defines, references: references, errors: errors };
+  return { defines: defines, references: references };
 }
 
 /** Check if Observable Runtime is available */
@@ -245,8 +247,7 @@ function registerCell(cellId, expr) {
     deps.defines.forEach(function(newVar) {
       cellVariableMap.forEach(function(info, otherCellId) {
         if (otherCellId === cellId) return;
-        // Use Giac has(quote()) to check if the other cell references our new variable
-        if (info.expr && _giacHasSymbol(info.expr, newVar).found) {
+        if (info.expr && _extractIdentifiers(info.expr).has(newVar)) {
           // Re-register if the active inputs have changed
           var prevInputs = info._activeInputs || [];
           if (prevInputs.indexOf(newVar) === -1) {
