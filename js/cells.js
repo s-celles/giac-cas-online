@@ -137,6 +137,8 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
               } catch(e) {}
             }
             if (!jsxDone) renderGr2dPlot(out, raw);
+          } else if (typeof isGiacError === 'function' && isGiacError(raw)) {
+            out.innerHTML = '<span class="err">' + (typeof t === 'function' ? t('errorPrefix') + ' ' : '') + esc(raw) + '</span>';
           } else {
             out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
           }

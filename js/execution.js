@@ -134,6 +134,10 @@ function runSingleCell(cellId, forceManual) {
           } else {
             renderGl3dPlot(out, sceneId);
           }
+        } else if (isGiacError(raw)) {
+          // GIAC error — display as styled error, not as LaTeX
+          out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(raw) + '</span>';
+          cell.classList.add('cell-error');
         } else {
           // Text/LaTeX path
           let latex = '';
@@ -147,12 +151,12 @@ function runSingleCell(cellId, forceManual) {
           } else {
             out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
           }
-        }
-        // Show raw result beneath — but not for plot outputs (too verbose)
-        if (plotFmt === 'text') {
-          const r = document.createElement('div');
-          r.className = 'raw-res'; r.textContent = '→ ' + raw;
-          out.appendChild(r);
+          // Show raw result beneath — but not for plot outputs (too verbose)
+          if (plotFmt === 'text') {
+            const r = document.createElement('div');
+            r.className = 'raw-res'; r.textContent = '→ ' + raw;
+            out.appendChild(r);
+          }
         }
         // Clean up pre-created gl3d canvas if it wasn't used
         if (preGl3dCanvas && preGl3dContainer) {

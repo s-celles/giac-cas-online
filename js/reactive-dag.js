@@ -342,6 +342,10 @@ function scheduleCellRender(cellId, expr, rawResult) {
       } else if (plotFmt === 'gl3d') {
         var sceneId = raw.substr(5).trim();
         renderGl3dPlot(out, sceneId);
+      } else if (isGiacError(raw)) {
+        // GIAC error — display as styled error, not as LaTeX
+        out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(raw) + '</span>';
+        cell.classList.add('cell-error');
       } else {
         // Text/LaTeX path
         var latex = '';

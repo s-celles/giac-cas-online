@@ -65,6 +65,10 @@ function plotResolveColor(c) {
   return PLOT_COLORS[c] || 'black';
 }
 
+function isGiacError(raw) {
+  return raw && raw.length >= 10 && raw.substr(0, 10) === 'GIAC_ERROR';
+}
+
 function detectPlotFormat(raw) {
   if (!raw || raw.length < 5) return 'text';
   if (raw.substr(0, 4) === '<svg' || (raw.charAt(0) === '"' && raw.substr(1, 4) === '<svg')) return 'svg';
