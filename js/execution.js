@@ -13,6 +13,12 @@ function getXcasExpr(cellId) {
   }
   const mf = cell.querySelector('math-field');
   if (!mf) return '';
+  // For CAS functions (\operatorname{...}), use LaTeX pipeline with normalization
+  // because CortexJS may not parse them correctly from MathJSON
+  const latex = mf.value;
+  if (latex && /\\operatorname/.test(latex)) {
+    return latexToXcas(latex);
+  }
   const json = mf.expression.json;
   return mathJsonToXcas(json);
 }

@@ -267,9 +267,63 @@ function mathJsonToXcas(expr) {
 }
 
 /**
+ * Normalize LaTeX from MathLive: strip \mathrm{} wrappers inside \operatorname{}
+ * MathLive internally splits e.g. \operatorname{csolve} into
+ * \operatorname{\mathrm{c}\mathrm{solve}}
+ */
+function normalizeOperatorname(latex) {
+  return latex.replace(/\\operatorname\{([^{}]*(?:\\mathrm\{[^{}]*\})+[^{}]*)\}/g, function(_, inner) {
+    return '\\operatorname{' + inner.replace(/\\mathrm\{([^{}]*)\}/g, '$1') + '}';
+  });
+}
+
+/**
+ * Extract a CAS function call from normalized LaTeX:
+ *   \operatorname{func}\left(...\right)  →  func(...)
+ *   \operatorname{func}\left(...,...\right)  →  func(...,...)
+ * Returns null if the LaTeX doesn't match a CAS function pattern.
+ */
+function extractCasFunctionCall(latex) {
+  // Match \operatorname{name} followed by \left( ... \right)
+  var m = latex.match(/^\\operatorname\{([a-zA-Z_]+)\}\\left\((.+)\\right\)$/);
+  if (!m) return null;
+  var funcName = m[1];
+  var argsLatex = m[2];
+  // Split arguments by top-level commas (not nested inside \left..\right or {..})
+  var args = [];
+  var depth = 0;
+  var braceDepth = 0;
+  var current = '';
+  for (var i = 0; i < argsLatex.length; i++) {
+    var ch = argsLatex[i];
+    if (ch === '{') { braceDepth++; current += ch; }
+    else if (ch === '}') { braceDepth--; current += ch; }
+    else if (argsLatex.substr(i, 5) === '\\left') { depth++; current += '\\left'; i += 4; }
+    else if (argsLatex.substr(i, 6) === '\\right') { depth--; current += '\\right'; i += 5; }
+    else if (ch === ',' && depth === 0 && braceDepth === 0) {
+      args.push(current.trim());
+      current = '';
+    }
+    else { current += ch; }
+  }
+  if (current.trim()) args.push(current.trim());
+  return { func: funcName, args: args };
+}
+
+/**
  * Full pipeline: LaTeX (from math-field) → MathJSON → Xcas string.
  */
 function latexToXcas(latex) {
+  // Normalize \operatorname wrapping from MathLive
+  latex = normalizeOperatorname(latex);
+
+  // Try to extract CAS function call directly (bypass CortexJS)
+  var cas = extractCasFunctionCall(latex);
+  if (cas) {
+    var xcasArgs = cas.args.map(function(a) { return latexToXcas(a); });
+    return cas.func + '(' + xcasArgs.join(',') + ')';
+  }
+
   try {
     const json = ce.parse(latex, { canonical: false }).json;
     return mathJsonToXcas(json);
