@@ -14,15 +14,11 @@
     },
     {
       "type": "math",
-      "content": "\\sum_{k=1}^{n} k"
+      "content": "\\operatorname{factor}\\left(\\sum_{k=1}^{n} k\\right)"
     },
     {
       "type": "math",
-      "content": "\\sum_{k=1}^{n} k^2"
-    },
-    {
-      "type": "math",
-      "content": "\\sum_{k=1}^{10} k^2"
+      "content": "\\operatorname{factor}\\left(\\sum_{k=1}^{n} k^2\\right)"
     },
     {
       "type": "math",

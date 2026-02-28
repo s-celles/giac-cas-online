@@ -325,6 +325,8 @@ function scheduleCellRender(cellId, expr, rawResult) {
     } else {
       // Lazy-evaluate if no pre-computed result (plot commands skip caseval upstream)
       var raw = rawResult != null ? rawResult : caseval(expr);
+      // Flush messages now so the latex() re-evaluation doesn't duplicate them
+      var giacMsgs = giacCaptureFlush();
       var plotFmt = detectPlotFormat(raw);
 
       if (plotFmt === 'svg') {
@@ -351,7 +353,7 @@ function scheduleCellRender(cellId, expr, rawResult) {
       } else {
         // Text/LaTeX path
         var latex = '';
-        try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
         // GIAC wraps multi-line results (function defs, blocks) in \parbox — KaTeX can't render those
         if (latex && /\\parbox|\\symbol/.test(latex)) { latex = ''; }
         if (latex && typeof katex !== 'undefined') {
@@ -370,8 +372,8 @@ function scheduleCellRender(cellId, expr, rawResult) {
         }
       }
     }
-    // Show any giac warnings/info messages captured during caseval
-    renderGiacMessages(out);
+    // Show giac warnings/info messages from the main evaluation only
+    renderGiacMessages(out, giacMsgs);
   } catch(err) {
     out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
     cell.classList.add('cell-error');

@@ -18,9 +18,10 @@ function giacCaptureFlush() {
   return msgs;
 }
 
-/** Render captured giac messages as a warning/info block inside a cell output */
-function renderGiacMessages(outEl) {
-  var msgs = giacCaptureFlush();
+/** Render captured giac messages as a warning/info block inside a cell output.
+ *  If msgs is provided, render those instead of flushing the capture buffer. */
+function renderGiacMessages(outEl, msgs) {
+  if (!msgs) msgs = giacCaptureFlush();
   if (!msgs || msgs.length === 0) return;
   var div = document.createElement('div');
   div.className = 'giac-messages';
@@ -114,6 +115,8 @@ function runSingleCell(cellId, forceManual) {
         // Fall back to caseval + format-based pipeline
         giacCaptureStart();
         const raw = caseval(expr);
+        // Flush messages now so the latex() re-evaluation doesn't duplicate them
+        const giacMsgs = giacCaptureFlush();
         const plotFmt = detectPlotFormat(raw);
 
         // Clean up pre-created gl3d canvas immediately if output is not gl3d
@@ -178,7 +181,7 @@ function runSingleCell(cellId, forceManual) {
         } else {
           // Text/LaTeX path
           let latex = '';
-          try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
+          try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
           // GIAC wraps multi-line results (function defs, blocks) in \parbox — KaTeX can't render those
           if (latex && /\\parbox|\\symbol/.test(latex)) { latex = ''; }
           if (latex && typeof katex !== 'undefined') {
@@ -197,8 +200,8 @@ function runSingleCell(cellId, forceManual) {
             out.appendChild(r);
           }
         }
-        // Show any giac warnings/info messages captured during caseval
-        renderGiacMessages(out);
+        // Show giac warnings/info messages from the main evaluation only
+        renderGiacMessages(out, giacMsgs);
         // Clean up pre-created gl3d canvas if it wasn't used
         if (preGl3dCanvas && preGl3dContainer) {
           preGl3dContainer.remove();
