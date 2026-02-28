@@ -14,6 +14,7 @@ var EXAMPLES = [
   { id: 'algebra',               i18nName: 'exampleAlgebra' },
   { id: 'calculus',              i18nName: 'exampleCalculus' },
   { id: 'sums-series',           i18nName: 'exampleSumsSeries' },
+  { id: 'fourier-series',        i18nName: 'exampleFourier' },
   { id: 'linear-algebra',        i18nName: 'exampleLinearAlgebra' },
   { id: 'plots',                 i18nName: 'examplePlots' },
   { id: 'reactive-dag',          i18nName: 'exampleReactive' },

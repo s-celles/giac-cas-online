@@ -1,0 +1,154 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exFourierTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierSignal",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "f(x) := x"
+    },
+    {
+      "type": "raw",
+      "content": "plot(f(x), x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierRealCoeffs",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "assume(n, integer)"
+    },
+    {
+      "type": "raw",
+      "content": "1/(2*pi) * int(f(x), x, -pi, pi)"
+    },
+    {
+      "type": "raw",
+      "content": "1/pi * int(f(x)*cos(n*x), x, -pi, pi)"
+    },
+    {
+      "type": "raw",
+      "content": "expand(1/pi * int(f(x)*sin(n*x), x, -pi, pi))"
+    },
+    {
+      "type": "raw",
+      "content": "seq((-1)^(k+1)*2/k, k, 1, 6)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierPartialSums",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([x, sum((-1)^(k+1)*2/k*sin(k*x), k, 1, 3)], x=-pi..pi)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([x, sum((-1)^(k+1)*2/k*sin(k*x), k, 1, 10)], x=-pi..pi)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([x, sum((-1)^(k+1)*2/k*sin(k*x), k, 1, 30)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierComplexCoeffs",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "expand(1/(2*pi) * int(x*exp(-i*n*x), x, -pi, pi))"
+    },
+    {
+      "type": "raw",
+      "content": "seq(simplify(1/(2*pi) * int(x*exp(-i*k*x), x, -pi, pi)), k, -3, 3)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierSquareWave",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(piecewise(x<0, -1, 1), x=-pi..pi)"
+    },
+    {
+      "type": "raw",
+      "content": "expand(1/pi * int(piecewise(x<0, -1, 1)*sin(n*x), x, -pi, pi))"
+    },
+    {
+      "type": "raw",
+      "content": "seq(simplify(1/pi * int(piecewise(x<0, -1, 1)*sin(k*x), x, -pi, pi)), k, 1, 6)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([piecewise(x<0, -1, 1), 4/pi*(sin(x) + sin(3*x)/3 + sin(5*x)/5)], x=-pi..pi)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([piecewise(x<0, -1, 1), 4/pi*sum(sin((2*k-1)*x)/(2*k-1), k, 1, 15)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierHarmonics",
+      "suffix": "\n\n@bind(h1, -3, 3, 0.01, 2, \"n=1\")\n@bind(h2, -3, 3, 0.01, -1, \"n=2\")\n@bind(h3, -3, 3, 0.01, 0.67, \"n=3\")\n@bind(h4, -3, 3, 0.01, -0.5, \"n=4\")\n@bind(h5, -3, 3, 0.01, 0.4, \"n=5\")\n@bind(h6, -3, 3, 0.01, -0.33, \"n=6\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([x, h1*sin(x) + h2*sin(2*x) + h3*sin(3*x) + h4*sin(4*x) + h5*sin(5*x) + h6*sin(6*x)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierSquareSliders",
+      "suffix": "\n\n@bind(sq1, -2, 2, 0.01, 1.27, \"n=1\")\n@bind(sq3, -2, 2, 0.01, 0.42, \"n=3\")\n@bind(sq5, -2, 2, 0.01, 0.25, \"n=5\")\n@bind(sq7, -2, 2, 0.01, 0.18, \"n=7\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([piecewise(x<0,-1,1), sq1*sin(x) + sq3*sin(3*x) + sq5*sin(5*x) + sq7*sin(7*x)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierTriangleSliders",
+      "suffix": "\n\n@bind(tri1, -1, 1, 0.01, 0.81, \"n=1\")\n@bind(tri3, -1, 1, 0.01, -0.09, \"n=3\")\n@bind(tri5, -1, 1, 0.01, 0.03, \"n=5\")\n@bind(tri7, -1, 1, 0.01, -0.02, \"n=7\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([piecewise(x<0,1+2*x/pi,1-2*x/pi), tri1*cos(x) + tri3*cos(3*x) + tri5*cos(5*x) + tri7*cos(7*x)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierHalfWaveSliders",
+      "suffix": "\n\n@bind(hw1, -1, 1, 0.01, 0.5, \"n=1\")\n@bind(hw2, -1, 1, 0.01, -0.21, \"n=2\")\n@bind(hw4, -1, 1, 0.01, -0.04, \"n=4\")\n@bind(hw6, -1, 1, 0.01, -0.02, \"n=6\")\n@bind(hw8, -1, 1, 0.01, -0.01, \"n=8\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([piecewise(x<0,0,sin(x)), 1/pi + hw1*sin(x) + hw2*cos(2*x) + hw4*cos(4*x) + hw6*cos(6*x) + hw8*cos(8*x)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exFourierFullWaveSliders",
+      "suffix": "\n\n@bind(fw2, -1, 1, 0.01, -0.42, \"n=2\")\n@bind(fw4, -1, 1, 0.01, -0.08, \"n=4\")\n@bind(fw6, -1, 1, 0.01, -0.04, \"n=6\")\n@bind(fw8, -1, 1, 0.01, -0.02, \"n=8\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([abs(sin(x)), 2/pi + fw2*cos(2*x) + fw4*cos(4*x) + fw6*cos(6*x) + fw8*cos(8*x)], x=-pi..pi)"
+    }
+  ]
+}

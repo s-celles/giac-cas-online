@@ -24,7 +24,7 @@ const LOCALES = {
     exportBtn: '💾 Export', shareBtn: '📤 Share', importBtn: '📂 Import',
     examplesBtn: '📚 Examples', loadExampleConfirm: 'This will replace the current notebook. Continue?',
     exampleArithmetic: 'Arithmetic', exampleAlgebra: 'Algebra', exampleCalculus: 'Calculus',
-    exampleSumsSeries: 'Sums & Series', exampleLinearAlgebra: 'Linear Algebra', examplePlots: 'Plots & Visualization',
+    exampleSumsSeries: 'Sums & Series', exampleFourier: 'Fourier Series', exampleLinearAlgebra: 'Linear Algebra', examplePlots: 'Plots & Visualization',
     exampleReactive: 'Reactive Variables', exampleMechanics: 'Physics — Mechanics', exampleWaves: 'Physics — Waves',
     exampleSignal: 'Signal Processing', exampleProgramming: 'Programming', exampleFullDemo: 'Full demo (all features)',
     exampleAM: 'Amplitude Modulation', exampleFM: 'Frequency Modulation',
@@ -32,6 +32,7 @@ const LOCALES = {
     cellSlider: 'Slider', sliderUnavailable: 'Interactive sliders unavailable (Lit.js not loaded)',
     sliderCarrierFreq: 'Carrier frequency (Hz)', sliderModFreq: 'Modulating frequency (Hz)', sliderModDepth: 'Modulation depth',
     sliderModIndex: 'Modulation index (\u03b2)', sliderWaveFreq: 'Wave frequency (k)',
+    sliderH1: 'Harmonic 1 (fundamental)', sliderH2: 'Harmonic 2', sliderH3: 'Harmonic 3', sliderH4: 'Harmonic 4', sliderH5: 'Harmonic 5', sliderH6: 'Harmonic 6',
     exAMTitle: '# Amplitude Modulation (AM)\n\nAdjust the sliders to see how carrier frequency, modulating frequency, and modulation depth affect the AM waveform.',
     exFMTitle: '# Frequency Modulation (FM)\n\nAdjust the sliders to observe how the carrier frequency, modulating frequency, and modulation index affect the FM waveform.',
     sliderFreqX: 'X frequency (a)', sliderFreqY: 'Y frequency (b)',
@@ -61,6 +62,17 @@ const LOCALES = {
     exWavesTitle: '# Physics — Waves & Oscillations\n\nHarmonic motion, wave superposition, Fourier analysis, forced oscillations.',
     exWavesHarmonic: '## Simple harmonic motion', exWavesSuper: '## Superposition of waves', exWavesBeats: '## Beats (close frequencies)', exWavesDamped: '## Damped oscillation', exWavesODE: '## Differential equation: spring',
     exWavesStanding: '## Standing waves', exWavesFourier: '## Fourier series approximation', exWavesForced: '## Forced oscillations (resonance)',
+    exFourierTitle: '# Fourier Series\n\nDecomposition of periodic functions into sums of sines and cosines.\nReal coefficients (a_n, b_n), complex coefficients (c_n), partial sums and convergence.',
+    exFourierSignal: '## Sawtooth wave: f(x) = x on [-π, π]',
+    exFourierRealCoeffs: '## Real Fourier coefficients a_n and b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## Partial sums and convergence\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nCompare the original signal with its Fourier approximations at N = 3, 10, and 30 terms.',
+    exFourierComplexCoeffs: '## Complex Fourier coefficients c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nRelation with real coefficients: $c_n = \\frac{a_n - i\\,b_n}{2}$ for $n > 0$.',
+    exFourierSquareWave: '## Square wave: g(x) = sign(x)\n\nA second classical example. Only odd harmonics contribute.',
+    exFourierHarmonics: '## Harmonic reconstruction\n\nBuilding the signal harmonic by harmonic: fundamental, then adding the 2nd, 3rd… harmonics one by one.',
+    exFourierSquareSliders: '## Square wave — slider reconstruction\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nOnly odd sine harmonics. Note the Gibbs phenomenon at discontinuities.',
+    exFourierTriangleSliders: '## Triangle wave — slider reconstruction\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nOnly odd cosine harmonics. Converges faster ($1/n^2$) than the square wave.',
+    exFourierHalfWaveSliders: '## Half-wave rectified sine — slider reconstruction\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nDC offset + fundamental sine + even cosine harmonics.',
+    exFourierFullWaveSliders: '## Full-wave rectified sine — slider reconstruction\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nDC offset + even cosine harmonics only. No fundamental frequency.',
     exSignalTitle: '# Signal Processing\n\nLaplace transform, inverse Laplace, Z-transform, transfer functions.\nContinuous and discrete-time analysis with Giac.',
     exSignalLaplace: '## Laplace transform', exSignalILaplace: '## Inverse Laplace transform',
     exSignalTransfer: '## Transfer function (2nd order system)', exSignalZtrans: '## Z-transform',
@@ -158,7 +170,7 @@ const LOCALES = {
     exportBtn: '💾 Exporter', shareBtn: '📤 Partager', importBtn: '📂 Importer',
     examplesBtn: '📚 Exemples', loadExampleConfirm: 'Cela remplacera le notebook actuel. Continuer ?',
     exampleArithmetic: 'Arithmétique', exampleAlgebra: 'Algèbre', exampleCalculus: 'Analyse',
-    exampleSumsSeries: 'Sommes & Séries', exampleLinearAlgebra: 'Algèbre linéaire', examplePlots: 'Graphiques & Visualisation',
+    exampleSumsSeries: 'Sommes & Séries', exampleFourier: 'Séries de Fourier', exampleLinearAlgebra: 'Algèbre linéaire', examplePlots: 'Graphiques & Visualisation',
     exampleReactive: 'Variables réactives', exampleMechanics: 'Physique — Mécanique', exampleWaves: 'Physique — Ondes',
     exampleSignal: 'Traitement du signal', exampleProgramming: 'Programmation', exampleFullDemo: 'Démo complète (toutes les fonctionnalités)',
     exampleAM: 'Modulation d\'amplitude', exampleFM: 'Modulation de fréquence',
@@ -166,6 +178,7 @@ const LOCALES = {
     cellSlider: 'Curseur', sliderUnavailable: 'Curseurs interactifs indisponibles (Lit.js non chargé)',
     sliderCarrierFreq: 'Fréquence porteuse (Hz)', sliderModFreq: 'Fréquence modulante (Hz)', sliderModDepth: 'Profondeur de modulation',
     sliderModIndex: 'Indice de modulation (\u03b2)', sliderWaveFreq: 'Fréquence d\'onde (k)',
+    sliderH1: 'Harmonique 1 (fondamental)', sliderH2: 'Harmonique 2', sliderH3: 'Harmonique 3', sliderH4: 'Harmonique 4', sliderH5: 'Harmonique 5', sliderH6: 'Harmonique 6',
     exAMTitle: '# Modulation d\'amplitude (AM)\n\nAjustez les curseurs pour observer comment la fréquence porteuse, la fréquence modulante et la profondeur de modulation affectent la forme d\'onde AM.',
     exFMTitle: '# Modulation de fréquence (FM)\n\nAjustez les curseurs pour observer comment la fréquence porteuse, la fréquence modulante et l\'indice de modulation affectent la forme d\'onde FM.',
     sliderFreqX: 'Fréquence X (a)', sliderFreqY: 'Fréquence Y (b)',
@@ -194,6 +207,17 @@ const LOCALES = {
     exWavesTitle: '# Physique — Ondes & Oscillations\n\nMouvement harmonique, superposition d\'ondes, analyse de Fourier, oscillations forcées.',
     exWavesHarmonic: '## Mouvement harmonique simple', exWavesSuper: '## Superposition d\'ondes', exWavesBeats: '## Battements (fréquences proches)', exWavesDamped: '## Oscillation amortie', exWavesODE: '## Équation différentielle : ressort',
     exWavesStanding: '## Ondes stationnaires', exWavesFourier: '## Approximation en série de Fourier', exWavesForced: '## Oscillations forcées (résonance)',
+    exFourierTitle: '# Séries de Fourier\n\nDécomposition de fonctions périodiques en sommes de sinus et cosinus.\nCoefficients réels (a_n, b_n), coefficients complexes (c_n), sommes partielles et convergence.',
+    exFourierSignal: '## Signal en dents de scie : f(x) = x sur [-π, π]',
+    exFourierRealCoeffs: '## Coefficients réels de Fourier a_n et b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## Sommes partielles et convergence\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nComparaison du signal original avec ses approximations de Fourier à N = 3, 10 et 30 termes.',
+    exFourierComplexCoeffs: '## Coefficients complexes de Fourier c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nRelation avec les coefficients réels : $c_n = \\frac{a_n - i\\,b_n}{2}$ pour $n > 0$.',
+    exFourierSquareWave: '## Signal carré : g(x) = sign(x)\n\nUn deuxième exemple classique. Seules les harmoniques impaires contribuent.',
+    exFourierHarmonics: '## Reconstruction harmonique\n\nConstruction du signal harmonique par harmonique : fondamental, puis ajout de la 2e, 3e… harmonique une par une.',
+    exFourierSquareSliders: '## Signal carré — reconstruction par curseurs\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nUniquement des harmoniques sinus impaires. Phénomène de Gibbs visible aux discontinuités.',
+    exFourierTriangleSliders: '## Signal triangulaire — reconstruction par curseurs\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nUniquement des harmoniques cosinus impaires. Convergence plus rapide ($1/n^2$) que le signal carré.',
+    exFourierHalfWaveSliders: '## Redressement mono-alternance — reconstruction par curseurs\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nComposante continue + sinus fondamental + harmoniques cosinus paires.',
+    exFourierFullWaveSliders: '## Redressement double alternance — reconstruction par curseurs\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nComposante continue + harmoniques cosinus paires uniquement. Pas de fondamental.',
     exSignalTitle: '# Traitement du signal\n\nTransformée de Laplace, Laplace inverse, transformée en Z, fonctions de transfert.\nAnalyse en temps continu et discret avec Giac.',
     exSignalLaplace: '## Transformée de Laplace', exSignalILaplace: '## Transformée de Laplace inverse',
     exSignalTransfer: '## Fonction de transfert (système du 2nd ordre)', exSignalZtrans: '## Transformée en Z',
@@ -291,7 +315,7 @@ const LOCALES = {
     exportBtn: '💾 Exportar', shareBtn: '📤 Compartir', importBtn: '📂 Importar',
     examplesBtn: '📚 Ejemplos', loadExampleConfirm: 'Esto reemplazará el notebook actual. ¿Continuar?',
     exampleArithmetic: 'Aritmética', exampleAlgebra: 'Álgebra', exampleCalculus: 'Cálculo',
-    exampleSumsSeries: 'Sumas y Series', exampleLinearAlgebra: 'Álgebra lineal', examplePlots: 'Gráficos y Visualización',
+    exampleSumsSeries: 'Sumas y Series', exampleFourier: 'Series de Fourier', exampleLinearAlgebra: 'Álgebra lineal', examplePlots: 'Gráficos y Visualización',
     exampleReactive: 'Variables reactivas', exampleMechanics: 'Física — Mecánica', exampleWaves: 'Física — Ondas',
     exampleSignal: 'Procesamiento de señales', exampleProgramming: 'Programación', exampleFullDemo: 'Demo completa (todas las funciones)',
     exampleAM: 'Modulación de amplitud', exampleFM: 'Modulación de frecuencia',
@@ -299,6 +323,7 @@ const LOCALES = {
     cellSlider: 'Deslizador', sliderUnavailable: 'Deslizadores interactivos no disponibles (Lit.js no cargado)',
     sliderCarrierFreq: 'Frecuencia portadora (Hz)', sliderModFreq: 'Frecuencia moduladora (Hz)', sliderModDepth: 'Profundidad de modulación',
     sliderModIndex: 'Índice de modulación (\u03b2)', sliderWaveFreq: 'Frecuencia de onda (k)',
+    sliderH1: 'Armónico 1 (fundamental)', sliderH2: 'Armónico 2', sliderH3: 'Armónico 3', sliderH4: 'Armónico 4', sliderH5: 'Armónico 5', sliderH6: 'Armónico 6',
     exAMTitle: '# Modulación de amplitud (AM)\n\nAjuste los deslizadores para ver cómo la frecuencia portadora, la frecuencia moduladora y la profundidad de modulación afectan la forma de onda AM.',
     exFMTitle: '# Modulación de frecuencia (FM)\n\nAjuste los deslizadores para observar cómo la frecuencia portadora, la frecuencia moduladora y el índice de modulación afectan la forma de onda FM.',
     sliderFreqX: 'Frecuencia X (a)', sliderFreqY: 'Frecuencia Y (b)',
@@ -327,6 +352,17 @@ const LOCALES = {
     exWavesTitle: '# Física — Ondas y Oscilaciones\n\nMovimiento armónico, superposición de ondas, análisis de Fourier, oscilaciones forzadas.',
     exWavesHarmonic: '## Movimiento armónico simple', exWavesSuper: '## Superposición de ondas', exWavesBeats: '## Batidos (frecuencias cercanas)', exWavesDamped: '## Oscilación amortiguada', exWavesODE: '## Ecuación diferencial: resorte',
     exWavesStanding: '## Ondas estacionarias', exWavesFourier: '## Aproximación en serie de Fourier', exWavesForced: '## Oscilaciones forzadas (resonancia)',
+    exFourierTitle: '# Series de Fourier\n\nDescomposición de funciones periódicas en sumas de senos y cosenos.\nCoeficientes reales (a_n, b_n), coeficientes complejos (c_n), sumas parciales y convergencia.',
+    exFourierSignal: '## Onda diente de sierra: f(x) = x en [-π, π]',
+    exFourierRealCoeffs: '## Coeficientes reales de Fourier a_n y b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## Sumas parciales y convergencia\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nComparación de la señal original con sus aproximaciones de Fourier a N = 3, 10 y 30 términos.',
+    exFourierComplexCoeffs: '## Coeficientes complejos de Fourier c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nRelación con los coeficientes reales: $c_n = \\frac{a_n - i\\,b_n}{2}$ para $n > 0$.',
+    exFourierSquareWave: '## Onda cuadrada: g(x) = sign(x)\n\nUn segundo ejemplo clásico. Solo los armónicos impares contribuyen.',
+    exFourierHarmonics: '## Reconstrucción armónica\n\nConstrucción de la señal armónico por armónico: fundamental, luego añadiendo el 2°, 3°… armónico uno por uno.',
+    exFourierSquareSliders: '## Onda cuadrada — reconstrucción con deslizadores\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nSolo armónicos seno impares. Fenómeno de Gibbs visible en las discontinuidades.',
+    exFourierTriangleSliders: '## Onda triangular — reconstrucción con deslizadores\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nSolo armónicos coseno impares. Convergencia más rápida ($1/n^2$) que la onda cuadrada.',
+    exFourierHalfWaveSliders: '## Rectificación de media onda — reconstrucción con deslizadores\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nComponente DC + seno fundamental + armónicos coseno pares.',
+    exFourierFullWaveSliders: '## Rectificación de onda completa — reconstrucción con deslizadores\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nComponente DC + armónicos coseno pares únicamente. Sin frecuencia fundamental.',
     exSignalTitle: '# Procesamiento de señales\n\nTransformada de Laplace, Laplace inversa, transformada Z, funciones de transferencia.\nAnálisis en tiempo continuo y discreto con Giac.',
     exSignalLaplace: '## Transformada de Laplace', exSignalILaplace: '## Transformada de Laplace inversa',
     exSignalTransfer: '## Función de transferencia (sistema de 2º orden)', exSignalZtrans: '## Transformada Z',
@@ -424,7 +460,7 @@ const LOCALES = {
     exportBtn: '💾 Exportieren', shareBtn: '📤 Teilen', importBtn: '📂 Importieren',
     examplesBtn: '📚 Beispiele', loadExampleConfirm: 'Das aktuelle Notebook wird ersetzt. Fortfahren?',
     exampleArithmetic: 'Arithmetik', exampleAlgebra: 'Algebra', exampleCalculus: 'Analysis',
-    exampleSumsSeries: 'Summen & Reihen', exampleLinearAlgebra: 'Lineare Algebra', examplePlots: 'Graphiken & Visualisierung',
+    exampleSumsSeries: 'Summen & Reihen', exampleFourier: 'Fourier-Reihen', exampleLinearAlgebra: 'Lineare Algebra', examplePlots: 'Graphiken & Visualisierung',
     exampleReactive: 'Reaktive Variablen', exampleMechanics: 'Physik — Mechanik', exampleWaves: 'Physik — Wellen',
     exampleSignal: 'Signalverarbeitung', exampleProgramming: 'Programmierung', exampleFullDemo: 'Vollständige Demo (alle Funktionen)',
     exampleAM: 'Amplitudenmodulation', exampleFM: 'Frequenzmodulation',
@@ -432,6 +468,7 @@ const LOCALES = {
     cellSlider: 'Schieberegler', sliderUnavailable: 'Interaktive Schieberegler nicht verfügbar (Lit.js nicht geladen)',
     sliderCarrierFreq: 'Trägerfrequenz (Hz)', sliderModFreq: 'Modulationsfrequenz (Hz)', sliderModDepth: 'Modulationstiefe',
     sliderModIndex: 'Modulationsindex (\u03b2)', sliderWaveFreq: 'Wellenfrequenz (k)',
+    sliderH1: 'Harmonische 1 (Grundton)', sliderH2: 'Harmonische 2', sliderH3: 'Harmonische 3', sliderH4: 'Harmonische 4', sliderH5: 'Harmonische 5', sliderH6: 'Harmonische 6',
     exAMTitle: '# Amplitudenmodulation (AM)\n\nVerstellen Sie die Schieberegler, um zu sehen, wie Trägerfrequenz, Modulationsfrequenz und Modulationstiefe die AM-Wellenform beeinflussen.',
     exFMTitle: '# Frequenzmodulation (FM)\n\nVerstellen Sie die Schieberegler, um zu beobachten, wie Trägerfrequenz, Modulationsfrequenz und Modulationsindex die FM-Wellenform beeinflussen.',
     sliderFreqX: 'X-Frequenz (a)', sliderFreqY: 'Y-Frequenz (b)',
@@ -460,6 +497,17 @@ const LOCALES = {
     exWavesTitle: '# Physik — Wellen & Schwingungen\n\nHarmonische Bewegung, Wellenüberlagerung, Fourier-Analyse, erzwungene Schwingungen.',
     exWavesHarmonic: '## Einfache harmonische Bewegung', exWavesSuper: '## Wellenüberlagerung', exWavesBeats: '## Schwebung (nahe Frequenzen)', exWavesDamped: '## Gedämpfte Schwingung', exWavesODE: '## Differentialgleichung: Feder',
     exWavesStanding: '## Stehende Wellen', exWavesFourier: '## Fourier-Reihen-Näherung', exWavesForced: '## Erzwungene Schwingungen (Resonanz)',
+    exFourierTitle: '# Fourier-Reihen\n\nZerlegung periodischer Funktionen in Summen von Sinus und Kosinus.\nReelle Koeffizienten (a_n, b_n), komplexe Koeffizienten (c_n), Partialsummen und Konvergenz.',
+    exFourierSignal: '## Sägezahnwelle: f(x) = x auf [-π, π]',
+    exFourierRealCoeffs: '## Reelle Fourier-Koeffizienten a_n und b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## Partialsummen und Konvergenz\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nVergleich des Originalsignals mit seinen Fourier-Näherungen bei N = 3, 10 und 30 Termen.',
+    exFourierComplexCoeffs: '## Komplexe Fourier-Koeffizienten c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nBeziehung zu den reellen Koeffizienten: $c_n = \\frac{a_n - i\\,b_n}{2}$ für $n > 0$.',
+    exFourierSquareWave: '## Rechteckwelle: g(x) = sign(x)\n\nEin zweites klassisches Beispiel. Nur ungerade Harmonische tragen bei.',
+    exFourierHarmonics: '## Harmonische Rekonstruktion\n\nAufbau des Signals Harmonische für Harmonische: Grundton, dann Hinzufügen der 2., 3.… Harmonischen.',
+    exFourierSquareSliders: '## Rechteckwelle — Rekonstruktion mit Schiebereglern\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nNur ungerade Sinusharmonische. Gibbsches Phänomen an den Unstetigkeitsstellen.',
+    exFourierTriangleSliders: '## Dreieckwelle — Rekonstruktion mit Schiebereglern\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nNur ungerade Kosinusharmonische. Schnellere Konvergenz ($1/n^2$) als die Rechteckwelle.',
+    exFourierHalfWaveSliders: '## Einweggleichrichtung — Rekonstruktion mit Schiebereglern\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nGleichanteil + Grundschwingung (Sinus) + gerade Kosinusharmonische.',
+    exFourierFullWaveSliders: '## Zweiweggleichrichtung — Rekonstruktion mit Schiebereglern\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nGleichanteil + nur gerade Kosinusharmonische. Keine Grundfrequenz.',
     exSignalTitle: '# Signalverarbeitung\n\nLaplace-Transformation, inverse Laplace, Z-Transformation, Übertragungsfunktionen.\nKontinuierliche und diskrete Zeitanalyse mit Giac.',
     exSignalLaplace: '## Laplace-Transformation', exSignalILaplace: '## Inverse Laplace-Transformation',
     exSignalTransfer: '## Übertragungsfunktion (System 2. Ordnung)', exSignalZtrans: '## Z-Transformation',
@@ -557,7 +605,7 @@ const LOCALES = {
     exportBtn: '💾 تصدير', shareBtn: '📤 مشاركة', importBtn: '📂 استيراد',
     examplesBtn: '📚 أمثلة', loadExampleConfirm: 'سيتم استبدال الدفتر الحالي. هل تريد المتابعة؟',
     exampleArithmetic: 'الحساب', exampleAlgebra: 'الجبر', exampleCalculus: 'التحليل',
-    exampleSumsSeries: 'المجاميع والمتسلسلات', exampleLinearAlgebra: 'الجبر الخطي', examplePlots: 'الرسوم البيانية',
+    exampleSumsSeries: 'المجاميع والمتسلسلات', exampleFourier: 'سلاسل فورييه', exampleLinearAlgebra: 'الجبر الخطي', examplePlots: 'الرسوم البيانية',
     exampleReactive: 'المتغيرات التفاعلية', exampleMechanics: 'الفيزياء — الميكانيكا', exampleWaves: 'الفيزياء — الأمواج',
     exampleSignal: 'معالجة الإشارات', exampleProgramming: 'البرمجة', exampleFullDemo: 'عرض كامل (جميع الميزات)',
     exampleAM: 'تعديل السعة', exampleFM: 'تعديل التردد',
@@ -565,6 +613,7 @@ const LOCALES = {
     cellSlider: 'شريط التمرير', sliderUnavailable: 'أشرطة التمرير التفاعلية غير متاحة (Lit.js غير محمّل)',
     sliderCarrierFreq: 'تردد الحامل (هرتز)', sliderModFreq: 'تردد التعديل (هرتز)', sliderModDepth: 'عمق التعديل',
     sliderModIndex: 'مؤشر التعديل (\u03b2)', sliderWaveFreq: 'تردد الموجة (k)',
+    sliderH1: 'التوافقي 1 (الأساسي)', sliderH2: 'التوافقي 2', sliderH3: 'التوافقي 3', sliderH4: 'التوافقي 4', sliderH5: 'التوافقي 5', sliderH6: 'التوافقي 6',
     exAMTitle: '# تعديل السعة (AM)\n\nاضبط أشرطة التمرير لمشاهدة كيف يؤثر تردد الحامل وتردد التعديل وعمق التعديل على شكل موجة AM.',
     exFMTitle: '# تعديل التردد (FM)\n\nاضبط أشرطة التمرير لملاحظة كيف يؤثر تردد الحامل وتردد التعديل ومؤشر التعديل على شكل موجة FM.',
     sliderFreqX: 'تردد X (a)', sliderFreqY: 'تردد Y (b)',
@@ -593,6 +642,17 @@ const LOCALES = {
     exWavesTitle: '# الفيزياء — الأمواج والتذبذبات\n\nالحركة التوافقية، تراكب الأمواج، تحليل فورييه، التذبذبات القسرية.',
     exWavesHarmonic: '## الحركة التوافقية البسيطة', exWavesSuper: '## تراكب الأمواج', exWavesBeats: '## النبضات (ترددات متقاربة)', exWavesDamped: '## التذبذب المخمد', exWavesODE: '## معادلة تفاضلية: نابض',
     exWavesStanding: '## أمواج مستقرة', exWavesFourier: '## تقريب سلسلة فورييه', exWavesForced: '## تذبذبات قسرية (رنين)',
+    exFourierTitle: '# سلاسل فورييه\n\nتفكيك الدوال الدورية إلى مجاميع جيوب وجيوب تمام.\nمعاملات حقيقية (a_n, b_n)، معاملات مركبة (c_n)، مجاميع جزئية وتقارب.',
+    exFourierSignal: '## موجة سن المنشار: f(x) = x على [-π, π]',
+    exFourierRealCoeffs: '## معاملات فورييه الحقيقية a_n و b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## المجاميع الجزئية والتقارب\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nمقارنة الإشارة الأصلية مع تقريبات فورييه عند N = 3، 10 و 30 حدًا.',
+    exFourierComplexCoeffs: '## معاملات فورييه المركبة c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nالعلاقة مع المعاملات الحقيقية: $c_n = \\frac{a_n - i\\,b_n}{2}$ لـ $n > 0$.',
+    exFourierSquareWave: '## الموجة المربعة: g(x) = sign(x)\n\nمثال كلاسيكي ثانٍ. فقط التوافقيات الفردية تساهم.',
+    exFourierHarmonics: '## إعادة بناء توافقية\n\nبناء الإشارة توافقية بتوافقية: الأساسية، ثم إضافة التوافقية الثانية والثالثة… واحدة تلو الأخرى.',
+    exFourierSquareSliders: '## الموجة المربعة — إعادة بناء بالمنزلقات\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nتوافقيات جيبية فردية فقط. ظاهرة غيبس مرئية عند نقاط الانقطاع.',
+    exFourierTriangleSliders: '## الموجة المثلثية — إعادة بناء بالمنزلقات\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nتوافقيات جيب تمام فردية فقط. تقارب أسرع ($1/n^2$) من الموجة المربعة.',
+    exFourierHalfWaveSliders: '## تقويم نصف موجة — إعادة بناء بالمنزلقات\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nمركبة مستمرة + جيب أساسي + توافقيات جيب تمام زوجية.',
+    exFourierFullWaveSliders: '## تقويم موجة كاملة — إعادة بناء بالمنزلقات\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nمركبة مستمرة + توافقيات جيب تمام زوجية فقط. بدون تردد أساسي.',
     exSignalTitle: '# معالجة الإشارات\n\nتحويل لابلاس، لابلاس العكسي، تحويل Z، دوال النقل.\nتحليل الزمن المتصل والمنفصل مع Giac.',
     exSignalLaplace: '## تحويل لابلاس', exSignalILaplace: '## تحويل لابلاس العكسي',
     exSignalTransfer: '## دالة النقل (نظام من الدرجة الثانية)', exSignalZtrans: '## تحويل Z',
@@ -690,7 +750,7 @@ const LOCALES = {
     exportBtn: '💾 निर्यात', shareBtn: '📤 साझा करें', importBtn: '📂 आयात',
     examplesBtn: '📚 उदाहरण', loadExampleConfirm: 'यह वर्तमान नोटबुक को बदल देगा। जारी रखें?',
     exampleArithmetic: 'अंकगणित', exampleAlgebra: 'बीजगणित', exampleCalculus: 'कलन',
-    exampleSumsSeries: 'योग और श्रेणी', exampleLinearAlgebra: 'रैखिक बीजगणित', examplePlots: 'ग्राफ़ और विज़ुअलाइज़ेशन',
+    exampleSumsSeries: 'योग और श्रेणी', exampleFourier: 'फूरिए श्रेणी', exampleLinearAlgebra: 'रैखिक बीजगणित', examplePlots: 'ग्राफ़ और विज़ुअलाइज़ेशन',
     exampleReactive: 'प्रतिक्रियाशील चर', exampleMechanics: 'भौतिकी — यांत्रिकी', exampleWaves: 'भौतिकी — तरंगें',
     exampleSignal: 'संकेत प्रसंस्करण', exampleProgramming: 'प्रोग्रामिंग', exampleFullDemo: 'पूर्ण डेमो (सभी सुविधाएँ)',
     exampleAM: 'आयाम मॉडुलेशन', exampleFM: 'आवृत्ति मॉडुलेशन',
@@ -698,6 +758,7 @@ const LOCALES = {
     cellSlider: 'स्लाइडर', sliderUnavailable: 'इंटरैक्टिव स्लाइडर उपलब्ध नहीं (Lit.js लोड नहीं हुआ)',
     sliderCarrierFreq: 'वाहक आवृत्ति (Hz)', sliderModFreq: 'मॉडुलेटिंग आवृत्ति (Hz)', sliderModDepth: 'मॉडुलेशन गहराई',
     sliderModIndex: 'मॉडुलेशन सूचकांक (\u03b2)', sliderWaveFreq: 'तरंग आवृत्ति (k)',
+    sliderH1: 'हार्मोनिक 1 (मूल)', sliderH2: 'हार्मोनिक 2', sliderH3: 'हार्मोनिक 3', sliderH4: 'हार्मोनिक 4', sliderH5: 'हार्मोनिक 5', sliderH6: 'हार्मोनिक 6',
     exAMTitle: '# आयाम मॉडुलेशन (AM)\n\nवाहक आवृत्ति, मॉडुलेटिंग आवृत्ति और मॉडुलेशन गहराई AM तरंग को कैसे प्रभावित करती हैं, देखने के लिए स्लाइडर समायोजित करें।',
     exFMTitle: '# आवृत्ति मॉडुलेशन (FM)\n\nवाहक आवृत्ति, मॉडुलेटिंग आवृत्ति और मॉडुलेशन सूचकांक FM तरंग को कैसे प्रभावित करते हैं, देखने के लिए स्लाइडर समायोजित करें।',
     sliderFreqX: 'X आवृत्ति (a)', sliderFreqY: 'Y आवृत्ति (b)',
@@ -726,6 +787,17 @@ const LOCALES = {
     exWavesTitle: '# भौतिकी — तरंगें और दोलन\n\nहार्मोनिक गति, तरंग अध्यारोपण, फूरियर विश्लेषण, प्रणोदित दोलन।',
     exWavesHarmonic: '## सरल हार्मोनिक गति', exWavesSuper: '## तरंग अध्यारोपण', exWavesBeats: '## विस्पंद (निकट आवृत्तियाँ)', exWavesDamped: '## अवमंदित दोलन', exWavesODE: '## अवकल समीकरण: स्प्रिंग',
     exWavesStanding: '## अप्रगामी तरंगें', exWavesFourier: '## फूरियर श्रेणी सन्निकटन', exWavesForced: '## प्रणोदित दोलन (अनुनाद)',
+    exFourierTitle: '# फूरिए श्रेणी\n\nआवर्ती फलनों का साइन और कोसाइन के योग में विघटन।\nवास्तविक गुणांक (a_n, b_n), सम्मिश्र गुणांक (c_n), आंशिक योग और अभिसरण।',
+    exFourierSignal: '## आरादंत तरंग: f(x) = x पर [-π, π]',
+    exFourierRealCoeffs: '## वास्तविक फूरिए गुणांक a_n और b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## आंशिक योग और अभिसरण\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nN = 3, 10 और 30 पदों पर मूल संकेत की फूरिए सन्निकटन से तुलना।',
+    exFourierComplexCoeffs: '## सम्मिश्र फूरिए गुणांक c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nवास्तविक गुणांकों से संबंध: $c_n = \\frac{a_n - i\\,b_n}{2}$ जब $n > 0$।',
+    exFourierSquareWave: '## वर्ग तरंग: g(x) = sign(x)\n\nएक दूसरा शास्त्रीय उदाहरण। केवल विषम हार्मोनिक्स योगदान करते हैं।',
+    exFourierHarmonics: '## हार्मोनिक पुनर्निर्माण\n\nसंकेत का हार्मोनिक दर हार्मोनिक निर्माण: मूल, फिर दूसरा, तीसरा… हार्मोनिक एक-एक करके जोड़ना।',
+    exFourierSquareSliders: '## वर्ग तरंग — स्लाइडर पुनर्निर्माण\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nकेवल विषम साइन हार्मोनिक्स। विच्छेदन बिंदुओं पर गिब्स घटना दिखाई देती है।',
+    exFourierTriangleSliders: '## त्रिकोण तरंग — स्लाइडर पुनर्निर्माण\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nकेवल विषम कोसाइन हार्मोनिक्स। वर्ग तरंग से तेज अभिसरण ($1/n^2$)।',
+    exFourierHalfWaveSliders: '## अर्ध-तरंग दिष्टकरण — स्लाइडर पुनर्निर्माण\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nDC घटक + मूल साइन + सम कोसाइन हार्मोनिक्स।',
+    exFourierFullWaveSliders: '## पूर्ण-तरंग दिष्टकरण — स्लाइडर पुनर्निर्माण\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nDC घटक + केवल सम कोसाइन हार्मोनिक्स। कोई मूल आवृत्ति नहीं।',
     exSignalTitle: '# संकेत प्रसंस्करण\n\nलाप्लास रूपांतरण, व्युत्क्रम लाप्लास, Z-रूपांतरण, अंतरण फलन।\nGiac के साथ सतत और असतत समय विश्लेषण।',
     exSignalLaplace: '## लाप्लास रूपांतरण', exSignalILaplace: '## व्युत्क्रम लाप्लास रूपांतरण',
     exSignalTransfer: '## अंतरण फलन (द्वितीय क्रम प्रणाली)', exSignalZtrans: '## Z-रूपांतरण',
@@ -823,7 +895,7 @@ const LOCALES = {
     exportBtn: '💾 Экспорт', shareBtn: '📤 Поделиться', importBtn: '📂 Импорт',
     examplesBtn: '📚 Примеры', loadExampleConfirm: 'Текущий блокнот будет заменён. Продолжить?',
     exampleArithmetic: 'Арифметика', exampleAlgebra: 'Алгебра', exampleCalculus: 'Анализ',
-    exampleSumsSeries: 'Суммы и ряды', exampleLinearAlgebra: 'Линейная алгебра', examplePlots: 'Графики и визуализация',
+    exampleSumsSeries: 'Суммы и ряды', exampleFourier: 'Ряды Фурье', exampleLinearAlgebra: 'Линейная алгебра', examplePlots: 'Графики и визуализация',
     exampleReactive: 'Реактивные переменные', exampleMechanics: 'Физика — Механика', exampleWaves: 'Физика — Волны',
     exampleSignal: 'Обработка сигналов', exampleProgramming: 'Программирование', exampleFullDemo: 'Полная демо (все функции)',
     exampleAM: 'Амплитудная модуляция', exampleFM: 'Частотная модуляция',
@@ -831,6 +903,7 @@ const LOCALES = {
     cellSlider: 'Ползунок', sliderUnavailable: 'Интерактивные ползунки недоступны (Lit.js не загружен)',
     sliderCarrierFreq: 'Несущая частота (Гц)', sliderModFreq: 'Модулирующая частота (Гц)', sliderModDepth: 'Глубина модуляции',
     sliderModIndex: 'Индекс модуляции (\u03b2)', sliderWaveFreq: 'Частота волны (k)',
+    sliderH1: 'Гармоника 1 (основная)', sliderH2: 'Гармоника 2', sliderH3: 'Гармоника 3', sliderH4: 'Гармоника 4', sliderH5: 'Гармоника 5', sliderH6: 'Гармоника 6',
     exAMTitle: '# Амплитудная модуляция (АМ)\n\nНастройте ползунки, чтобы увидеть, как несущая частота, модулирующая частота и глубина модуляции влияют на форму волны АМ.',
     exFMTitle: '# Частотная модуляция (ЧМ)\n\nНастройте ползунки, чтобы увидеть, как несущая частота, модулирующая частота и индекс модуляции влияют на форму волны ЧМ.',
     sliderFreqX: 'Частота X (a)', sliderFreqY: 'Частота Y (b)',
@@ -859,6 +932,17 @@ const LOCALES = {
     exWavesTitle: '# Физика — Волны и колебания\n\nГармоническое движение, суперпозиция волн, анализ Фурье, вынужденные колебания.',
     exWavesHarmonic: '## Простое гармоническое движение', exWavesSuper: '## Суперпозиция волн', exWavesBeats: '## Биения (близкие частоты)', exWavesDamped: '## Затухающее колебание', exWavesODE: '## Дифференциальное уравнение: пружина',
     exWavesStanding: '## Стоячие волны', exWavesFourier: '## Приближение рядом Фурье', exWavesForced: '## Вынужденные колебания (резонанс)',
+    exFourierTitle: '# Ряды Фурье\n\nРазложение периодических функций в суммы синусов и косинусов.\nВещественные коэффициенты (a_n, b_n), комплексные коэффициенты (c_n), частичные суммы и сходимость.',
+    exFourierSignal: '## Пилообразная волна: f(x) = x на [-π, π]',
+    exFourierRealCoeffs: '## Вещественные коэффициенты Фурье a_n и b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## Частичные суммы и сходимость\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\nСравнение исходного сигнала с его приближениями Фурье при N = 3, 10 и 30 членах.',
+    exFourierComplexCoeffs: '## Комплексные коэффициенты Фурье c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\nСвязь с вещественными коэффициентами: $c_n = \\frac{a_n - i\\,b_n}{2}$ для $n > 0$.',
+    exFourierSquareWave: '## Прямоугольная волна: g(x) = sign(x)\n\nВторой классический пример. Только нечётные гармоники дают вклад.',
+    exFourierHarmonics: '## Гармоническая реконструкция\n\nПостроение сигнала гармоника за гармоникой: основная, затем добавление 2-й, 3-й… гармоник по одной.',
+    exFourierSquareSliders: '## Прямоугольная волна — реконструкция ползунками\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\nТолько нечётные синусные гармоники. Явление Гиббса у точек разрыва.',
+    exFourierTriangleSliders: '## Треугольная волна — реконструкция ползунками\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\nТолько нечётные косинусные гармоники. Более быстрая сходимость ($1/n^2$), чем у прямоугольной.',
+    exFourierHalfWaveSliders: '## Однополупериодное выпрямление — реконструкция ползунками\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nПостоянная составляющая + основной синус + чётные косинусные гармоники.',
+    exFourierFullWaveSliders: '## Двуполупериодное выпрямление — реконструкция ползунками\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\nПостоянная составляющая + только чётные косинусные гармоники. Без основной частоты.',
     exSignalTitle: '# Обработка сигналов\n\nПреобразование Лапласа, обратное Лапласа, Z-преобразование, передаточные функции.\nАнализ непрерывного и дискретного времени с Giac.',
     exSignalLaplace: '## Преобразование Лапласа', exSignalILaplace: '## Обратное преобразование Лапласа',
     exSignalTransfer: '## Передаточная функция (система 2-го порядка)', exSignalZtrans: '## Z-преобразование',
@@ -956,7 +1040,7 @@ const LOCALES = {
     exportBtn: '💾 导出', shareBtn: '📤 分享', importBtn: '📂 导入',
     examplesBtn: '📚 示例', loadExampleConfirm: '这将替换当前笔记本。继续？',
     exampleArithmetic: '算术', exampleAlgebra: '代数', exampleCalculus: '微积分',
-    exampleSumsSeries: '求和与级数', exampleLinearAlgebra: '线性代数', examplePlots: '图表与可视化',
+    exampleSumsSeries: '求和与级数', exampleFourier: '傅里叶级数', exampleLinearAlgebra: '线性代数', examplePlots: '图表与可视化',
     exampleReactive: '响应式变量', exampleMechanics: '物理 — 力学', exampleWaves: '物理 — 波动',
     exampleSignal: '信号处理', exampleProgramming: '编程', exampleFullDemo: '完整演示（所有功能）',
     exampleAM: '幅度调制', exampleFM: '频率调制',
@@ -964,6 +1048,7 @@ const LOCALES = {
     cellSlider: '滑块', sliderUnavailable: '交互式滑块不可用（Lit.js 未加载）',
     sliderCarrierFreq: '载波频率 (Hz)', sliderModFreq: '调制频率 (Hz)', sliderModDepth: '调制深度',
     sliderModIndex: '调制指数 (\u03b2)', sliderWaveFreq: '波频率 (k)',
+    sliderH1: '谐波 1（基波）', sliderH2: '谐波 2', sliderH3: '谐波 3', sliderH4: '谐波 4', sliderH5: '谐波 5', sliderH6: '谐波 6',
     exAMTitle: '# 幅度调制 (AM)\n\n调整滑块以观察载波频率、调制频率和调制深度如何影响 AM 波形。',
     exFMTitle: '# 频率调制 (FM)\n\n调整滑块以观察载波频率、调制频率和调制指数如何影响 FM 波形。',
     sliderFreqX: 'X 频率 (a)', sliderFreqY: 'Y 频率 (b)',
@@ -992,6 +1077,17 @@ const LOCALES = {
     exWavesTitle: '# 物理 — 波动与振荡\n\n谐运动、波叠加、傅里叶分析、受迫振荡。',
     exWavesHarmonic: '## 简谐运动', exWavesSuper: '## 波叠加', exWavesBeats: '## 拍频（相近频率）', exWavesDamped: '## 阻尼振荡', exWavesODE: '## 微分方程：弹簧',
     exWavesStanding: '## 驻波', exWavesFourier: '## 傅里叶级数近似', exWavesForced: '## 受迫振荡（共振）',
+    exFourierTitle: '# 傅里叶级数\n\n将周期函数分解为正弦和余弦之和。\n实系数（a_n、b_n）、复系数（c_n）、部分和与收敛。',
+    exFourierSignal: '## 锯齿波：f(x) = x 在 [-π, π] 上',
+    exFourierRealCoeffs: '## 实傅里叶系数 a_n 和 b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## 部分和与收敛\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\n将原始信号与 N = 3、10 和 30 项的傅里叶近似进行比较。',
+    exFourierComplexCoeffs: '## 复傅里叶系数 c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\n与实系数的关系：$c_n = \\frac{a_n - i\\,b_n}{2}$（$n > 0$）。',
+    exFourierSquareWave: '## 方波：g(x) = sign(x)\n\n第二个经典例子。只有奇次谐波有贡献。',
+    exFourierHarmonics: '## 谐波重建\n\n逐个谐波构建信号：基波，然后依次添加第2、第3……谐波。',
+    exFourierSquareSliders: '## 方波 — 滑块重建\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\n仅奇次正弦谐波。不连续点处可见吉布斯现象。',
+    exFourierTriangleSliders: '## 三角波 — 滑块重建\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\n仅奇次余弦谐波。比方波收敛更快（$1/n^2$）。',
+    exFourierHalfWaveSliders: '## 半波整流正弦 — 滑块重建\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\n直流分量 + 基波正弦 + 偶次余弦谐波。',
+    exFourierFullWaveSliders: '## 全波整流正弦 — 滑块重建\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\n直流分量 + 仅偶次余弦谐波。无基频。',
     exSignalTitle: '# 信号处理\n\n拉普拉斯变换、逆拉普拉斯、Z变换、传递函数。\n使用 Giac 进行连续和离散时间分析。',
     exSignalLaplace: '## 拉普拉斯变换', exSignalILaplace: '## 逆拉普拉斯变换',
     exSignalTransfer: '## 传递函数（二阶系统）', exSignalZtrans: '## Z变换',
@@ -1089,7 +1185,7 @@ const LOCALES = {
     exportBtn: '💾 エクスポート', shareBtn: '📤 共有', importBtn: '📂 インポート',
     examplesBtn: '📚 サンプル', loadExampleConfirm: '現在のノートブックが置き換えられます。続行しますか？',
     exampleArithmetic: '算術', exampleAlgebra: '代数', exampleCalculus: '微積分',
-    exampleSumsSeries: '和と級数', exampleLinearAlgebra: '線形代数', examplePlots: 'グラフと可視化',
+    exampleSumsSeries: '和と級数', exampleFourier: 'フーリエ級数', exampleLinearAlgebra: '線形代数', examplePlots: 'グラフと可視化',
     exampleReactive: 'リアクティブ変数', exampleMechanics: '物理 — 力学', exampleWaves: '物理 — 波動',
     exampleSignal: '信号処理', exampleProgramming: 'プログラミング', exampleFullDemo: '完全デモ（全機能）',
     exampleAM: '振幅変調', exampleFM: '周波数変調',
@@ -1097,6 +1193,7 @@ const LOCALES = {
     cellSlider: 'スライダー', sliderUnavailable: 'インタラクティブスライダーが利用できません（Lit.js 未読み込み）',
     sliderCarrierFreq: '搬送波周波数 (Hz)', sliderModFreq: '変調周波数 (Hz)', sliderModDepth: '変調深度',
     sliderModIndex: '変調指数 (\u03b2)', sliderWaveFreq: '波の周波数 (k)',
+    sliderH1: '高調波 1（基本波）', sliderH2: '高調波 2', sliderH3: '高調波 3', sliderH4: '高調波 4', sliderH5: '高調波 5', sliderH6: '高調波 6',
     exAMTitle: '# 振幅変調 (AM)\n\nスライダーを調整して、搬送波周波数、変調周波数、変調深度がAM波形にどのように影響するかを観察します。',
     exFMTitle: '# 周波数変調 (FM)\n\nスライダーを調整して、搬送波周波数、変調周波数、変調指数がFM波形にどのように影響するかを観察します。',
     sliderFreqX: 'X 周波数 (a)', sliderFreqY: 'Y 周波数 (b)',
@@ -1125,6 +1222,17 @@ const LOCALES = {
     exWavesTitle: '# 物理 — 波動と振動\n\n調和運動、波の重ね合わせ、フーリエ解析、強制振動。',
     exWavesHarmonic: '## 単純調和運動', exWavesSuper: '## 波の重ね合わせ', exWavesBeats: '## うなり（近い周波数）', exWavesDamped: '## 減衰振動', exWavesODE: '## 微分方程式：ばね',
     exWavesStanding: '## 定在波', exWavesFourier: '## フーリエ級数近似', exWavesForced: '## 強制振動（共振）',
+    exFourierTitle: '# フーリエ級数\n\n周期関数を正弦と余弦の和に分解。\n実係数（a_n、b_n）、複素係数（c_n）、部分和と収束。',
+    exFourierSignal: '## のこぎり波：f(x) = x（[-π, π] 上）',
+    exFourierRealCoeffs: '## 実フーリエ係数 a_n と b_n\n\n$$a_0 = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,dx, \\quad a_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\cos(nx)\\,dx, \\quad b_n = \\frac{1}{\\pi}\\int_{-\\pi}^{\\pi} f(x)\\sin(nx)\\,dx$$',
+    exFourierPartialSums: '## 部分和と収束\n\n$$S_N(x) = \\frac{a_0}{2} + \\sum_{k=1}^{N} b_k \\sin(kx)$$\n\n元の信号とN = 3、10、30項のフーリエ近似を比較。',
+    exFourierComplexCoeffs: '## 複素フーリエ係数 c_n\n\n$$c_n = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} f(x)\\,e^{-inx}\\,dx$$\n\n実係数との関係：$c_n = \\frac{a_n - i\\,b_n}{2}$（$n > 0$）。',
+    exFourierSquareWave: '## 矩形波：g(x) = sign(x)\n\n2番目の古典的な例。奇数高調波のみが寄与する。',
+    exFourierHarmonics: '## 高調波再構成\n\n高調波ごとに信号を構築：基本波、次に第2、第3…高調波を一つずつ追加。',
+    exFourierSquareSliders: '## 矩形波 — スライダー再構成\n\n$$\\text{sign}(x) = \\frac{4}{\\pi}\\sum_{k=0}^{\\infty} \\frac{\\sin((2k+1)x)}{2k+1}$$\n\n奇数次正弦高調波のみ。不連続点でギブス現象が見られます。',
+    exFourierTriangleSliders: '## 三角波 — スライダー再構成\n\n$$1 - \\frac{2|x|}{\\pi} = \\frac{8}{\\pi^2}\\sum_{k=0}^{\\infty} \\frac{(-1)^k\\cos((2k+1)x)}{(2k+1)^2}$$\n\n奇数次余弦高調波のみ。矩形波より速い収束（$1/n^2$）。',
+    exFourierHalfWaveSliders: '## 半波整流正弦波 — スライダー再構成\n\n$$\\max(\\sin x, 0) = \\frac{1}{\\pi} + \\frac{\\sin x}{2} - \\frac{2}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\n直流成分 + 基本波正弦 + 偶数次余弦高調波。',
+    exFourierFullWaveSliders: '## 全波整流正弦波 — スライダー再構成\n\n$$|\\sin x| = \\frac{2}{\\pi} - \\frac{4}{\\pi}\\sum_{k=1}^{\\infty} \\frac{\\cos 2kx}{4k^2-1}$$\n\n直流成分 + 偶数次余弦高調波のみ。基本周波数なし。',
     exSignalTitle: '# 信号処理\n\nラプラス変換、逆ラプラス、Z変換、伝達関数。\nGiac による連続・離散時間解析。',
     exSignalLaplace: '## ラプラス変換', exSignalILaplace: '## 逆ラプラス変換',
     exSignalTransfer: '## 伝達関数（2次系）', exSignalZtrans: '## Z変換',
