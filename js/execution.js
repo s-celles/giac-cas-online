@@ -102,7 +102,7 @@ function runSingleCell(cellId, forceManual) {
             preGl3dContainer.className = 'gl3d-container';
             preGl3dCanvas = document.createElement('canvas');
             preGl3dCanvas.id = 'gl3d_pre_' + Date.now();
-            var pcw = Math.min(out.clientWidth || 600, 600);
+            var pcw = Math.min(out.clientWidth || 700, 700);
             preGl3dCanvas.width = pcw;
             preGl3dCanvas.height = Math.round(pcw * 2 / 3);
             preGl3dContainer.appendChild(preGl3dCanvas);

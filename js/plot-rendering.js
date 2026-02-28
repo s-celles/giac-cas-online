@@ -1826,7 +1826,7 @@ function renderGl3dPlot(outputEl, sceneId) {
   var canvas = document.createElement('canvas');
   canvas.id = canvasId;
   // Responsive: use container width but cap at 600px
-  var containerWidth = Math.min(outputEl.clientWidth || 600, 600);
+  var containerWidth = Math.min(outputEl.clientWidth || 700, 700);
   canvas.width = containerWidth;
   canvas.height = Math.round(containerWidth * 2 / 3); // 3:2 aspect ratio
   container.appendChild(canvas);
