@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exAlgebraTitle",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "expand((x+1)^3)"
+    },
+    {
+      "type": "raw",
+      "content": "factor(x^3 - 1)"
+    },
+    {
+      "type": "raw",
+      "content": "simplify((x^2-1)/(x-1))"
+    },
+    {
+      "type": "raw",
+      "content": "solve(x^2 - 5*x + 6 = 0, x)"
+    },
+    {
+      "type": "raw",
+      "content": "solve(x^3 - 6*x^2 + 11*x - 6 = 0, x)"
+    },
+    {
+      "type": "raw",
+      "content": "solve([x + y = 5, x - y = 1], [x, y])"
+    },
+    {
+      "type": "math",
+      "content": "\\frac{x^4-1}{x^2+1}"
+    },
+    {
+      "type": "raw",
+      "content": "partfrac(1/(x^2-1))"
+    },
+    {
+      "type": "raw",
+      "content": "subst(x^2 + 2*x + 1, x=3)"
+    }
+  ]
+}

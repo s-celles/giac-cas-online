@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exArithTitle",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "2 + 3"
+    },
+    {
+      "type": "raw",
+      "content": "7 * 8"
+    },
+    {
+      "type": "raw",
+      "content": "100 / 7"
+    },
+    {
+      "type": "raw",
+      "content": "exact(100/7)"
+    },
+    {
+      "type": "raw",
+      "content": "2^10"
+    },
+    {
+      "type": "raw",
+      "content": "ifactor(360)"
+    },
+    {
+      "type": "raw",
+      "content": "gcd(48, 36)"
+    },
+    {
+      "type": "raw",
+      "content": "lcm(12, 18)"
+    },
+    {
+      "type": "raw",
+      "content": "iquo(17, 5)"
+    },
+    {
+      "type": "raw",
+      "content": "irem(17, 5)"
+    }
+  ]
+}

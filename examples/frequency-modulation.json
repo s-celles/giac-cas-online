@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exFMTitle",
+      "suffix": "\n\n@bind(fc, 1, 20, 0.5, 5, \"sliderCarrierFreq\")\n@bind(fm, 0.1, 5, 0.1, 1, \"sliderModFreq\")\n@bind(beta, 0, 10, 0.1, 2, \"sliderModIndex\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(2*pi*fc*x+beta*sin(2*pi*fm*x)), x=0..2)"
+    }
+  ]
+}

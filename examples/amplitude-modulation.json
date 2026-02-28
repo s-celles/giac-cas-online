@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exAMTitle",
+      "suffix": "\n\n@bind(fc, 1, 20, 0.5, 5, \"sliderCarrierFreq\")\n@bind(fm, 0.1, 5, 0.1, 1, \"sliderModFreq\")\n@bind(m, 0, 1, 0.01, 0.5, \"sliderModDepth\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(2*pi*fc*x)*(1+m*sin(2*pi*fm*x)), x=0..2)"
+    }
+  ]
+}

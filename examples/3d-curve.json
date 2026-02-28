@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "ex3dCurveTitle",
+      "suffix": "\n\n@bind(n, 1, 10, 0.5, 3, \"sliderHelixTurns\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotparam3d([cos(2*pi*n*t),sin(2*pi*n*t),t],[t=0..1])"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exPlotsTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exPlots2D",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(x))"
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc([sin(x),cos(x)],x)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)"
+    },
+    {
+      "type": "text",
+      "i18n": "exPlotsImplicit",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotimplicit(x^2+y^2-1,x,y)"
+    },
+    {
+      "type": "raw",
+      "content": "plotfield(sin(x*y),[x,y])"
+    },
+    {
+      "type": "raw",
+      "content": "plotcontour(x^2+y^2,[x=-3..3,y=-3..3])"
+    },
+    {
+      "type": "text",
+      "i18n": "exPlotsDiffEq",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotode(sin(t*y),[t,y],[0,1])"
+    },
+    {
+      "type": "raw",
+      "content": "plotseq(cos(x),0.5,5)"
+    },
+    {
+      "type": "text",
+      "i18n": "exPlotsStats",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "histogram(seq(rand(100),k,1,200))"
+    },
+    {
+      "type": "raw",
+      "content": "barplot([3,5,2,8,1])"
+    },
+    {
+      "type": "raw",
+      "content": "boxwhisker([1,2,3,4,5,6,7,8,9,10])"
+    },
+    {
+      "type": "raw",
+      "content": "scatterplot([1,2,3,4,5],[2,4,5,4,5])"
+    },
+    {
+      "type": "raw",
+      "content": "gl_ortho=1; camembert([[\"Maths\",35],[\"Physique\",25],[\"Chimie\",20],[\"Info\",20]])"
+    },
+    {
+      "type": "text",
+      "i18n": "exPlotsGeom",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "circle(0,2); segment([0,0],[2,0]); point(1,1)"
+    },
+    {
+      "type": "text",
+      "i18n": "exPlots3D",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(x^2+y^2,[x,y])"
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])"
+    }
+  ]
+}

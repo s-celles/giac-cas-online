@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "ex3dParametricTitle",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotparam3d([cos(u)*cos(v),sin(u)*cos(v),sin(v)],[u=0..6.28,v=-1.57..1.57])"
+    }
+  ]
+}

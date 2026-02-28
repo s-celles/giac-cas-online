@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exMechTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exMechKinematics",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "v0 := 10"
+    },
+    {
+      "type": "raw",
+      "content": "a := 9.81"
+    },
+    {
+      "type": "raw",
+      "content": "t := 2"
+    },
+    {
+      "type": "raw",
+      "content": "v := v0 + a*t"
+    },
+    {
+      "type": "raw",
+      "content": "x := v0*t + (1/2)*a*t^2"
+    },
+    {
+      "type": "text",
+      "i18n": "exMechFreeFall",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "solve(v0*t - (1/2)*g*t^2 = 0, t)"
+    },
+    {
+      "type": "raw",
+      "content": "solve(v0 - g*t = 0, t)"
+    },
+    {
+      "type": "text",
+      "i18n": "exMechEnergy",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "m := 2"
+    },
+    {
+      "type": "raw",
+      "content": "Ec := (1/2)*m*v^2"
+    },
+    {
+      "type": "raw",
+      "content": "h := 5"
+    },
+    {
+      "type": "raw",
+      "content": "Ep := m*9.81*h"
+    },
+    {
+      "type": "raw",
+      "content": "Em := Ec + Ep"
+    },
+    {
+      "type": "text",
+      "i18n": "exMechTrajectory",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(10*x - 4.905*x^2, x=0..2.1)"
+    },
+    {
+      "type": "text",
+      "i18n": "exMechNewton",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "desolve(m*y'' = -m*g, y)"
+    },
+    {
+      "type": "raw",
+      "content": "desolve(m*y'' + k*y = 0, y)"
+    },
+    {
+      "type": "text",
+      "i18n": "exMechFriction",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "desolve(m*y'' = -m*g - f*y', y)"
+    },
+    {
+      "type": "text",
+      "i18n": "exMechCircular",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "R := 5"
+    },
+    {
+      "type": "raw",
+      "content": "omega := 2*pi"
+    },
+    {
+      "type": "raw",
+      "content": "ac := omega^2 * R"
+    },
+    {
+      "type": "raw",
+      "content": "plot([R*cos(omega*t), R*sin(omega*t)], t=0..1)"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exWavesTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesHarmonic",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "omega := 2*pi"
+    },
+    {
+      "type": "raw",
+      "content": "A := 3"
+    },
+    {
+      "type": "raw",
+      "content": "phi := pi/4"
+    },
+    {
+      "type": "raw",
+      "content": "plot(A*sin(omega*t + phi), t=0..2)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesSuper",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot([sin(x), sin(x-pi/3), sin(x-2*pi/3)], x)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesBeats",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(10*t) + sin(11*t), t=0..4*pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesDamped",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(exp(-0.3*t)*cos(5*t), t=0..10)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesODE",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "desolve(y'' + 4*y = 0, y)"
+    },
+    {
+      "type": "raw",
+      "content": "desolve(y'' + 0.5*y' + 4*y = 0, y)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesStanding",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(3*x)*cos(5*t), t=0..2*pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesFourier",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "taylor(periodic(x,-pi,pi), x=0, 10)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([x, sum((-1)^(n+1)*2*sin(n*x)/n, n, 1, 5)], x=-pi..pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exWavesForced",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "desolve(y'' + 0.2*y' + 4*y = cos(t), y)"
+    },
+    {
+      "type": "raw",
+      "content": "desolve(y'' + 0.2*y' + 4*y = cos(2*t), y)"
+    }
+  ]
+}

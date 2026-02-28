@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "ex3dSurfaceTitle",
+      "suffix": "\n\n@bind(a, 0.1, 5, 0.1, 1, \"sliderFreqX\")\n@bind(b, 0.1, 5, 0.1, 1, \"sliderFreqY\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(sin(a*x)*cos(b*y),[x,y])"
+    }
+  ]
+}

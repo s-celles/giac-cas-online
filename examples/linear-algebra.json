@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exLinAlgTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exLinAlgMatrices",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
+    },
+    {
+      "type": "raw",
+      "content": "tran([[1,2],[3,4]])"
+    },
+    {
+      "type": "raw",
+      "content": "[[1,2],[3,4]] * [[5,6],[7,8]]"
+    },
+    {
+      "type": "raw",
+      "content": "inv([[1,2],[3,4]])"
+    },
+    {
+      "type": "text",
+      "i18n": "exLinAlgDet",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\det\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
+    },
+    {
+      "type": "math",
+      "content": "\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}"
+    },
+    {
+      "type": "text",
+      "i18n": "exLinAlgEigen",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "eigenvalues([[1,2],[3,4]])"
+    },
+    {
+      "type": "raw",
+      "content": "eigenvects([[1,2],[3,4]])"
+    },
+    {
+      "type": "raw",
+      "content": "eigenvalues([[a,b],[c,d]])"
+    },
+    {
+      "type": "raw",
+      "content": "rank([[1,2,3],[4,5,6],[7,8,9]])"
+    },
+    {
+      "type": "raw",
+      "content": "ker([[1,2,3],[4,5,6],[7,8,9]])"
+    }
+  ]
+}

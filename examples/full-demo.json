@@ -1,52 +1,205 @@
 {
   "version": 2,
-  "locale": "en",
   "reactiveMode": true,
   "cells": [
-    { "type": "text", "content": "# Welcome to rnGIAC\n\nType math visually (MathJSON) or use raw Xcas syntax.\nTick **Show MathJSON** at the bottom to inspect the conversion pipeline.\n\nText cells support LaTeX: inline $v = \\frac{d}{t}$ and display mode:\n\n$$\\vec{F} = m\\vec{a}$$" },
-    { "type": "raw", "content": "p := 5" },
-    { "type": "raw", "content": "p^2" },
-    { "type": "raw", "content": "q := p + 3" },
-    { "type": "math", "content": "\\frac{x^4-1}{x^2+1}" },
-    { "type": "math", "content": "\\int \\frac{1}{x^2+1}\\, dx" },
-    { "type": "math", "content": "\\frac{d}{dx}\\left(\\sin(x)\\cdot e^x\\right)" },
-    { "type": "math", "content": "\\lim_{x \\to 0} \\frac{\\sin(x)}{x}" },
-    { "type": "math", "content": "\\sum_{k=1}^{n} k" },
-    { "type": "math", "content": "\\prod_{k=1}^{n} k" },
-    { "type": "math", "content": "\\sum_{k=1}^{10} k^2" },
-    { "type": "math", "content": "\\prod_{k=1}^{5} k" },
-    { "type": "math", "content": "\\sum_{k=1}^{100} \\frac{1}{k^2}" },
-    { "type": "math", "content": "\\prod_{k=1}^{8} k" },
-    { "type": "math", "content": "\\sum_{n=1}^{\\infty} \\frac{1}{n^2}" },
-    { "type": "math", "content": "\\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1}" },
-    { "type": "math", "content": "\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}" },
-    { "type": "math", "content": "\\lim_{x \\to 0^-} \\frac{1}{x}" },
-    { "type": "math", "content": "\\lim_{x \\to 0^+} \\frac{1}{x}" },
-    { "type": "math", "content": "\\lim_{x \\to 0^-} \\frac{|x|}{x}" },
-    { "type": "math", "content": "\\lim_{x \\to 0^+} \\frac{|x|}{x}" },
-    { "type": "math", "content": "\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}" },
-    { "type": "math", "content": "\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}" },
-    { "type": "math", "content": "\\det\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}" },
-    { "type": "math", "content": "\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}" },
-    { "type": "raw", "content": "eigenvalues([[1,2],[3,4]])" },
-    { "type": "raw", "content": "tran([[1,2],[3,4]])" },
-    { "type": "raw", "content": "eigenvalues([[a,b],[c,d]])" },
-    { "type": "raw", "content": "solve(x^2 - 3*x + 2 = 0, x)" },
-    { "type": "raw", "content": "plot(sin(x))" },
-    { "type": "raw", "content": "plotfunc([sin(x),cos(x)],x)" },
-    { "type": "raw", "content": "plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)" },
-    { "type": "raw", "content": "plotfunc(x^2+y^2,[x,y])" },
-    { "type": "raw", "content": "plotimplicit(x^2+y^2-1,x,y)" },
-    { "type": "raw", "content": "plotfield(sin(x*y),[x,y])" },
-    { "type": "raw", "content": "plotcontour(x^2+y^2,[x=-3..3,y=-3..3])" },
-    { "type": "raw", "content": "plotode(sin(t*y),[t,y],[0,1])" },
-    { "type": "raw", "content": "plotseq(cos(x),0.5,5)" },
-    { "type": "raw", "content": "histogram(seq(rand(100),k,1,200))" },
-    { "type": "raw", "content": "barplot([3,5,2,8,1])" },
-    { "type": "raw", "content": "gl_ortho=1; camembert([[\"Maths\",35],[\"Physique\",25],[\"Chimie\",20],[\"Info\",20]])" },
-    { "type": "raw", "content": "boxwhisker([1,2,3,4,5,6,7,8,9,10])" },
-    { "type": "raw", "content": "scatterplot([1,2,3,4,5],[2,4,5,4,5])" },
-    { "type": "raw", "content": "circle(0,2); segment([0,0],[2,0]); point(1,1)" },
-    { "type": "raw", "content": "plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])" }
+    {
+      "type": "text",
+      "i18n": "exWelcome",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "p := 5"
+    },
+    {
+      "type": "raw",
+      "content": "p^2"
+    },
+    {
+      "type": "raw",
+      "content": "q := p + 3"
+    },
+    {
+      "type": "math",
+      "content": "\\frac{x^4-1}{x^2+1}"
+    },
+    {
+      "type": "math",
+      "content": "\\int \\frac{1}{x^2+1}\\, dx"
+    },
+    {
+      "type": "math",
+      "content": "\\frac{d}{dx}\\left(\\sin(x)\\cdot e^x\\right)"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0} \\frac{\\sin(x)}{x}"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{k=1}^{n} k"
+    },
+    {
+      "type": "math",
+      "content": "\\prod_{k=1}^{n} k"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{k=1}^{10} k^2"
+    },
+    {
+      "type": "math",
+      "content": "\\prod_{k=1}^{5} k"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{k=1}^{100} \\frac{1}{k^2}"
+    },
+    {
+      "type": "math",
+      "content": "\\prod_{k=1}^{8} k"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{n=1}^{\\infty} \\frac{1}{n^2}"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1}"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0^-} \\frac{1}{x}"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0^+} \\frac{1}{x}"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0^-} \\frac{|x|}{x}"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0^+} \\frac{|x|}{x}"
+    },
+    {
+      "type": "math",
+      "content": "\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
+    },
+    {
+      "type": "math",
+      "content": "\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}"
+    },
+    {
+      "type": "math",
+      "content": "\\det\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
+    },
+    {
+      "type": "math",
+      "content": "\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}"
+    },
+    {
+      "type": "raw",
+      "content": "eigenvalues([[1,2],[3,4]])"
+    },
+    {
+      "type": "raw",
+      "content": "tran([[1,2],[3,4]])"
+    },
+    {
+      "type": "raw",
+      "content": "eigenvalues([[a,b],[c,d]])"
+    },
+    {
+      "type": "raw",
+      "content": "solve(x^2 - 3*x + 2 = 0, x)"
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(x))"
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc([sin(x),cos(x)],x)"
+    },
+    {
+      "type": "raw",
+      "content": "plot([sin(x),sin(x-pi/3),sin(x-2*pi/3)],x)"
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(x^2+y^2,[x,y])"
+    },
+    {
+      "type": "raw",
+      "content": "plotimplicit(x^2+y^2-1,x,y)"
+    },
+    {
+      "type": "raw",
+      "content": "plotfield(sin(x*y),[x,y])"
+    },
+    {
+      "type": "raw",
+      "content": "plotcontour(x^2+y^2,[x=-3..3,y=-3..3])"
+    },
+    {
+      "type": "raw",
+      "content": "plotode(sin(t*y),[t,y],[0,1])"
+    },
+    {
+      "type": "raw",
+      "content": "plotseq(cos(x),0.5,5)"
+    },
+    {
+      "type": "raw",
+      "content": "histogram(seq(rand(100),k,1,200))"
+    },
+    {
+      "type": "raw",
+      "content": "barplot([3,5,2,8,1])"
+    },
+    {
+      "type": "raw",
+      "content": "gl_ortho=1; camembert([[\"Maths\",35],[\"Physique\",25],[\"Chimie\",20],[\"Info\",20]])"
+    },
+    {
+      "type": "raw",
+      "content": "boxwhisker([1,2,3,4,5,6,7,8,9,10])"
+    },
+    {
+      "type": "raw",
+      "content": "scatterplot([1,2,3,4,5],[2,4,5,4,5])"
+    },
+    {
+      "type": "raw",
+      "content": "circle(0,2); segment([0,0],[2,0]); point(1,1)"
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(sin(x)*cos(y),[x=-pi..pi,y=-pi..pi])"
+    },
+    {
+      "type": "text",
+      "i18n": "exFullDemoSliders",
+      "suffix": "\n\n@bind(a, 0.1, 5, 0.1, 1, \"sliderFreqX\")\n@bind(b, 0.1, 5, 0.1, 1, \"sliderFreqY\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(sin(a*x)*cos(b*y),[x,y])"
+    },
+    {
+      "type": "text",
+      "content": "@bind(fc, 1, 20, 0.5, 5, \"sliderCarrierFreq\")\n@bind(fm, 0.1, 5, 0.1, 1, \"sliderModFreq\")\n@bind(m, 0, 1, 0.01, 0.5, \"sliderModDepth\")"
+    },
+    {
+      "type": "raw",
+      "content": "plot(sin(2*pi*fc*x)*(1+m*sin(2*pi*fm*x)), x=0..2)"
+    }
   ]
 }

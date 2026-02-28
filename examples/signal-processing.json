@@ -1,0 +1,141 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exSignalTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exSignalLaplace",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "laplace(1, t, s)"
+    },
+    {
+      "type": "raw",
+      "content": "laplace(t, t, s)"
+    },
+    {
+      "type": "raw",
+      "content": "laplace(t^2, t, s)"
+    },
+    {
+      "type": "raw",
+      "content": "laplace(exp(-2*t), t, s)"
+    },
+    {
+      "type": "raw",
+      "content": "laplace(sin(3*t), t, s)"
+    },
+    {
+      "type": "raw",
+      "content": "laplace(cos(3*t), t, s)"
+    },
+    {
+      "type": "raw",
+      "content": "laplace(exp(-2*t)*sin(3*t), t, s)"
+    },
+    {
+      "type": "text",
+      "i18n": "exSignalILaplace",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(1/s, s, t)"
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(1/(s+2), s, t)"
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(1/s^2, s, t)"
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(3/(s^2+9), s, t)"
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(1/((s+1)*(s+2)), s, t)"
+    },
+    {
+      "type": "text",
+      "i18n": "exSignalTransfer",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "H := 1/(s^2 + s + 1)"
+    },
+    {
+      "type": "raw",
+      "content": "partfrac(H)"
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(H, s, t)"
+    },
+    {
+      "type": "raw",
+      "content": "ilaplace(H/s, s, t)"
+    },
+    {
+      "type": "text",
+      "i18n": "exSignalZtrans",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "ztrans(1, n, z)"
+    },
+    {
+      "type": "raw",
+      "content": "ztrans(n, n, z)"
+    },
+    {
+      "type": "raw",
+      "content": "ztrans((1/2)^n, n, z)"
+    },
+    {
+      "type": "raw",
+      "content": "ztrans(n*(1/2)^n, n, z)"
+    },
+    {
+      "type": "text",
+      "i18n": "exSignalIZtrans",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "invztrans(z/(z-1), z, n)"
+    },
+    {
+      "type": "raw",
+      "content": "invztrans(z/(z-1/2), z, n)"
+    },
+    {
+      "type": "raw",
+      "content": "invztrans(z/(z-1)^2, z, n)"
+    },
+    {
+      "type": "text",
+      "i18n": "exSignalRoundtrip",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "simplify(ilaplace(laplace(exp(-2*t)*cos(3*t), t, s), s, t))"
+    },
+    {
+      "type": "raw",
+      "content": "simplify(invztrans(ztrans((1/2)^n, n, z), z, n))"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exQuadTitle",
+      "suffix": "\n\n@bind(a, -5, 5, 0.1, 1, \"sliderCoeffA\")\n@bind(b, -10, 10, 0.1, -3, \"sliderCoeffB\")\n@bind(c, -10, 10, 0.1, 2, \"sliderCoeffC\")",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exQuadDiscriminant",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "Delta := b^2 - 4*a*c"
+    },
+    {
+      "type": "text",
+      "i18n": "exQuadRoots",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "solve(a*x^2 + b*x + c = 0, x)"
+    },
+    {
+      "type": "text",
+      "i18n": "exQuadVertex",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "-b/(2*a)"
+    },
+    {
+      "type": "raw",
+      "content": "a*(-b/(2*a))^2 + b*(-b/(2*a)) + c"
+    },
+    {
+      "type": "text",
+      "i18n": "exQuadFactored",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "factor(a*x^2 + b*x + c)"
+    },
+    {
+      "type": "text",
+      "i18n": "exQuadGraph",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plot(a*x^2 + b*x + c, x=-10..10)"
+    },
+    {
+      "type": "text",
+      "content": "@bind(a, -5, 5, 0.1, 1, \"sliderCoeffA\")\n@bind(b, -10, 10, 0.1, -3, \"sliderCoeffB\")\n@bind(c, -10, 10, 0.1, 2, \"sliderCoeffC\")"
+    }
+  ]
+}

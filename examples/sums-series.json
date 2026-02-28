@@ -1,0 +1,53 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exSumsTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exSumsFinite",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{k=1}^{n} k"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{k=1}^{n} k^2"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{k=1}^{10} k^2"
+    },
+    {
+      "type": "math",
+      "content": "\\prod_{k=1}^{n} k"
+    },
+    {
+      "type": "math",
+      "content": "\\prod_{k=1}^{8} k"
+    },
+    {
+      "type": "text",
+      "i18n": "exSumsInfinite",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{n=1}^{\\infty} \\frac{1}{n^2}"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1}"
+    },
+    {
+      "type": "math",
+      "content": "\\sum_{n=0}^{\\infty} \\frac{x^n}{n!}"
+    }
+  ]
+}

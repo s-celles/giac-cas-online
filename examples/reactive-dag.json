@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exReactiveTitle",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "p := 5"
+    },
+    {
+      "type": "raw",
+      "content": "p^2"
+    },
+    {
+      "type": "raw",
+      "content": "q := p + 3"
+    },
+    {
+      "type": "raw",
+      "content": "q * 2"
+    },
+    {
+      "type": "raw",
+      "content": "r := p + q"
+    },
+    {
+      "type": "raw",
+      "content": "r^2 - p*q"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "ex3dSlidersTitle",
+      "suffix": "\n\n@bind(k, 0, 5, 0.1, 2, \"sliderWaveFreq\")",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "plotfunc(sin(k*x)*cos(y),[x,y])"
+    }
+  ]
+}

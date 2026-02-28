@@ -1,0 +1,214 @@
+{
+  "version": 4,
+  "reactiveMode": false,
+  "cells": [
+    {
+      "type": "text",
+      "content": "# Programming in Xcas\n\nThis notebook demonstrates Xcas programming features:\nvariables, conditionals, loops, functions, and recursion.\n\n**Tip:** Programming cells use **Raw** mode (Xcas syntax)."
+    },
+    {
+      "type": "text",
+      "content": "## Variables and Assignment\n\nUse `:=` to assign a value to a variable."
+    },
+    {
+      "type": "raw",
+      "content": "a := 3"
+    },
+    {
+      "type": "raw",
+      "content": "b := 7"
+    },
+    {
+      "type": "raw",
+      "content": "a + b"
+    },
+    {
+      "type": "raw",
+      "content": "msg := \"Hello, Xcas!\""
+    },
+    {
+      "type": "raw",
+      "content": "msg"
+    },
+    {
+      "type": "text",
+      "content": "## Conditional: `ifte` and `if..then..else`\n\n`ifte(condition, value_if_true, value_if_false)` is the inline form.\n`if...then...else...end` is the block form."
+    },
+    {
+      "type": "raw",
+      "content": "x := -5"
+    },
+    {
+      "type": "raw",
+      "content": "ifte(x >= 0, x, -x)"
+    },
+    {
+      "type": "raw",
+      "content": "if x > 0\nthen \"positive\"\nelif x == 0\nthen \"zero\"\nelse \"negative\"\nend"
+    },
+    {
+      "type": "text",
+      "content": "## For Loop\n\nCompute $\\displaystyle\\sum_{k=1}^{100} k^2$ with a `for` loop."
+    },
+    {
+      "type": "raw",
+      "content": "s := 0;\nfor (k := 1; k <= 100; k++) {\n  s := s + k^2;\n};\ns"
+    },
+    {
+      "type": "text",
+      "content": "Verify with the closed-form formula $\\frac{n(n+1)(2n+1)}{6}$:"
+    },
+    {
+      "type": "raw",
+      "content": "100*101*201/6"
+    },
+    {
+      "type": "text",
+      "content": "## While Loop\n\nFind the smallest $n$ such that $\\sum_{k=1}^{n}\\frac{1}{k} > 10$ (harmonic series)."
+    },
+    {
+      "type": "raw",
+      "content": "h := 0;\nn := 0;\nwhile (h <= 10) {\n  n := n + 1;\n  h := h + 1.0/n;\n};\nn"
+    },
+    {
+      "type": "text",
+      "content": "## Sequences with `seq`\n\nGenerate lists using the `seq` command."
+    },
+    {
+      "type": "raw",
+      "content": "seq(k^2, k, 1, 10)"
+    },
+    {
+      "type": "raw",
+      "content": "seq(ifte(irem(k,2)==0, k, -k), k, 1, 10)"
+    },
+    {
+      "type": "text",
+      "content": "## User-defined Functions\n\nDefine functions with `:=` or the block syntax `{ local ...; ... return ...; }`."
+    },
+    {
+      "type": "raw",
+      "content": "f(x) := x^3 - 2*x + 1"
+    },
+    {
+      "type": "raw",
+      "content": "f(3)"
+    },
+    {
+      "type": "raw",
+      "content": "diff(f(x), x)"
+    },
+    {
+      "type": "text",
+      "content": "A function with local variables and a loop — compute $n!$ iteratively:"
+    },
+    {
+      "type": "raw",
+      "content": "my_fact(n) := {\n  local r, k;\n  r := 1;\n  for (k := 2; k <= n; k++) {\n    r := r * k;\n  };\n  return r;\n}"
+    },
+    {
+      "type": "raw",
+      "content": "my_fact(10)"
+    },
+    {
+      "type": "raw",
+      "content": "10!"
+    },
+    {
+      "type": "text",
+      "content": "## Recursion\n\nFibonacci sequence — recursive definition:"
+    },
+    {
+      "type": "raw",
+      "content": "fib(n) := ifte(n <= 1, n, fib(n-1) + fib(n-2))"
+    },
+    {
+      "type": "raw",
+      "content": "seq(fib(k), k, 0, 15)"
+    },
+    {
+      "type": "text",
+      "content": "Efficient version with a loop:"
+    },
+    {
+      "type": "raw",
+      "content": "fib_fast(n) := {\n  local a, b, k, tmp;\n  a := 0;\n  b := 1;\n  for (k := 2; k <= n; k++) {\n    tmp := a + b;\n    a := b;\n    b := tmp;\n  };\n  return ifte(n == 0, 0, b);\n}"
+    },
+    {
+      "type": "raw",
+      "content": "fib_fast(50)"
+    },
+    {
+      "type": "text",
+      "content": "## Piecewise Functions\n\nDefine a piecewise function and plot it:"
+    },
+    {
+      "type": "raw",
+      "content": "g(x) := ifte(x < -1, -1, ifte(x <= 1, x^2, 1))"
+    },
+    {
+      "type": "raw",
+      "content": "plot(g(x), x=-3..3)"
+    },
+    {
+      "type": "text",
+      "content": "## Working with Lists\n\nLists are fundamental in Xcas. Create, manipulate, and apply functions."
+    },
+    {
+      "type": "raw",
+      "content": "L := [3, 1, 4, 1, 5, 9, 2, 6]"
+    },
+    {
+      "type": "raw",
+      "content": "sort(L)"
+    },
+    {
+      "type": "raw",
+      "content": "size(L)"
+    },
+    {
+      "type": "raw",
+      "content": "sum(L)"
+    },
+    {
+      "type": "raw",
+      "content": "apply(x -> x^2, L)"
+    },
+    {
+      "type": "raw",
+      "content": "select(x -> x > 3, L)"
+    },
+    {
+      "type": "text",
+      "content": "## Number Theory Example\n\nCollatz conjecture: if $n$ is even divide by 2, if odd compute $3n+1$. Count steps to reach 1."
+    },
+    {
+      "type": "raw",
+      "content": "collatz(n) := {\n  local steps;\n  steps := 0;\n  while (n != 1) {\n    n := ifte(irem(n,2)==0, n/2, 3*n+1);\n    steps := steps + 1;\n  };\n  return steps;\n}"
+    },
+    {
+      "type": "raw",
+      "content": "collatz(27)"
+    },
+    {
+      "type": "raw",
+      "content": "seq(collatz(k), k, 1, 30)"
+    },
+    {
+      "type": "text",
+      "content": "## Newton's Method\n\nFind $\\sqrt{2}$ by iterating $x_{n+1} = \\frac{1}{2}\\left(x_n + \\frac{2}{x_n}\\right)$."
+    },
+    {
+      "type": "raw",
+      "content": "newton_sqrt2(niter) := {\n  local x, k;\n  x := 1.0;\n  for (k := 1; k <= niter; k++) {\n    x := (x + 2.0/x) / 2.0;\n  };\n  return x;\n}"
+    },
+    {
+      "type": "raw",
+      "content": "newton_sqrt2(10)"
+    },
+    {
+      "type": "raw",
+      "content": "evalf(sqrt(2), 50)"
+    }
+  ]
+}

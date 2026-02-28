@@ -1,0 +1,75 @@
+{
+  "version": 2,
+  "reactiveMode": true,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exCalculusTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exCalculusLimits",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0} \\frac{\\sin(x)}{x}"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to +\\infty} \\left(1+\\frac{1}{x}\\right)^x"
+    },
+    {
+      "type": "math",
+      "content": "\\lim_{x \\to 0^+} x \\cdot \\ln(x)"
+    },
+    {
+      "type": "text",
+      "i18n": "exCalculusDerivatives",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\frac{d}{dx}\\left(\\sin(x)\\cdot e^x\\right)"
+    },
+    {
+      "type": "raw",
+      "content": "diff(x^3 * ln(x), x)"
+    },
+    {
+      "type": "raw",
+      "content": "diff(atan(x), x)"
+    },
+    {
+      "type": "text",
+      "i18n": "exCalculusIntegrals",
+      "hidden": true
+    },
+    {
+      "type": "math",
+      "content": "\\int \\frac{1}{x^2+1}\\, dx"
+    },
+    {
+      "type": "raw",
+      "content": "int(x * exp(-x), x)"
+    },
+    {
+      "type": "raw",
+      "content": "int(sin(x)^2, x, 0, pi)"
+    },
+    {
+      "type": "text",
+      "i18n": "exCalculusTaylor",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "taylor(exp(x), x=0, 5)"
+    },
+    {
+      "type": "raw",
+      "content": "taylor(sin(x), x=0, 7)"
+    }
+  ]
+}
