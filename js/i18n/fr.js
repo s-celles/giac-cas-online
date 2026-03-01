@@ -255,4 +255,22 @@ var I18N_FR = {
     helpPanelLangUnavailable: 'L\'aide n\'est pas disponible dans votre langue. Affichage en anglais.',
     helpPanelGeneralHelp: 'Tapez help(commande) ou ?commande pour afficher la documentation de toute commande GIAC.',
     commandMenuHelp: 'Aide',
+
+    // ── P2P Transfer ──
+    p2pReceive: '📲 Recevoir du téléphone',
+    p2pWaiting: 'En attente de connexion du téléphone…',
+    p2pConnected: 'Connecté ! Vérifiez le code ci-dessous.',
+    p2pTransferring: 'Transfert du notebook en cours…',
+    p2pComplete: 'Transfert terminé !',
+    p2pConfirmCode: 'Code de confirmation',
+    p2pLoadError: 'Le transfert P2P n\'est pas disponible. Essayez le partage par URL ou l\'export.',
+    p2pSignalingError: 'Impossible de joindre le serveur de signalisation. Essayez le partage par URL ou l\'export.',
+    p2pTimeout: 'Aucun appareil connecté. Session expirée.',
+    p2pConnectionLost: 'Connexion perdue pendant le transfert.',
+    p2pInvalidData: 'Les données reçues ne sont pas un notebook CAScad valide.',
+    p2pSessionFull: 'Cette session est déjà appairée avec un autre appareil.',
+    p2pNotSupported: 'Votre navigateur ne supporte pas le transfert P2P.',
+    p2pRetry: 'Réessayer',
+    p2pCancel: 'Annuler',
+    p2pSourceLabel: 'Transfert P2P',
 };

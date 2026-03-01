@@ -185,4 +185,22 @@ var I18N_DE = {
     helpPanelLangUnavailable: 'Hilfe ist in Ihrer Sprache nicht verfügbar. Anzeige auf Englisch.',
     helpPanelGeneralHelp: 'Geben Sie help(Befehl) oder ?Befehl ein, um die Dokumentation eines GIAC-Befehls anzuzeigen.',
     commandMenuHelp: 'Hilfe',
+
+    // ── P2P Transfer ──
+    p2pReceive: '📲 Vom Handy empfangen',
+    p2pWaiting: 'Warte auf Verbindung vom Handy…',
+    p2pConnected: 'Verbunden! Überprüfen Sie den Code unten.',
+    p2pTransferring: 'Notebook wird übertragen…',
+    p2pComplete: 'Übertragung abgeschlossen!',
+    p2pConfirmCode: 'Bestätigungscode',
+    p2pLoadError: 'P2P-Übertragung ist nicht verfügbar. Versuchen Sie URL-Freigabe oder Export.',
+    p2pSignalingError: 'Signalisierungsserver nicht erreichbar. Versuchen Sie URL-Freigabe oder Export.',
+    p2pTimeout: 'Kein Gerät verbunden. Sitzung abgelaufen.',
+    p2pConnectionLost: 'Verbindung während der Übertragung verloren.',
+    p2pInvalidData: 'Die empfangenen Daten sind kein gültiges CAScad-Notebook.',
+    p2pSessionFull: 'Diese Sitzung ist bereits mit einem anderen Gerät gekoppelt.',
+    p2pNotSupported: 'Ihr Browser unterstützt keine P2P-Übertragung.',
+    p2pRetry: 'Erneut versuchen',
+    p2pCancel: 'Abbrechen',
+    p2pSourceLabel: 'P2P-Übertragung',
 };

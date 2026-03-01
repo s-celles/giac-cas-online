@@ -273,4 +273,22 @@ var I18N_EN = {
     helpPanelLangUnavailable: 'Help is not available in your language. Showing English.',
     helpPanelGeneralHelp: 'Type help(command) or ?command to view documentation for any GIAC command.',
     commandMenuHelp: 'Help',
+
+    // ── P2P Transfer ──
+    p2pReceive: '📲 Receive from Phone',
+    p2pWaiting: 'Waiting for phone to connect…',
+    p2pConnected: 'Connected! Verify the code below.',
+    p2pTransferring: 'Transferring notebook…',
+    p2pComplete: 'Transfer complete!',
+    p2pConfirmCode: 'Confirmation code',
+    p2pLoadError: 'P2P transfer is not available. Try URL sharing or file export.',
+    p2pSignalingError: 'Cannot reach signaling server. Try URL sharing or file export.',
+    p2pTimeout: 'No device connected. Session expired.',
+    p2pConnectionLost: 'Connection lost during transfer.',
+    p2pInvalidData: 'Received data is not a valid CAScad notebook.',
+    p2pSessionFull: 'This session is already paired with another device.',
+    p2pNotSupported: 'Your browser does not support P2P transfer.',
+    p2pRetry: 'Retry',
+    p2pCancel: 'Cancel',
+    p2pSourceLabel: 'P2P Transfer',
 };

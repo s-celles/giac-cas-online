@@ -384,6 +384,27 @@
   .password-prompt-actions button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
   .password-prompt-actions button.primary:hover{background:var(--accent-hover)}
 
+  /* ═══════ P2P Transfer Dialog ═══════ */
+  .p2p-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+  .p2p-dialog{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);max-width:420px;width:100%;max-height:90vh;overflow-y:auto;padding:1.5rem;position:relative}
+  .p2p-dialog h2{font-family:var(--mono);font-size:1.1rem;margin-bottom:1rem}
+  .p2p-close{position:absolute;top:.5rem;right:.5rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);line-height:1}
+  .p2p-close:hover{color:var(--text)}
+  .p2p-status{font-family:var(--mono);font-size:.8rem;color:var(--text-muted);text-align:center;margin:.8rem 0}
+  .p2p-code{font-family:var(--mono);font-size:2.5rem;font-weight:600;letter-spacing:.5rem;text-align:center;color:var(--accent);padding:.8rem 0}
+  .p2p-code-label{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);text-align:center;margin-bottom:.2rem}
+  .p2p-qr{display:flex;justify-content:center;align-items:center;min-height:150px;margin:1rem 0}
+  .p2p-qr svg{max-width:100%;height:auto}
+  .p2p-progress-bar{width:80%;max-width:350px;height:6px;background:rgba(0,0,0,.08);border-radius:3px;margin:.5rem auto;overflow:hidden}
+  .p2p-progress-fill{height:100%;background:var(--success);border-radius:3px;transition:width .2s ease;width:0}
+  .p2p-actions{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
+  .p2p-actions button{font-family:var(--mono);font-size:.75rem;padding:.4rem 1rem;border:1px solid var(--border);border-radius:5px;background:var(--surface);cursor:pointer}
+  .p2p-actions button:hover{background:var(--accent-light)}
+  .p2p-fallback{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);text-align:center;margin-top:.8rem}
+  .p2p-fallback a{color:var(--accent);cursor:pointer;text-decoration:none}
+  .p2p-fallback a:hover{text-decoration:underline}
+  .p2p-success{color:var(--success);font-size:1.5rem;text-align:center;padding:.5rem 0}
+
   /* ═══════ QR Responsive ═══════ */
   @media(max-width:480px){
     .share-qr-dialog{padding:1rem;max-width:100%}
@@ -392,4 +413,6 @@
     .qr-slider-group{flex-wrap:wrap}
     .qr-slider-group label{min-width:100%;margin-bottom:.2rem}
     .password-prompt-dialog{max-width:100%;padding:1rem}
+    .p2p-dialog{padding:1rem;max-width:100%}
+    .p2p-code{font-size:2rem;letter-spacing:.3rem}
   }

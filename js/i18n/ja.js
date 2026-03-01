@@ -185,4 +185,22 @@ var I18N_JA = {
     helpPanelLangUnavailable: 'ヘルプはお使いの言語では利用できません。英語で表示しています。',
     helpPanelGeneralHelp: 'help(コマンド) または ?コマンド と入力すると、GIACコマンドのドキュメントを表示できます。',
     commandMenuHelp: 'ヘルプ',
+
+    // ── P2P Transfer ──
+    p2pReceive: '📲 スマホから受信',
+    p2pWaiting: 'スマホの接続を待っています…',
+    p2pConnected: '接続しました！下のコードを確認してください。',
+    p2pTransferring: 'ノートブックを転送中…',
+    p2pComplete: '転送完了！',
+    p2pConfirmCode: '確認コード',
+    p2pLoadError: 'P2P転送は利用できません。URL共有またはファイルエクスポートをお試しください。',
+    p2pSignalingError: 'シグナリングサーバーに接続できません。URL共有またはファイルエクスポートをお試しください。',
+    p2pTimeout: 'デバイスが接続されませんでした。セッションが期限切れです。',
+    p2pConnectionLost: '転送中に接続が失われました。',
+    p2pInvalidData: '受信したデータは有効なCAScadノートブックではありません。',
+    p2pSessionFull: 'このセッションは既に別のデバイスとペアリングされています。',
+    p2pNotSupported: 'お使いのブラウザはP2P転送をサポートしていません。',
+    p2pRetry: '再試行',
+    p2pCancel: 'キャンセル',
+    p2pSourceLabel: 'P2P転送',
 };

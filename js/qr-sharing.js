@@ -386,6 +386,16 @@ function startScanLoop(jsQR, video, canvas) {
 var _fountainDecoder = null;
 
 function handleDecodedQR(data) {
+  // P2P pairing QR (detect #p2p= URL)
+  if (data.indexOf('#p2p=') !== -1) {
+    var peerId = data.split('#p2p=')[1];
+    if (peerId) {
+      closeScanQR();
+      joinP2PSession(peerId);
+      return;
+    }
+  }
+
   // Fountain QR frame (auto-detect: GIAC:F: or legacy XCAS:F: prefix)
   if (data.indexOf('GIAC:F:') === 0 || data.indexOf('XCAS:F:') === 0) {
     _handleFountainPacket(data);
@@ -945,6 +955,16 @@ function importViaQR() {
 function loadFromURLHash() {
   var hash = location.hash;
   if (!hash) return false;
+
+  // P2P pairing via URL hash
+  if (hash.indexOf('#p2p=') === 0) {
+    var peerId = hash.substring(5);
+    if (peerId) {
+      joinP2PSession(peerId);
+      history.replaceState(null, '', location.pathname);
+      return true;
+    }
+  }
 
   if (hash.indexOf('#nb=') === 0) {
     var data = hash.substring(4);

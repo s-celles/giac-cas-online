@@ -185,4 +185,22 @@ var I18N_ZH = {
     helpPanelLangUnavailable: '帮助暂无您的语言版本，显示英文内容。',
     helpPanelGeneralHelp: '输入 help(命令) 或 ?命令 以查看任何 GIAC 命令的文档。',
     commandMenuHelp: '帮助',
+
+    // ── P2P Transfer ──
+    p2pReceive: '📲 从手机接收',
+    p2pWaiting: '等待手机连接…',
+    p2pConnected: '已连接！请验证下方代码。',
+    p2pTransferring: '正在传输笔记本…',
+    p2pComplete: '传输完成！',
+    p2pConfirmCode: '确认码',
+    p2pLoadError: 'P2P传输不可用。请尝试URL分享或文件导出。',
+    p2pSignalingError: '无法连接信令服务器。请尝试URL分享或文件导出。',
+    p2pTimeout: '没有设备连接。会话已过期。',
+    p2pConnectionLost: '传输过程中连接丢失。',
+    p2pInvalidData: '接收的数据不是有效的CAScad笔记本。',
+    p2pSessionFull: '此会话已与另一设备配对。',
+    p2pNotSupported: '您的浏览器不支持P2P传输。',
+    p2pRetry: '重试',
+    p2pCancel: '取消',
+    p2pSourceLabel: 'P2P传输',
 };

@@ -97,7 +97,7 @@ var UI = {
   <div class="header-left">
     <h1>📓 <span data-i18n="title">CAScad</span></h1>
     <p data-i18n="subtitle">A pure HTML/JS/CSS reactive notebook for symbolic computation — computer algebra system (CAS) with support of different kernel (GIAC JS version as default kernel)</p>
-    <a href="https://github.com/s-celles/giac-cas-online" target="_blank" rel="noopener" style="font-size:.85rem;opacity:.7;text-decoration:none;color:inherit"><svg height="16" width="16" viewBox="0 0 24 24" style="vertical-align:text-bottom;margin-right:.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Source code</a>
+    <a href="https://github.com/s-celles/CAScad" target="_blank" rel="noopener" style="font-size:.85rem;opacity:.7;text-decoration:none;color:inherit"><svg height="16" width="16" viewBox="0 0 24 24" style="vertical-align:text-bottom;margin-right:.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Source code</a>
   </div>
   <div class="header-right">
     <select class="lang-select" id="lang-select" onchange="setLocale(this.value)">
@@ -135,6 +135,7 @@ var UI = {
   <div class="sep"></div>
   <button onclick="showShareQR()" data-i18n="shareQR">📤 Share QR</button>
   <button onclick="showScanQR()" data-i18n="scanQR">📷 Scan QR</button>
+  <button onclick="showReceiveFromPhone()" data-i18n="p2pReceive" id="p2p-receive-btn" style="display:none">📲 Receive from Phone</button>
   <div class="sep"></div>
   <label class="reactive-toggle"><input type="checkbox" id="reactive-toggle" checked onchange="toggleReactiveMode(this.checked)"><span class="reactive-label" data-i18n="reactiveToggle">Reactive</span></label>
   <div class="sep"></div>
@@ -192,6 +193,7 @@ var UI = {
 <script src="js/examples.js"></script>
 <script src="js/fountain.js"></script>
 <script src="js/qr-sharing.js"></script>
+<script src="js/p2p-transfer.js"></script>
 <script src="js/command-menu-data.js"></script>
 <script src="js/command-menu.js"></script>
 <script src="js/help/help-en.js" defer></script>

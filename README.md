@@ -87,6 +87,38 @@ The notebook comes pre-loaded with demo cells covering:
 | **Statistics** | `histogram(...)`, `barplot(...)`, `camembert(...)`, `boxwhisker(...)`, `scatterplot(...)` |
 | **Geometry** | `circle(0,2); segment([0,0],[2,0]); point(1,1)` |
 
+## P2P Transfer (Phone → PC)
+
+Transfer a notebook from your phone to your PC without needing a webcam on the PC side. Uses WebRTC for direct browser-to-browser communication — notebook data never passes through any server.
+
+### Prerequisites
+
+- Two devices (phone + PC) with internet access
+- Modern browser (Chrome 83+, Firefox 80+, Safari 15+, Edge 83+)
+- Phone must have a camera for QR scanning
+
+### How to Use
+
+1. On the **PC**, click **📲 Receive from Phone** in the toolbar — a QR code appears
+2. On the **phone**, click **📷 Scan QR** and scan the PC's QR code
+3. Both devices show a **4-digit confirmation code** — verify they match
+4. The notebook transfers automatically from phone to PC
+5. Review and confirm to load the notebook
+
+The connection uses PeerJS Cloud for signaling and Google STUN for NAT traversal. All notebook data travels over a DTLS-encrypted WebRTC data channel.
+
+### Transfer Methods Comparison
+
+| Method | PC Webcam | Internet | Size Limit | Speed |
+|--------|-----------|----------|------------|-------|
+| Static QR | No | No | ~2 KB | Instant |
+| Animated QR (Fountain) | No | No | Unlimited | 5-30s |
+| URL Sharing | No | Yes | ~2 KB | Instant |
+| File Export/Import | No | No | Unlimited | Manual |
+| **P2P Transfer** | **No** | **Yes** | **Unlimited** | **<10s** |
+
+**When to use P2P Transfer**: You want to send a large notebook from phone to PC, the PC has no webcam, and both devices have internet access.
+
 ## Keyboard Shortcuts
 
 | Shortcut | Action |
