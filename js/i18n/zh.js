@@ -173,6 +173,7 @@ var I18N_ZH = {
     helpPanelNoDoc: '没有关于 {command} 的文档',
     helpPanelLoading: '正在加载帮助\u2026',
     helpPanelFallbackLang: '（英文）',
+    helpPanelLangUnavailable: '帮助暂无您的语言版本，显示英文内容。',
     helpPanelGeneralHelp: '输入 help(命令) 或 ?命令 以查看任何 GIAC 命令的文档。',
     commandMenuHelp: '帮助',
 };

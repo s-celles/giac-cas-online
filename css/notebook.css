@@ -105,6 +105,7 @@
   .help-panel-fallback{color:var(--muted);font-style:italic;padding:.5rem 0}
   .help-panel-loading{color:var(--muted);text-align:center;padding:1rem}
   .help-panel-lang-note{font-size:.75rem;color:var(--muted);margin-left:.3rem}
+  .help-panel-lang-banner{font-size:.8rem;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:.4rem .6rem;margin-bottom:.5rem;font-style:italic}
 
   @media(max-width:767px){
     .help-panel-floating{width:95%;max-width:none;top:5%;left:2.5%;transform:none;max-height:90vh}

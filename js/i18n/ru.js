@@ -173,6 +173,7 @@ var I18N_RU = {
     helpPanelNoDoc: 'Документация для {command} недоступна',
     helpPanelLoading: 'Загрузка справки\u2026',
     helpPanelFallbackLang: '(английский)',
+    helpPanelLangUnavailable: 'Справка недоступна на вашем языке. Отображается на английском.',
     helpPanelGeneralHelp: 'Введите help(команда) или ?команда для просмотра документации любой команды GIAC.',
     commandMenuHelp: 'Справка',
 };

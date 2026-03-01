@@ -16,9 +16,12 @@ var _helpDetailsLoaded = false;
 var _helpDetailsCallbacks = [];
 var _helpFloatingOpen = false;
 var _helpLoadedLang = 'en';
+var _helpRequestedLang = 'en'; // UI language requested (may differ from loaded)
 var _helpLangMap = {
+  // Languages with native aide_cas translations:
   en: 'help-en', fr: 'help-fr', es: 'help-es',
   el: 'help-el', de: 'help-de', zh: 'help-zh'
+  // ar, hi, ja, ru: not in giac source — falls back to English
 };
 var _helpEnglishCache = {}; // cache English descriptions for fallback
 
@@ -119,6 +122,14 @@ function _helpRenderPanel(result, options) {
 
   var entry = result.entry;
   var name = result.name;
+
+  // Language fallback banner: help loaded in English but UI is in another language
+  if (_helpLoadedLang === 'en' && _helpRequestedLang !== 'en' && !_helpLangMap[_helpRequestedLang]) {
+    var langBanner = document.createElement('div');
+    langBanner.className = 'help-panel-lang-banner';
+    langBanner.textContent = t('helpPanelLangUnavailable');
+    panel.appendChild(langBanner);
+  }
 
   // Header
   var header = document.createElement('div');
@@ -399,6 +410,7 @@ function _helpEscapeHandler(e) {
 // ── Language switching ────────────────────────────────────────
 
 function switchHelpLanguage(lang) {
+  _helpRequestedLang = lang;
   var helpFile = _helpLangMap[lang] || _helpLangMap.en;
   var helpLang = _helpLangMap[lang] ? lang : 'en';
   if (helpLang === _helpLoadedLang) return;

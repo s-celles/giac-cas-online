@@ -173,6 +173,7 @@ var I18N_AR = {
     helpPanelNoDoc: 'لا تتوفر وثائق لـ {command}',
     helpPanelLoading: 'جاري تحميل المساعدة…',
     helpPanelFallbackLang: '(الإنجليزية)',
+    helpPanelLangUnavailable: 'المساعدة غير متوفرة بلغتك. يتم العرض باللغة الإنجليزية.',
     helpPanelGeneralHelp: 'اكتب help(أمر) أو ?أمر لعرض وثائق أي أمر GIAC.',
     commandMenuHelp: 'مساعدة',
 };

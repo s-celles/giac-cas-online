@@ -173,6 +173,7 @@ var I18N_HI = {
     helpPanelNoDoc: '{command} के लिए कोई दस्तावेज़ उपलब्ध नहीं है',
     helpPanelLoading: 'सहायता लोड हो रही है\u2026',
     helpPanelFallbackLang: '(अंग्रेज़ी)',
+    helpPanelLangUnavailable: 'सहायता आपकी भाषा में उपलब्ध नहीं है। अंग्रेज़ी में दिखाया जा रहा है।',
     helpPanelGeneralHelp: 'किसी भी GIAC कमांड का दस्तावेज़ देखने के लिए help(कमांड) या ?कमांड टाइप करें।',
     commandMenuHelp: 'सहायता',
 };

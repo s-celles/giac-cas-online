@@ -173,6 +173,7 @@ var I18N_DE = {
     helpPanelNoDoc: 'Keine Dokumentation verfügbar für {command}',
     helpPanelLoading: 'Hilfe wird geladen\u2026',
     helpPanelFallbackLang: '(Englisch)',
+    helpPanelLangUnavailable: 'Hilfe ist in Ihrer Sprache nicht verfügbar. Anzeige auf Englisch.',
     helpPanelGeneralHelp: 'Geben Sie help(Befehl) oder ?Befehl ein, um die Dokumentation eines GIAC-Befehls anzuzeigen.',
     commandMenuHelp: 'Hilfe',
 };

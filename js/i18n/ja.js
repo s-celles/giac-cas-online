@@ -173,6 +173,7 @@ var I18N_JA = {
     helpPanelNoDoc: '{command} のドキュメントはありません',
     helpPanelLoading: 'ヘルプを読み込み中…',
     helpPanelFallbackLang: '（英語）',
+    helpPanelLangUnavailable: 'ヘルプはお使いの言語では利用できません。英語で表示しています。',
     helpPanelGeneralHelp: 'help(コマンド) または ?コマンド と入力すると、GIACコマンドのドキュメントを表示できます。',
     commandMenuHelp: 'ヘルプ',
 };
