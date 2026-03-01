@@ -74,6 +74,7 @@ var I18N_JA = {
     cellMath: '数学', cellRaw: 'GIAC', cellText: 'テキスト',
     placeholderRaw: 'GIAC 構文（例：factor(x^4-1)）',
     placeholderText: 'メモ、Markdown…',
+    placeholderMath: '\\text{数式（例：}x^2+1\\text{）}',
     computing: '計算中…',
     giacNotReady: '⏳ Giac はまだ読み込み中です…',
     errorPrefix: '✗ エラー：',

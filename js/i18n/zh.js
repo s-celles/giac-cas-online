@@ -74,6 +74,7 @@ var I18N_ZH = {
     cellMath: '数学', cellRaw: 'GIAC', cellText: '文本',
     placeholderRaw: 'GIAC 语法（例如：factor(x^4-1)）',
     placeholderText: '笔记、Markdown…',
+    placeholderMath: '\\text{数学表达式（例如 }x^2+1\\text{）}',
     computing: '计算中…',
     giacNotReady: '⏳ Giac 仍在加载…',
     errorPrefix: '✗ 错误：',

@@ -74,6 +74,7 @@ var I18N_HI = {
     cellMath: 'गणित', cellRaw: 'GIAC', cellText: 'पाठ',
     placeholderRaw: 'GIAC वाक्यविन्यास (उदा: factor(x^4-1))',
     placeholderText: 'नोट्स, Markdown…',
+    placeholderMath: '\\text{गणितीय व्यंजक (उदा: }x^2+1\\text{)}',
     computing: 'गणना हो रही है…',
     giacNotReady: '⏳ Giac अभी लोड हो रहा है…',
     errorPrefix: '✗ त्रुटि:',

@@ -178,7 +178,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     configureMathField(mf);
     mf.addEventListener('input', () => updateDebug(id));
     mf.addEventListener('keydown', (e) => cellKey(e, id, 'math'));
-    setTimeout(() => updateDebug(id), 100);
+    setTimeout(() => { mf.placeholder = t('placeholderMath'); updateDebug(id); }, 100);
   } else {
     const ph = type === 'raw' ? t('placeholderRaw') : t('placeholderText');
     const ta = mkTextarea(ph, initialRaw);
@@ -296,6 +296,6 @@ function setCellMode(cellId, mode) {
     btns[0].classList.add('active'); btns[1].classList.remove('active');
     // Reapply lock state after mode switch
     if (cell.dataset.locked === 'true') mf.readOnly = true;
-    setTimeout(() => updateDebug(cellId), 100);
+    setTimeout(() => { mf.placeholder = t('placeholderMath'); updateDebug(cellId); }, 100);
   }
 }

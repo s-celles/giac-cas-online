@@ -216,6 +216,7 @@
   /* ═══════ Input ═══════ */
   .cell-input{padding:.65rem .8rem;min-height:46px}
   .cell-input math-field{width:100%;font-size:1.2rem;border:none;outline:none;--caret-color:var(--accent);--selection-background-color:rgba(37,99,235,.12)}
+  .cell-input math-field::part(placeholder){color:var(--text-muted,#999);opacity:.6}
   .cell-input textarea{width:100%;min-height:34px;border:none;outline:none;font-family:var(--mono);font-size:.8rem;color:var(--text);background:transparent;resize:vertical;line-height:1.55}
 
   /* ═══════ Debug ═══════ */

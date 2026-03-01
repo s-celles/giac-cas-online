@@ -75,6 +75,7 @@ var I18N_EL = {
     cellMath: 'Μαθηματικά', cellRaw: 'GIAC', cellText: 'Κείμενο',
     placeholderRaw: 'Σύνταξη GIAC (π.χ. factor(x^4-1))',
     placeholderText: 'Σημειώσεις, Markdown…',
+    placeholderMath: '\\text{Μαθηματική έκφραση (π.χ. }x^2+1\\text{)}',
     computing: 'Υπολογισμός…',
     giacNotReady: '⏳ Το Giac φορτώνεται ακόμα…',
     errorPrefix: '✗ Σφάλμα:',

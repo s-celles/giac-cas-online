@@ -74,6 +74,7 @@ var I18N_FR = {
     cellMath: 'Math', cellRaw: 'GIAC', cellText: 'Texte',
     placeholderRaw: 'Syntaxe GIAC (ex : factor(x^4-1))',
     placeholderText: 'Notes, Markdown\u2026',
+    placeholderMath: '\\text{Expression math (ex : }x^2+1\\text{)}',
     computing: 'Calcul en cours\u2026',
     giacNotReady: '\u231b Giac en chargement\u2026',
     errorPrefix: '\u2717 Erreur :',

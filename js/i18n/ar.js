@@ -74,6 +74,7 @@ var I18N_AR = {
     cellMath: 'رياضيات', cellRaw: 'GIAC', cellText: 'نص',
     placeholderRaw: 'صيغة GIAC (مثال: factor(x^4-1))',
     placeholderText: 'ملاحظات، Markdown…',
+    placeholderMath: '\\text{تعبير رياضي (مثال: }x^2+1\\text{)}',
     computing: 'جارٍ الحساب…',
     giacNotReady: '⏳ Giac لا يزال يُحمَّل…',
     errorPrefix: '✗ خطأ:',

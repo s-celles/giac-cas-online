@@ -159,7 +159,10 @@ function setCellType(id, newType) {
   var mf = cell.querySelector('math-field');
   var ta = cell.querySelector('textarea');
   if (oldType === 'math' && mf) {
-    try { content = mathJsonToGiac(mf.expression.json); } catch(e) { content = mf.value; }
+    var mfLatex = mf.value;
+    if (mfLatex && mfLatex.trim()) {
+      try { content = mathJsonToGiac(mf.expression.json); } catch(e) { content = mfLatex; }
+    }
   } else if (ta) {
     content = ta.value;
   }
@@ -206,7 +209,7 @@ function setCellType(id, newType) {
     inp.appendChild(newMf);
     if (cell.dataset.locked === 'true') newMf.readOnly = true;
     cell.dataset.mode = 'math';
-    setTimeout(function() { updateDebug(id); }, 100);
+    setTimeout(function() { newMf.placeholder = t('placeholderMath'); updateDebug(id); }, 100);
   } else {
     var ph = newType === 'raw' ? t('placeholderRaw') : t('placeholderText');
     var newTa = mkTextarea(ph, content);

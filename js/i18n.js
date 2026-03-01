@@ -46,6 +46,8 @@ function applyI18n() {
     const ta = cell.querySelector('textarea');
     if (ta && cell.dataset.type === 'raw')  ta.placeholder = t('placeholderRaw');
     if (ta && cell.dataset.type === 'text') ta.placeholder = t('placeholderText');
+    const mf = cell.querySelector('math-field');
+    if (mf) mf.placeholder = t('placeholderMath');
     // Refresh i18n-bound text cells
     if (ta && cell.dataset.i18nContent) {
       var keys = cell.dataset.i18nContent.split(',');

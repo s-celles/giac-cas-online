@@ -74,6 +74,7 @@ var I18N_RU = {
     cellMath: 'Математика', cellRaw: 'GIAC', cellText: 'Текст',
     placeholderRaw: 'Синтаксис GIAC (напр.: factor(x^4-1))',
     placeholderText: 'Заметки, Markdown…',
+    placeholderMath: '\\text{Математическое выражение (напр. }x^2+1\\text{)}',
     computing: 'Вычисление…',
     giacNotReady: '⏳ Giac ещё загружается…',
     errorPrefix: '✗ Ошибка:',
