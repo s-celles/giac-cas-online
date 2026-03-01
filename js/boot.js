@@ -113,6 +113,50 @@ function setupMathKeyboard() {
         ]
       ]
     },
+    {
+      label: "ℒ𝒵",
+      tooltip: t('kbPhysicsSignal'),
+      rows: [
+        [
+          { latex: "\\operatorname{laplace}(#?)", label: "ℒ", tooltip: t('kbLaplace') },
+          { latex: "\\operatorname{ilaplace}(#?)", label: "ℒ⁻¹", tooltip: t('kbInverseLaplace') },
+          { latex: "\\operatorname{ztrans}(#?)", label: "𝒵", tooltip: t('kbZTransform') },
+          { latex: "\\operatorname{invztrans}(#?)", label: "𝒵⁻¹", tooltip: t('kbInverseZTransform') },
+          { latex: "\\operatorname{fourier}(#?)", label: "ℱ", tooltip: t('kbFourier') },
+          { latex: "\\operatorname{ifourier}(#?)", label: "ℱ⁻¹", tooltip: t('kbInverseFourier') },
+          { class: "separator w5" },
+          { latex: "H(s)=\\frac{#?}{#?}", label: "H(s)", tooltip: t('kbTransferFunctionS') },
+          { latex: "H(z)=\\frac{#?}{#?}", label: "H(z)", tooltip: t('kbTransferFunctionZ') }
+        ],
+        [
+          { latex: "c", label: "c", tooltip: t('kbSpeedOfLight') },
+          { latex: "\\hbar", label: "ℏ", tooltip: t('kbPlanckConstant') },
+          { latex: "k_B", label: "kB", tooltip: t('kbBoltzmannConstant') },
+          { latex: "G", label: "G", tooltip: t('kbGravitationalConstant') },
+          { latex: "e", label: "e", tooltip: t('kbElementaryCharge') },
+          { class: "separator w5" },
+          { latex: "\\operatorname{Heaviside}(#?)", label: "H(t)", tooltip: t('kbHeaviside') },
+          { latex: "\\operatorname{Dirac}(#?)", label: "δ(t)", tooltip: t('kbDirac') }
+        ],
+        [
+          { latex: "\\nabla", label: "∇", tooltip: t('kbNabla') },
+          { latex: "\\operatorname{div}(#?)", label: "div", tooltip: t('kbDivergence') },
+          { latex: "\\operatorname{curl}(#?)", label: "curl", tooltip: t('kbCurl') },
+          { latex: "\\Delta", label: "Δ", tooltip: t('kbLaplacian') },
+          { class: "separator w5" },
+          { latex: "\\operatorname{fourier\\_an}(#?)", label: "aₙ", tooltip: t('kbFourierAn') },
+          { latex: "\\operatorname{fourier\\_bn}(#?)", label: "bₙ", tooltip: t('kbFourierBn') },
+          { latex: "\\operatorname{fourier\\_cn}(#?)", label: "cₙ", tooltip: t('kbFourierCn') }
+        ],
+        [
+          "[undo]", "[redo]",
+          { class: "separator w5" },
+          "[left]", "[right]", "[up]", "[down]",
+          { class: "separator w5" },
+          "[backspace]", "[return]"
+        ]
+      ]
+    },
     "alphabetic",
     "greek"
   ];
