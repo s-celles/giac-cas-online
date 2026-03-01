@@ -198,6 +198,7 @@
   /* ═══════ Reactive DAG ═══════ */
   .cell.dep-upstream{border-color:#7c3aed;box-shadow:0 0 0 2px rgba(124,58,237,.15)}
   .cell.dep-downstream{border-color:#059669;box-shadow:0 0 0 2px rgba(5,150,105,.15)}
+  .cell.cell-unevaluated{opacity:.7}
   .cell.cell-pending{border-color:var(--warning);opacity:.7}
   .cell.cell-pending::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--warning),transparent);animation:pendingPulse 1.5s ease-in-out infinite}
   @keyframes pendingPulse{0%,100%{opacity:.3}50%{opacity:1}}

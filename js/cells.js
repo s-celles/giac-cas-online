@@ -23,6 +23,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
   if (isHidden)   div.classList.add('cell-hidden');
   if (isDisabled) div.classList.add('cell-disabled');
   if (isLocked)   div.classList.add('cell-locked');
+  if (reactiveMode) div.classList.add('cell-unevaluated');
 
   const badge = { math:'cellMath', raw:'cellRaw', text:'cellText', slider:'cellSlider' }[type] || 'cellRaw';
   const idx   = type === 'slider' ? `Slider[${cellCounter}]` : type === 'text' ? `Txt[${cellCounter}]` : `In[${cellCounter}]`;

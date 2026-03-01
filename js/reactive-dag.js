@@ -335,7 +335,7 @@ function scheduleCellRender(cellId, expr, rawResult) {
   var out = document.getElementById(cellId + '-output');
   if (!out) return;
 
-  cell.classList.remove('cell-pending', 'cell-error');
+  cell.classList.remove('cell-pending', 'cell-error', 'cell-unevaluated');
   cell.classList.add('running');
 
   // Clean up previous output
@@ -568,6 +568,7 @@ function runAllReactive() {
       if (c.type === 'text') {
         // renderTextCell handles @bind: registers variables in DAG + Giac
         renderTextCell(c.id);
+        if (el) el.classList.remove('cell-unevaluated');
       } else if (c.type === 'slider') {
         // Legacy slider cells — register params and trigger evaluation
         if (el && el._sliderParams) {
