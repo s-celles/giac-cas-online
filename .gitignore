@@ -13,6 +13,8 @@
 !favicon.ico
 !js/
 !js/*.js
+!js/i18n/
+!js/i18n/*.js
 !css/
 !css/*.css
 !examples/
