@@ -7,6 +7,7 @@ var _dagRenderId = 0;
 var _dagRefreshTimer = null;
 var _dagObserver = null;
 var _dagNodeToCellId = {};
+var _dagPendingHighlight = null;
 
 // ── Helpers ────────────────────────────────────────────────────
 
@@ -181,25 +182,30 @@ function _dagScrollToCell(cellId) {
 
 /** Scroll diagram to show a specific node, opening the panel if needed */
 function _dagScrollToNode(cellId) {
+  console.log('[DAG] _dagScrollToNode called with:', cellId);
   var panel = document.getElementById('dag-diagram-panel');
-  if (!panel) return;
-  // Open diagram if not visible
+  if (!panel) { console.log('[DAG] no panel element'); return; }
+  // Always store pending highlight (will be consumed after render)
+  _dagPendingHighlight = cellId;
   if (!panel.classList.contains('visible')) {
+    console.log('[DAG] panel not visible, opening');
     toggleDagDiagram();
-    // Wait for render to complete before scrolling to node
-    setTimeout(function() { _dagHighlightNode(cellId); }, 500);
   } else {
-    _dagHighlightNode(cellId);
+    console.log('[DAG] panel visible, refreshing');
+    refreshDagDiagram();
   }
 }
 
 /** Find and highlight a node in the SVG diagram */
 function _dagHighlightNode(cellId) {
   var container = document.getElementById('dag-diagram-container');
-  if (!container) return;
+  if (!container) { console.log('[DAG highlight] no container'); return; }
   var nodeId = _mermaidNodeId(cellId);
-  // Find the SVG node by matching data-id or id pattern
+  console.log('[DAG highlight] looking for nodeId:', nodeId);
+  // Find the SVG node by matching data-id, id pattern, or partial id match
   var nodes = container.querySelectorAll('.node');
+  console.log('[DAG highlight] found', nodes.length, 'SVG nodes');
+  var found = null;
   for (var i = 0; i < nodes.length; i++) {
     var n = nodes[i];
     var nId = (n.dataset && n.dataset.id) || '';
@@ -207,44 +213,53 @@ function _dagHighlightNode(cellId) {
       var match = (n.id || '').match(/^flowchart-(.+?)-\d+$/);
       if (match) nId = match[1];
     }
-    if (nId === nodeId) {
-      // Scroll the node into view within the diagram container
-      var rect = n.getBoundingClientRect();
-      var cRect = container.getBoundingClientRect();
-      container.scrollLeft += rect.left - cRect.left - cRect.width / 2 + rect.width / 2;
-      container.scrollTop += rect.top - cRect.top - cRect.height / 2 + rect.height / 2;
-      // Flash the node
-      var origOpacity = n.style.opacity;
-      n.style.transition = 'opacity 0.2s';
-      n.style.opacity = '0.3';
-      setTimeout(function() { n.style.opacity = '1'; }, 200);
-      setTimeout(function() { n.style.opacity = '0.3'; }, 400);
-      setTimeout(function() {
-        n.style.opacity = origOpacity || '';
-        n.style.transition = '';
-      }, 600);
+    console.log('[DAG highlight] node', i, 'id:', n.id, 'data-id:', n.dataset && n.dataset.id, 'resolved:', nId);
+    if (nId === nodeId || (n.id && n.id.indexOf(nodeId) !== -1)) {
+      found = n;
       break;
     }
   }
+  if (!found) { console.log('[DAG highlight] node NOT found for', nodeId); return; }
+  console.log('[DAG highlight] node FOUND:', found.id);
+  // Wait for CSS max-height transition (.3s) to complete, then scroll and flash
+  var panel = document.getElementById('dag-diagram-panel');
+  var delay = (panel && !panel.dataset.scrollReady) ? 400 : 0;
+  setTimeout(function() {
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      panel.dataset.scrollReady = 'true';
+    }
+    // Flash with CSS filter (works on SVG <g> elements)
+    found.style.transition = 'filter 0.2s';
+    found.style.filter = 'drop-shadow(0 0 10px #ff4500) drop-shadow(0 0 20px #ff4500)';
+    setTimeout(function() { found.style.filter = ''; }, 400);
+    setTimeout(function() { found.style.filter = 'drop-shadow(0 0 10px #ff4500) drop-shadow(0 0 20px #ff4500)'; }, 600);
+    setTimeout(function() { found.style.filter = ''; }, 1000);
+    setTimeout(function() { found.style.filter = 'drop-shadow(0 0 10px #ff4500) drop-shadow(0 0 20px #ff4500)'; }, 1200);
+    setTimeout(function() { found.style.filter = ''; found.style.transition = ''; }, 1600);
+  }, delay);
 }
 
 // ── Render & Toggle ───────────────────────────────────────────
 
 async function refreshDagDiagram() {
   var container = document.getElementById('dag-diagram-container');
-  if (!container) return;
+  if (!container) { console.log('[DAG] no container'); return; }
 
   var panel = document.getElementById('dag-diagram-panel');
-  if (!panel || !panel.classList.contains('visible')) return;
+  if (!panel || !panel.classList.contains('visible')) { console.log('[DAG] panel not visible'); return; }
 
   var def = buildMermaidDefinition();
+  console.log('[DAG] definition:', def ? def.substring(0, 120) + '...' : '(empty)');
   if (!def) {
     container.innerHTML = '<div class="dag-empty">' + (typeof t === 'function' ? t('dagDiagramEmpty') : 'No cells in notebook') + '</div>';
+    _dagPendingHighlight = null;
     return;
   }
 
   if (typeof mermaid === 'undefined') {
     container.innerHTML = '<div class="dag-empty">Mermaid not loaded</div>';
+    _dagPendingHighlight = null;
     return;
   }
 
@@ -258,9 +273,17 @@ async function refreshDagDiagram() {
     container.innerHTML = result.svg;
     if (result.bindFunctions) result.bindFunctions(container);
     _dagBindNodeClicks(container);
+    // Apply pending highlight after render is complete
+    if (_dagPendingHighlight) {
+      var pendingId = _dagPendingHighlight;
+      _dagPendingHighlight = null;
+      console.log('[DAG] highlighting pending node:', pendingId);
+      _dagHighlightNode(pendingId);
+    }
   } catch (e) {
     console.warn('Mermaid render error:', e);
     container.innerHTML = '<div class="dag-empty">Diagram render error</div>';
+    _dagPendingHighlight = null;
   }
 }
 
@@ -272,6 +295,7 @@ function toggleDagDiagram() {
   var isVisible = panel.classList.contains('visible');
   if (isVisible) {
     panel.classList.remove('visible');
+    delete panel.dataset.scrollReady;
     if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-pressed', 'false'); }
   } else {
     panel.classList.add('visible');
@@ -322,15 +346,6 @@ function initDagDiagram() {
     subtree: true,
     attributes: true,
     attributeFilter: ['class']
-  });
-
-  // Delegated click on cell index labels → scroll to diagram node
-  notebook.addEventListener('click', function(e) {
-    var idx = e.target.closest('.cell-idx');
-    if (!idx) return;
-    var cell = idx.closest('.cell');
-    if (!cell || !cell.id) return;
-    _dagScrollToNode(cell.id);
   });
 }
 

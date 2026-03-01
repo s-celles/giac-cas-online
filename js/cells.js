@@ -32,7 +32,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     <div class="cell-insert-zone" onclick="insertCellAt('${id}',-1)" title="${t('insertAbove')}"><span>+</span></div>
     <div class="cell-head">
       <span class="drag-handle" title="${t('dragToReorder')}">⠿</span>
-      <span class="cell-idx">${idx}</span>
+      <span class="cell-idx" onclick="if(typeof _dagScrollToNode==='function')_dagScrollToNode('${id}')" title="${t('dagDiagramToggle') || 'Flow diagram'}">${idx}</span>
       <span class="cell-badge ${type}" data-i18n="${badge}" onclick="cycleCellType('${id}')" title="${t('changeType')}">${t(badge)}</span>
       ${type === 'math' ? `<div class="mode-toggle">
         <button class="active" onclick="setCellMode('${id}','math')" title="${t('modeVisual')}">𝑓(𝑥)</button>

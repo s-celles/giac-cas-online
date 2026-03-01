@@ -202,8 +202,10 @@
   .cell:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
   .cell.running{border-color:var(--warning)}
   .cell-head{display:flex;align-items:center;padding:.3rem .7rem;border-bottom:1px solid var(--border);background:#fafaf7;border-radius:var(--radius) var(--radius) 0 0;gap:.45rem;min-height:30px}
-  .cell-idx{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);min-width:44px;cursor:pointer}
+  .cell-idx{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);min-width:44px;cursor:pointer;position:relative}
+  .cell-idx::after{content:'⇗';font-size:.55rem;margin-left:2px;opacity:0;transition:opacity .15s}
   .cell-idx:hover{color:var(--border-focus);text-decoration:underline}
+  .cell-idx:hover::after{opacity:.7}
   .cell-badge{font-family:var(--mono);font-size:.6rem;padding:1px 7px;border-radius:4px;color:#fff;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
   .cell-badge:hover{opacity:.8}
   .cell-badge.math{background:#7c3aed}.cell-badge.text{background:#d97706}.cell-badge.raw{background:#64748b}
