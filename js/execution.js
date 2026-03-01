@@ -95,6 +95,12 @@ function runSingleCell(cellId, forceManual) {
     }
   }
 
+  // Intercept discovery queries (search_commands, list_categories, etc.)
+  if (typeof isDiscoveryQuery === 'function') {
+    const dq = isDiscoveryQuery(expr);
+    if (dq) { renderDiscoveryResult(cellId, runDiscoveryQuery(dq.fn, dq.args)); return; }
+  }
+
   if (!giacReady) { out.innerHTML = '<span class="err">' + t('giacNotReady') + '</span>'; return; }
 
   // Reactive mode: register/update in Observable graph (unless forced manual)

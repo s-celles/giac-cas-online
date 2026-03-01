@@ -111,6 +111,22 @@
     .help-panel-floating{width:95%;max-width:none;top:5%;left:2.5%;transform:none;max-height:90vh}
   }
 
+  /* ═══════ Command Discovery ═══════ */
+  .discovery-result{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:1rem;margin-top:.5rem;max-height:60vh;overflow-y:auto;font-family:var(--body);color:var(--text)}
+  .discovery-header{margin-bottom:.5rem}
+  .discovery-header code{font-family:var(--mono);font-size:.95rem;font-weight:600}
+  .discovery-subtitle{font-size:.85rem;color:var(--muted);margin-bottom:.5rem}
+  .discovery-count{font-size:2rem;font-weight:700;color:var(--accent);padding:.5rem 0}
+  .discovery-list{display:flex;flex-wrap:wrap;gap:.3rem}
+  .discovery-cmd-link{font-family:var(--mono);font-size:.85rem;background:var(--bg);padding:.15rem .4rem;border-radius:var(--radius);cursor:pointer;color:var(--accent);text-decoration:none}
+  .discovery-cmd-link:hover{background:var(--accent);color:#fff}
+  .discovery-cat-link{cursor:pointer;color:var(--accent)}
+  .discovery-cat-link:hover{text-decoration:underline}
+  .discovery-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:.3rem}
+  .discovery-table th{text-align:left;font-weight:600;padding:.3rem .5rem;border-bottom:2px solid var(--border);color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+  .discovery-table td{padding:.25rem .5rem;border-bottom:1px solid var(--border);vertical-align:top}
+  .discovery-table tr:hover td{background:var(--bg)}
+
   /* ═══════ About Dialog ═══════ */
   .about-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:1rem}
   .about-dialog{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,.18);padding:2rem 2.2rem;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;font-family:var(--body);color:var(--text)}

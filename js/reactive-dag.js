@@ -160,6 +160,15 @@ function registerCell(cellId, expr) {
     }
   }
 
+  // Intercept discovery queries (search_commands, list_categories, etc.)
+  if (typeof isDiscoveryQuery === 'function') {
+    var dq = isDiscoveryQuery(expr);
+    if (dq) {
+      renderDiscoveryResult(cellId, runDiscoveryQuery(dq.fn, dq.args));
+      return null;
+    }
+  }
+
   var deps = extractCellDependencies(expr, cellId);
   var definedName = deps.defines.length > 0 ? deps.defines[0] : null;
 
