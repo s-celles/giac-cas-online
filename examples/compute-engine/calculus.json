@@ -1,0 +1,13 @@
+{
+  "type": "cascad-notebook",
+  "version": 5,
+  "kernel": "compute-engine",
+  "cells": [
+    { "type": "text", "i18n": "ceExampleCalculusTitle" },
+    { "type": "text", "i18n": "ceExampleCalculusIntro" },
+    { "type": "raw", "content": "D(sin(x)*cos(x), x)" },
+    { "type": "raw", "content": "D(x^3+2*x^2-x+1, x)" },
+    { "type": "raw", "content": "Integrate(x^2, x)" },
+    { "type": "raw", "content": "N(Sqrt(2))" }
+  ]
+}

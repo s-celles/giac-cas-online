@@ -20,6 +20,9 @@
 !css/
 !css/*.css
 !examples/
-!examples/*.json
+!examples/giac-js/
+!examples/giac-js/*.json
+!examples/compute-engine/
+!examples/compute-engine/*.json
 !scripts/
 !scripts/*.js

@@ -64,6 +64,22 @@ function toggleCommandMenu() {
 
 function openCommandMenu() {
   if (_cmdMenuOpen) return;
+  // Kernel-aware: command menu uses GIAC-specific COMMAND_MENU data
+  // For non-GIAC kernels, use kernel's getCommands() if available
+  if (typeof KernelRegistry !== 'undefined' && KernelRegistry.active && KernelRegistry.active.id !== 'giac-js') {
+    var cmds = KernelRegistry.active.getCommands();
+    if (!cmds || cmds.length === 0) {
+      // No commands available for this kernel
+      return;
+    }
+    // For non-GIAC kernels, show a simplified command list
+    _cmdCaptureFocusedCell();
+    _cmdMenuOpen = true;
+    _cmdCurrentPath = [];
+    _cmdSearchQuery = '';
+    _cmdRenderSimpleMenu(cmds);
+    return;
+  }
   if (typeof COMMAND_MENU === 'undefined') {
     // GIAC data not loaded yet — show a loading message
     _cmdMenuOpen = true;
@@ -421,6 +437,70 @@ function _cmdRenderSearchResults(list) {
     more.textContent = results.length + ' results \u2014 showing first ' + maxResults;
     list.appendChild(more);
   }
+}
+
+// ── Simple menu for non-GIAC kernels ─────────────────────────
+
+function _cmdRenderSimpleMenu(commands) {
+  var existing = document.getElementById('command-menu');
+  if (existing) existing.remove();
+
+  var menu = document.createElement('div');
+  menu.id = 'command-menu';
+  menu.className = 'command-menu';
+
+  var kernelLabel = KernelRegistry.active ? (typeof t === 'function' ? t(KernelRegistry.active.label) : KernelRegistry.active.label) : 'Commands';
+
+  var header = document.createElement('div');
+  header.className = 'cmd-header';
+  header.innerHTML = '<span class="cmd-title">' + (typeof esc === 'function' ? esc(kernelLabel) : kernelLabel) + ' Commands</span>' +
+    '<button class="cmd-close" onclick="closeCommandMenu()">\u2715</button>';
+  menu.appendChild(header);
+
+  var searchWrap = document.createElement('div');
+  searchWrap.className = 'cmd-search-wrap';
+  var searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.className = 'cmd-search';
+  searchInput.placeholder = typeof t === 'function' ? t('commandMenuSearch') : 'Search...';
+  searchWrap.appendChild(searchInput);
+  menu.appendChild(searchWrap);
+
+  var list = document.createElement('div');
+  list.className = 'cmd-list';
+  list.id = 'cmd-simple-list';
+
+  function renderList(filter) {
+    list.innerHTML = '';
+    var filtered = filter ? commands.filter(function(c) { return c.toLowerCase().indexOf(filter.toLowerCase()) >= 0; }) : commands;
+    filtered.forEach(function(cmd) {
+      var item = document.createElement('div');
+      item.className = 'cmd-item cmd-command';
+      item.innerHTML = '<code>' + (typeof esc === 'function' ? esc(cmd) : cmd) + '</code>';
+      item.onclick = function() { insertCommand(cmd); };
+      list.appendChild(item);
+    });
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="cmd-empty">' + (typeof t === 'function' ? t('commandMenuNoResults') : 'No results') + '</div>';
+    }
+  }
+
+  renderList('');
+  menu.appendChild(list);
+
+  var footer = document.createElement('div');
+  footer.className = 'cmd-footer';
+  footer.textContent = commands.length + ' commands';
+  menu.appendChild(footer);
+
+  var btn = document.getElementById('command-menu-btn');
+  if (btn) { btn.parentNode.insertBefore(menu, btn.nextSibling); }
+  else { document.body.appendChild(menu); }
+
+  searchInput.addEventListener('input', function() { renderList(this.value); });
+  searchInput.focus();
+  document.addEventListener('keydown', _cmdEscapeHandler);
+  document.addEventListener('click', _cmdOutsideClickHandler);
 }
 
 // ── Navigation ───────────────────────────────────────────────

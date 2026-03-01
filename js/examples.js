@@ -6,38 +6,49 @@
 // Text cells use i18n keys (resolved at load time via t()).
 // Math/raw cells are language-independent.
 //
-// Individual notebook data is loaded on demand from examples/*.json
+// Individual notebook data is loaded on demand from examples/<kernel>/*.json
 // ─────────────────────────────────────────────────────────────
 
 var EXAMPLES = [
-  { id: 'arithmetic',            i18nName: 'exampleArithmetic' },
-  { id: 'algebra',               i18nName: 'exampleAlgebra' },
-  { id: 'calculus',              i18nName: 'exampleCalculus' },
-  { id: 'sums-series',           i18nName: 'exampleSumsSeries' },
-  { id: 'fourier-series',        i18nName: 'exampleFourier' },
-  { id: 'linear-algebra',        i18nName: 'exampleLinearAlgebra' },
-  { id: 'plots',                 i18nName: 'examplePlots' },
-  { id: 'reactive-dag',          i18nName: 'exampleReactive' },
-  { id: 'quadratic-equation',    i18nName: 'exampleQuadratic' },
-  { id: '3d-surface',             i18nName: 'example3dSurface' },
-  { id: '3d-parametric',          i18nName: 'example3dParametric' },
-  { id: '3d-curve',                i18nName: 'example3dCurve' },
-  { id: '3d-sliders',             i18nName: 'example3dSliders' },
-  { id: '3d-vectorfield',        i18nName: 'example3dVectorfield' },
-  { id: 'amplitude-modulation',  i18nName: 'exampleAM' },
-  { id: 'frequency-modulation',  i18nName: 'exampleFM' },
-  { id: 'physics-mechanics',     i18nName: 'exampleMechanics' },
-  { id: 'physics-waves',         i18nName: 'exampleWaves' },
-  { id: 'signal-processing',     i18nName: 'exampleSignal' },
-  { id: 'programming',           i18nName: 'exampleProgramming' },
-  { id: 'full-demo',             i18nName: 'exampleFullDemo' }
+  // GIAC JS examples
+  { id: 'arithmetic',            i18nName: 'exampleArithmetic',       kernel: 'giac-js' },
+  { id: 'algebra',               i18nName: 'exampleAlgebra',          kernel: 'giac-js' },
+  { id: 'calculus',              i18nName: 'exampleCalculus',         kernel: 'giac-js' },
+  { id: 'sums-series',           i18nName: 'exampleSumsSeries',       kernel: 'giac-js' },
+  { id: 'fourier-series',        i18nName: 'exampleFourier',          kernel: 'giac-js' },
+  { id: 'linear-algebra',        i18nName: 'exampleLinearAlgebra',    kernel: 'giac-js' },
+  { id: 'plots',                 i18nName: 'examplePlots',            kernel: 'giac-js' },
+  { id: 'reactive-dag',          i18nName: 'exampleReactive',         kernel: 'giac-js' },
+  { id: 'quadratic-equation',    i18nName: 'exampleQuadratic',        kernel: 'giac-js' },
+  { id: '3d-surface',            i18nName: 'example3dSurface',        kernel: 'giac-js' },
+  { id: '3d-parametric',         i18nName: 'example3dParametric',     kernel: 'giac-js' },
+  { id: '3d-curve',              i18nName: 'example3dCurve',          kernel: 'giac-js' },
+  { id: '3d-sliders',            i18nName: 'example3dSliders',        kernel: 'giac-js' },
+  { id: '3d-vectorfield',        i18nName: 'example3dVectorfield',    kernel: 'giac-js' },
+  { id: 'amplitude-modulation',  i18nName: 'exampleAM',              kernel: 'giac-js' },
+  { id: 'frequency-modulation',  i18nName: 'exampleFM',              kernel: 'giac-js' },
+  { id: 'physics-mechanics',     i18nName: 'exampleMechanics',        kernel: 'giac-js' },
+  { id: 'physics-waves',         i18nName: 'exampleWaves',            kernel: 'giac-js' },
+  { id: 'signal-processing',     i18nName: 'exampleSignal',           kernel: 'giac-js' },
+  { id: 'programming',           i18nName: 'exampleProgramming',      kernel: 'giac-js' },
+  { id: 'full-demo',             i18nName: 'exampleFullDemo',         kernel: 'giac-js' },
+  // Compute Engine examples
+  { id: 'basic-algebra',         i18nName: 'ceExampleAlgebra',        kernel: 'compute-engine' },
+  { id: 'calculus',              i18nName: 'ceExampleCalculus',       kernel: 'compute-engine' },
+  { id: 'simplification',        i18nName: 'ceExampleSimplification', kernel: 'compute-engine' }
 ];
 
-function loadExample(id) {
+function loadExample(id, kernel) {
   if (cells.length > 0 && !confirm(t('loadExampleConfirm'))) return;
   hideExamplesMenu();
 
-  fetch('examples/' + id + '.json?v=' + Date.now())
+  // Set the kernel before loading (FR-009)
+  if (kernel && typeof KernelRegistry !== 'undefined') {
+    KernelRegistry.setActive(kernel);
+  }
+
+  var dir = kernel || 'giac-js';
+  fetch('examples/' + dir + '/' + id + '.json?v=' + Date.now())
     .then(function(res) {
       if (!res.ok) throw new Error('Failed to load example: ' + res.status);
       return res.json();
@@ -81,12 +92,37 @@ function showExamplesMenu() {
   var menu = document.createElement('div');
   menu.id = 'examples-menu';
   menu.className = 'examples-menu';
+
+  // Group examples by kernel
+  var groups = {};
   EXAMPLES.forEach(function(ex) {
-    var btn = document.createElement('button');
-    btn.textContent = t(ex.i18nName);
-    btn.onclick = function() { loadExample(ex.id); };
-    menu.appendChild(btn);
+    var k = ex.kernel || 'giac-js';
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(ex);
   });
+
+  // Render grouped menu with section headings
+  var kernelOrder = ['giac-js', 'compute-engine'];
+  kernelOrder.forEach(function(kernelId) {
+    var items = groups[kernelId];
+    if (!items || items.length === 0) return;
+
+    // Section heading
+    var heading = document.createElement('div');
+    heading.className = 'examples-menu-heading';
+    heading.textContent = typeof t === 'function' ?
+      (kernelId === 'giac-js' ? t('kernelGiac') : t('kernelComputeEngine')) :
+      kernelId;
+    menu.appendChild(heading);
+
+    items.forEach(function(ex) {
+      var btn = document.createElement('button');
+      btn.textContent = t(ex.i18nName);
+      btn.onclick = function() { loadExample(ex.id, ex.kernel); };
+      menu.appendChild(btn);
+    });
+  });
+
   var anchor = document.getElementById('examples-btn');
   if (anchor) {
     anchor.parentNode.style.position = 'relative';

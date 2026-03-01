@@ -5,8 +5,9 @@
 
 function buildNotebookData() {
   return {
-    version: 4,
-    type: 'giac-notebook',
+    version: 5,
+    type: 'cascad-notebook',
+    kernel: (typeof KernelRegistry !== 'undefined' && KernelRegistry.active) ? KernelRegistry.active.id : currentKernel,
     created: new Date().toISOString(),
     locale: currentLocale,
     reactiveMode: reactiveMode,
@@ -47,7 +48,7 @@ function exportNotebook() {
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'notebook.giac.json';
+  a.download = 'notebook.cascad.json';
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -55,7 +56,7 @@ function exportNotebook() {
 function _shareAsURL() {
   return compressNotebook().then(function(compressed) {
     var url = generateNotebookURL(compressed, false);
-    return navigator.share({ title: 'rnGIAC Notebook', url: url });
+    return navigator.share({ title: 'CAScad Notebook', url: url });
   });
 }
 
@@ -63,9 +64,9 @@ function shareNotebook() {
   if (!navigator.share) return;
   var data = buildNotebookData();
   var json = JSON.stringify(data, null, 2);
-  var file = new File([json], 'notebook.giac.json', { type: 'application/json' });
+  var file = new File([json], 'notebook.cascad.json', { type: 'application/json' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ title: 'rnGIAC Notebook', files: [file] }).catch(function(err) {
+    navigator.share({ title: 'CAScad Notebook', files: [file] }).catch(function(err) {
       if (err.name === 'AbortError') return;
       // File sharing denied — fall back to URL sharing
       _shareAsURL().catch(function() {});
@@ -77,6 +78,14 @@ function shareNotebook() {
 
 function loadNotebookData(data, opts) {
   opts = opts || {};
+  // Restore kernel from notebook data (v5+), default to giac-js
+  var notebookKernel = data.kernel || 'giac-js';
+  if (typeof KernelRegistry !== 'undefined') {
+    var k = KernelRegistry.get(notebookKernel);
+    if (k && k.available) {
+      KernelRegistry.setActive(notebookKernel);
+    }
+  }
   if (data.locale && LOCALES[data.locale]) setLocale(data.locale);
   // Clear reactive graph
   cellVariableMap.forEach(function(info, cid) { unregisterCell(cid); });
@@ -132,14 +141,15 @@ function loadNotebookData(data, opts) {
 
 function importNotebook() {
   const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = '.json,.giac.json,.xcas.json';
+  inp.type = 'file'; inp.accept = '.json,.giac.json,.cascad.json,.xcas.json';
   inp.onchange = (e) => {
     const f = e.target.files[0]; if (!f) return;
     const r = new FileReader();
     r.onload = (ev) => {
       try {
         var parsed = JSON.parse(ev.target.result);
-        if (parsed.type && parsed.type !== 'giac-notebook' && parsed.type !== 'xcas-notebook') {
+        var validTypes = ['giac-notebook', 'xcas-notebook', 'cascad-notebook'];
+        if (parsed.type && validTypes.indexOf(parsed.type) === -1) {
           alert(t('invalidJson'));
           return;
         }

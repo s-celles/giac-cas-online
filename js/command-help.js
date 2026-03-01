@@ -43,8 +43,13 @@ function isHelpQuery(input) {
 // ── Help lookup ──────────────────────────────────────────────
 
 function getHelp(name) {
-  if (typeof GIAC_HELP === 'undefined') return null;
   if (!name) return null;
+  // Kernel-aware: try active kernel's help first (for non-GIAC kernels)
+  if (typeof KernelRegistry !== 'undefined' && KernelRegistry.active && KernelRegistry.active.id !== 'giac-js') {
+    var kernelHelp = KernelRegistry.active.getHelp(name);
+    if (kernelHelp) return kernelHelp;
+  }
+  if (typeof GIAC_HELP === 'undefined') return null;
   // Direct match
   var entry = GIAC_HELP.cmds[name];
   if (entry) return { name: name, entry: entry };

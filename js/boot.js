@@ -149,15 +149,15 @@ function showAboutDialog() {
       '<div class="about-share-buttons">' +
         (navigator.share ? '<button class="share-primary" onclick="aboutNativeShare()" title="' + t('shareNative') + '">📤 ' + t('shareNative') + '</button>' : '') +
         '<button onclick="aboutCopyLink()" id="about-copy-btn" title="' + t('shareCopy') + '">📋 ' + t('shareCopy') + '</button>' +
-        '<a href="mailto:?subject=rnGIAC&body=' + encodeURIComponent(location.href) + '" title="Email">✉️ Email</a>' +
-        '<a href="https://wa.me/?text=' + encodeURIComponent('rnGIAC ' + location.href) + '" target="_blank" rel="noopener" title="WhatsApp">💬 WhatsApp</a>' +
-        '<a href="https://t.me/share/url?url=' + encodeURIComponent(location.href) + '&text=rnGIAC" target="_blank" rel="noopener" title="Telegram">➤ Telegram</a>' +
-        '<a href="https://x.com/intent/tweet?url=' + encodeURIComponent(location.href) + '&text=rnGIAC" target="_blank" rel="noopener" title="X">𝕏 X</a>' +
-        '<a href="https://bsky.app/intent/compose?text=' + encodeURIComponent('rnGIAC ' + location.href) + '" target="_blank" rel="noopener" title="Bluesky">🦋 Bluesky</a>' +
-        '<a href="https://mastodonshare.com/?text=' + encodeURIComponent('rnGIAC ' + location.href) + '" target="_blank" rel="noopener" title="Mastodon">🐘 Mastodon</a>' +
+        '<a href="mailto:?subject=CAScad&body=' + encodeURIComponent(location.href) + '" title="Email">✉️ Email</a>' +
+        '<a href="https://wa.me/?text=' + encodeURIComponent('CAScad ' + location.href) + '" target="_blank" rel="noopener" title="WhatsApp">💬 WhatsApp</a>' +
+        '<a href="https://t.me/share/url?url=' + encodeURIComponent(location.href) + '&text=CAScad" target="_blank" rel="noopener" title="Telegram">➤ Telegram</a>' +
+        '<a href="https://x.com/intent/tweet?url=' + encodeURIComponent(location.href) + '&text=CAScad" target="_blank" rel="noopener" title="X">𝕏 X</a>' +
+        '<a href="https://bsky.app/intent/compose?text=' + encodeURIComponent('CAScad ' + location.href) + '" target="_blank" rel="noopener" title="Bluesky">🦋 Bluesky</a>' +
+        '<a href="https://mastodonshare.com/?text=' + encodeURIComponent('CAScad ' + location.href) + '" target="_blank" rel="noopener" title="Mastodon">🐘 Mastodon</a>' +
         '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(location.href) + '" target="_blank" rel="noopener" title="LinkedIn">💼 LinkedIn</a>' +
         '<a href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href) + '" target="_blank" rel="noopener" title="Facebook">👤 Facebook</a>' +
-        '<a href="https://www.reddit.com/submit?url=' + encodeURIComponent(location.href) + '&title=rnGIAC" target="_blank" rel="noopener" title="Reddit">🔗 Reddit</a>' +
+        '<a href="https://www.reddit.com/submit?url=' + encodeURIComponent(location.href) + '&title=CAScad" target="_blank" rel="noopener" title="Reddit">🔗 Reddit</a>' +
       '</div>' +
       '<h3>' + t('aboutLibraries') + '</h3>' +
       '<table><thead><tr><th>' + t('aboutColLib') + '</th><th>' + t('aboutColAuthor') + '</th><th>' + t('aboutColLicense') + '</th></tr></thead>' +
@@ -189,7 +189,7 @@ function aboutCopyLink() {
   });
 }
 function aboutNativeShare() {
-  navigator.share({ title: 'rnGIAC', url: location.href }).catch(function() {});
+  navigator.share({ title: 'CAScad', url: location.href }).catch(function() {});
 }
 function hideAboutDialog() {
   var el = document.getElementById('about-overlay');
@@ -202,6 +202,43 @@ function _aboutEscHandler(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
   setLocale(detectLocale());
+
+  // Initialize kernel registry — restore default kernel from localStorage
+  defaultKernel = localStorage.getItem('cascad-default-kernel') || 'giac-js';
+  currentKernel = defaultKernel;
+  // Set active kernel (if available, otherwise stays on first registered)
+  var defKernel = KernelRegistry.get(defaultKernel);
+  if (defKernel && defKernel.available) {
+    KernelRegistry.setActive(defaultKernel);
+  }
+
+  // Detect Compute Engine availability and update kernel selector
+  (function() {
+    var ceKernel = KernelRegistry.get('compute-engine');
+    var sel = document.getElementById('kernel-select');
+    if (ceKernel) {
+      try {
+        if (typeof ComputeEngine !== 'undefined' && typeof ce !== 'undefined') {
+          ceKernel.available = true;
+        }
+      } catch(e) {}
+      // Update selector option state
+      if (sel) {
+        var opt = sel.querySelector('option[value="compute-engine"]');
+        if (opt) {
+          if (!ceKernel.available) {
+            opt.disabled = true;
+            opt.textContent = (typeof t === 'function' ? t('kernelComputeEngine') : 'Compute Engine') + ' (' + (typeof t === 'function' ? t('kernelUnavailable') : 'unavailable') + ')';
+          }
+        }
+      }
+      // If user preferred CE and it's now available, activate it
+      if (defaultKernel === 'compute-engine' && ceKernel.available) {
+        KernelRegistry.setActive('compute-engine');
+      }
+    }
+  })();
+
   initGiac();
 
   // Show Share button only when Web Share API is available

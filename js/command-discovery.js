@@ -53,6 +53,12 @@ function _levenshtein(a, b) {
 // ── Discovery handlers ───────────────────────────────────────
 
 function _discoveryGetCommands() {
+  // Kernel-aware: use active kernel's command list if available
+  if (typeof KernelRegistry !== 'undefined' && KernelRegistry.active) {
+    var cmds = KernelRegistry.active.getCommands();
+    if (cmds && cmds.length > 0) return cmds;
+  }
+  // Fallback to GIAC-specific sources
   if (typeof COMMAND_MENU !== 'undefined' && COMMAND_MENU.allCommands) {
     return COMMAND_MENU.allCommands.filter(function(c) { return c.length > 0; });
   }
@@ -192,7 +198,14 @@ function _discoveryCommandsInCategory(cat) {
 function _discoveryCommandInfo(cmd) {
   if (!cmd) return '<div class="discovery-result"><div class="discovery-header"><code>command_info("")</code></div><div class="discovery-subtitle">Provide a command name.</div></div>';
 
-  var help = typeof getHelp === 'function' ? getHelp(cmd) : null;
+  // Kernel-aware help lookup
+  var help = null;
+  if (typeof KernelRegistry !== 'undefined' && KernelRegistry.active) {
+    help = KernelRegistry.active.getHelp(cmd);
+  }
+  if (!help && typeof getHelp === 'function') {
+    help = getHelp(cmd);
+  }
   var category = '';
   if (typeof COMMAND_MENU !== 'undefined' && COMMAND_MENU.commandToCategory) {
     var catKey = COMMAND_MENU.commandToCategory[help ? help.name : cmd];

@@ -1,0 +1,13 @@
+{
+  "type": "cascad-notebook",
+  "version": 5,
+  "kernel": "compute-engine",
+  "cells": [
+    { "type": "text", "i18n": "ceExampleAlgebraTitle" },
+    { "type": "text", "i18n": "ceExampleAlgebraIntro" },
+    { "type": "raw", "content": "Expand((x+1)^3)" },
+    { "type": "raw", "content": "Factor(x^4-1)" },
+    { "type": "raw", "content": "Simplify((x^2-1)/(x-1))" },
+    { "type": "raw", "content": "Solve(x^2-5*x+6=0, x)" }
+  ]
+}

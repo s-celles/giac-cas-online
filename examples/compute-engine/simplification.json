@@ -1,0 +1,13 @@
+{
+  "type": "cascad-notebook",
+  "version": 5,
+  "kernel": "compute-engine",
+  "cells": [
+    { "type": "text", "i18n": "ceExampleSimplificationTitle" },
+    { "type": "text", "i18n": "ceExampleSimplificationIntro" },
+    { "type": "raw", "content": "Simplify(sin(x)^2+cos(x)^2)" },
+    { "type": "raw", "content": "Simplify((x^3-8)/(x-2))" },
+    { "type": "raw", "content": "Simplify(Exp(Log(x)))" },
+    { "type": "raw", "content": "Simplify(Sqrt(x^2))" }
+  ]
+}

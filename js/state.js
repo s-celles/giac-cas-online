@@ -10,3 +10,5 @@ let observableModule = null;
 let cellVariableMap = new Map();   // cellId → { variable, defines, references }
 let variableOwnerMap = new Map();  // variableName → cellId
 let viewMode = 'code';             // 'code' | 'report'
+let currentKernel = 'giac-js';     // active kernel ID
+let defaultKernel = 'giac-js';     // user's default kernel preference (persisted in localStorage)

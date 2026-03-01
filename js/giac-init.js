@@ -278,6 +278,14 @@ function initGiac() {
       try {
         caseval = Module.cwrap('caseval', 'string', ['string']);
         giacReady = true;
+        // Update GIAC kernel adapter availability
+        if (typeof GiacKernel !== 'undefined') {
+          GiacKernel.available = true;
+        }
+        // Update status via kernel registry
+        if (typeof KernelRegistry !== 'undefined') {
+          KernelRegistry._updateStatusIndicator();
+        }
         txt.textContent = t('giacReady');
         el.classList.add('ready');
         // FR-001: Register GIAC commands as MathLive shortcuts.

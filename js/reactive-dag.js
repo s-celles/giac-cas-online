@@ -229,25 +229,39 @@ function registerCell(cellId, expr) {
   // Calling caseval before canvas setup corrupts WebGL state for 3D plots.
   var plotExprRe = /(?:^|;\s*)(plot|plotfunc|plotparam|plotpolar|plotimplicit|plotfield|plotcontour|plotode|plotseq|plotparam3d|plot3d|camembert|barplot|histogram|boxwhisker|scatterplot|circle|segment|point|triangle)\s*\(/;
 
+  // Kernel-aware evaluation helper
+  var _kernelEval = function(expression) {
+    var kernel = KernelRegistry.active;
+    if (kernel && kernel.id !== 'giac-js' && kernel.available) {
+      var ct = (cell.dataset.type === 'raw' || (cell.dataset.mode || cell.dataset.type) === 'raw') ? 'raw' : 'math';
+      return kernel.evaluate(expression, ct);
+    }
+    // Default: GIAC
+    return caseval(expression);
+  };
+
   if (definedName) {
     variable.define(definedName, activeInputs, function() {
       giacCaptureStart();
-      var result = caseval(evalExpr);
+      var result = _kernelEval(evalExpr);
       scheduleCellRender(evalCellId, evalExpr, result);
       // Return the assigned value for downstream cells
+      var kernel = KernelRegistry.active;
+      if (kernel && kernel.id !== 'giac-js') return result;
       try { return caseval(evalDefinedName); } catch(e) { return result; }
     });
   } else {
     // Anonymous cell — observes references but doesn't define a name
     variable.define(null, activeInputs, function() {
-      // For plot commands, defer evaluation to scheduleCellRender/tryDirectJSXGraph
+      // For plot commands (GIAC only), defer evaluation to scheduleCellRender/tryDirectJSXGraph
       // to avoid double caseval and WebGL canvas conflicts
-      if (plotExprRe.test(evalExpr)) {
+      var kernel = KernelRegistry.active;
+      if ((!kernel || kernel.id === 'giac-js') && plotExprRe.test(evalExpr)) {
         scheduleCellRender(evalCellId, evalExpr, null);
         return null;
       }
       giacCaptureStart();
-      var result = caseval(evalExpr);
+      var result = _kernelEval(evalExpr);
       scheduleCellRender(evalCellId, evalExpr, result);
       return result;
     });
@@ -362,10 +376,25 @@ function scheduleCellRender(cellId, expr, rawResult) {
   cleanupJSXGraphInElement(out);
   out.innerHTML = '';
 
+  var _activeKernel = KernelRegistry.active;
+
   try {
-    // Try direct JSXGraph rendering (handles its own caseval for 3D plots)
-    if (jsxGraphAvailable() && tryDirectJSXGraph(expr, out)) {
-      // Done
+    // Non-GIAC kernel: simplified rendering (result is already a LaTeX string)
+    if (_activeKernel && _activeKernel.id !== 'giac-js') {
+      var ceResult = rawResult || '';
+      if (ceResult && typeof katex !== 'undefined') {
+        var d = document.createElement('div');
+        try {
+          katex.render(ceResult, d, { displayMode: true, throwOnError: false, trust: true });
+          out.appendChild(d);
+        } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(ceResult) + '</div>'; }
+      } else {
+        out.innerHTML = '<div class="raw-res">' + esc(ceResult) + '</div>';
+      }
+    }
+    // GIAC kernel: full plot-aware pipeline
+    else if (jsxGraphAvailable() && tryDirectJSXGraph(expr, out)) {
+      // Done — direct JSXGraph rendering
     } else {
       // Lazy-evaluate if no pre-computed result (plot commands skip caseval upstream)
       var raw = rawResult != null ? rawResult : caseval(expr);
@@ -401,10 +430,10 @@ function scheduleCellRender(cellId, expr, rawResult) {
         // GIAC wraps multi-line results (function defs, blocks) in \parbox — KaTeX can't render those
         if (latex && /\\parbox|\\symbol/.test(latex)) { latex = ''; }
         if (latex && typeof katex !== 'undefined') {
-          var d = document.createElement('div');
+          var d2 = document.createElement('div');
           try {
-            katex.render(latex, d, { displayMode: true, throwOnError: false, trust: true });
-            out.appendChild(d);
+            katex.render(latex, d2, { displayMode: true, throwOnError: false, trust: true });
+            out.appendChild(d2);
           } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>'; }
         } else {
           out.innerHTML = '<div class="raw-res">' + esc(raw) + '</div>';
@@ -415,9 +444,9 @@ function scheduleCellRender(cellId, expr, rawResult) {
           out.appendChild(r);
         }
       }
+      // Show giac warnings/info messages from the main evaluation only
+      renderGiacMessages(out, giacMsgs);
     }
-    // Show giac warnings/info messages from the main evaluation only
-    renderGiacMessages(out, giacMsgs);
   } catch(err) {
     out.innerHTML = '<span class="err">' + t('errorPrefix') + ' ' + esc(String(err)) + '</span>';
     cell.classList.add('cell-error');

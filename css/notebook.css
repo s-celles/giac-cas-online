@@ -27,6 +27,10 @@
   .lang-select{font-family:var(--mono);font-size:.7rem;padding:3px 8px;border-radius:5px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#eae8e0;cursor:pointer;outline:none}
   .lang-select:hover{border-color:rgba(255,255,255,.3)}
   .lang-select option{background:#1c1917;color:#eae8e0}
+  .kernel-select{font-family:var(--mono);font-size:.7rem;padding:3px 8px;border-radius:5px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#eae8e0;cursor:pointer;outline:none}
+  .kernel-select:hover{border-color:rgba(255,255,255,.3)}
+  .kernel-select option{background:#1c1917;color:#eae8e0}
+  .kernel-select option:disabled{color:#78716c}
 
   /* ═══════ Toolbar ═══════ */
   .toolbar-wrap{border-bottom:1px solid var(--border);background:var(--surface);padding:0 2rem}
@@ -40,6 +44,8 @@
   .examples-menu{position:absolute;top:100%;left:0;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.12);padding:.3rem;min-width:180px}
   .examples-menu button{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
   .examples-menu button:hover{background:var(--accent);color:#fff}
+  .examples-menu-heading{font-family:var(--mono);font-size:.65rem;font-weight:600;padding:6px 10px 2px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-top:1px solid var(--border);margin-top:2px}
+  .examples-menu-heading:first-child{border-top:none;margin-top:0}
 
   /* ═══════ Command Menu ═══════ */
   .command-menu{position:absolute;top:100%;left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.12);min-width:280px;max-width:400px;max-height:60vh;display:flex;flex-direction:column}

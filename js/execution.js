@@ -120,7 +120,38 @@ function runSingleCell(cellId, forceManual) {
     if (dq) { renderDiscoveryResult(cellId, runDiscoveryQuery(dq.fn, dq.args)); return; }
   }
 
-  if (!giacReady) { out.innerHTML = '<span class="err">' + t('giacNotReady') + '</span>'; return; }
+  // Check kernel readiness
+  var activeKernel = KernelRegistry.active;
+  if (!activeKernel || !activeKernel.available) {
+    if (!giacReady) { out.innerHTML = '<span class="err">' + t('giacNotReady') + '</span>'; return; }
+  }
+
+  // Non-GIAC kernel: use simplified evaluation path (no plot pipeline)
+  if (activeKernel && activeKernel.id !== 'giac-js' && activeKernel.available) {
+    cell.classList.add('running');
+    out.innerHTML = '<span class="spinner"></span> ' + t('computing');
+    setTimeout(function() {
+      try {
+        var cellType = (cell.dataset.type === 'raw' || (cell.dataset.mode || cell.dataset.type) === 'raw') ? 'raw' : 'math';
+        var result = activeKernel.evaluate(expr, cellType);
+        out.innerHTML = '';
+        if (result && typeof katex !== 'undefined') {
+          var d = document.createElement('div');
+          try {
+            katex.render(result, d, { displayMode: true, throwOnError: false, trust: true });
+            out.appendChild(d);
+          } catch(e) { out.innerHTML = '<div class="raw-res">' + esc(result) + '</div>'; }
+        } else {
+          out.innerHTML = '<div class="raw-res">' + esc(result || '') + '</div>';
+        }
+      } catch(err) {
+        out.innerHTML = '<span class="err">' + esc(String(err)) + '</span>';
+        cell.classList.add('cell-error');
+      }
+      cell.classList.remove('running');
+    }, 10);
+    return;
+  }
 
   // Reactive mode: register/update in Observable graph (unless forced manual)
   if (reactiveMode && observableModule && !forceManual) {

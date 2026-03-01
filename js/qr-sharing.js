@@ -923,7 +923,7 @@ function shareToPC() {
   compressNotebook().then(function(compressed) {
     var url = generateNotebookURL(compressed, false);
     if (navigator.share) {
-      navigator.share({ title: 'rnGIAC', url: url }).catch(function() {});
+      navigator.share({ title: 'CAScad', url: url }).catch(function() {});
     } else {
       navigator.clipboard.writeText(url).then(function() {
         alert(t('urlCopied'));

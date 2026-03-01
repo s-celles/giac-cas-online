@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>rnGIAC — Reactive Notebook GIAC</title>
+<title>CAScad — CAS Notebook</title>
 
 <!-- ═══════════════════════════════════════════════════
   External dependencies (loaded from CDN)
@@ -95,8 +95,8 @@ var UI = {
 
 <div class="header"><div class="header-inner">
   <div class="header-left">
-    <h1>📓 <span data-i18n="title">rnGIAC</span></h1>
-    <p data-i18n="subtitle">Reactive Notebook GIAC — MathJSON ↔ Giac via WebAssembly</p>
+    <h1>📓 <span data-i18n="title">CAScad</span></h1>
+    <p data-i18n="subtitle">A pure HTML/JS/CSS reactive notebook for symbolic computation — computer algebra system (CAS) with support of different kernel (GIAC JS version as default kernel)</p>
     <a href="https://github.com/s-celles/giac-cas-online" target="_blank" rel="noopener" style="font-size:.85rem;opacity:.7;text-decoration:none;color:inherit"><svg height="16" width="16" viewBox="0 0 24 24" style="vertical-align:text-bottom;margin-right:.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Source code</a>
   </div>
   <div class="header-right">
@@ -111,6 +111,10 @@ var UI = {
       <option value="ru">Русский (ru)</option>
       <option value="zh">中文 (zh)</option>
       <option value="ja">日本語 (ja)</option>
+    </select>
+    <select class="kernel-select" id="kernel-select" onchange="if(typeof KernelRegistry!=='undefined')KernelRegistry.setActive(this.value)">
+      <option value="giac-js">GIAC JS</option>
+      <option value="compute-engine">Compute Engine</option>
     </select>
     <div id="giac-status">
       <span class="dot"></span>
@@ -175,6 +179,9 @@ var UI = {
 <script src="js/giac-commands.js"></script>
 <script src="js/giac-init.js"></script>
 <script src="js/mathjson-giac.js"></script>
+<script src="js/kernel-registry.js"></script>
+<script src="js/kernel-giac.js"></script>
+<script src="js/kernel-compute-engine.js"></script>
 <script src="js/state.js"></script>
 <script src="js/io.js"></script>
 <script src="js/plot-rendering.js"></script>
