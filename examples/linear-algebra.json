@@ -17,16 +17,16 @@
       "content": "\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "tran([[1,2],[3,4]])"
+      "type": "math",
+      "content": "\\operatorname{tran}\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
     },
     {
       "type": "raw",
       "content": "[[1,2],[3,4]] * [[5,6],[7,8]]"
     },
     {
-      "type": "raw",
-      "content": "inv([[1,2],[3,4]])"
+      "type": "math",
+      "content": "\\operatorname{inv}\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
     },
     {
       "type": "text",
@@ -47,24 +47,24 @@
       "hidden": true
     },
     {
-      "type": "raw",
-      "content": "eigenvalues([[1,2],[3,4]])"
+      "type": "math",
+      "content": "\\operatorname{eigenvalues}\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "eigenvects([[1,2],[3,4]])"
+      "type": "math",
+      "content": "\\operatorname{eigenvects}\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "eigenvalues([[a,b],[c,d]])"
+      "type": "math",
+      "content": "\\operatorname{eigenvalues}\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "rank([[1,2,3],[4,5,6],[7,8,9]])"
+      "type": "math",
+      "content": "\\operatorname{rank}\\begin{pmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "ker([[1,2,3],[4,5,6],[7,8,9]])"
+      "type": "math",
+      "content": "\\operatorname{ker}\\begin{pmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \\end{pmatrix}"
     }
   ]
 }

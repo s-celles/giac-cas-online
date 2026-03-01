@@ -281,11 +281,17 @@ function normalizeOperatorname(latex) {
  * Extract a CAS function call from normalized LaTeX:
  *   \operatorname{func}\left(...\right)  →  func(...)
  *   \operatorname{func}\left(...,...\right)  →  func(...,...)
+ *   \operatorname{func}\begin{pmatrix}...\end{pmatrix}  →  func(matrix)
  * Returns null if the LaTeX doesn't match a CAS function pattern.
  */
 function extractCasFunctionCall(latex) {
   // Match \operatorname{name} followed by \left( ... \right)
   var m = latex.match(/^\\operatorname\{([a-zA-Z_]+)\}\\left\((.+)\\right\)$/);
+  // Match \operatorname{name} followed directly by a matrix (no explicit parens)
+  if (!m) {
+    var m2 = latex.match(/^\\operatorname\{([a-zA-Z_]+)\}(\\begin\{[pbBvV]?matrix\}.+\\end\{[pbBvV]?matrix\})$/);
+    if (m2) return { func: m2[1], args: [m2[2]] };
+  }
   if (!m) return null;
   var funcName = m[1];
   var argsLatex = m[2];

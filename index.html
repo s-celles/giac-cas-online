@@ -50,12 +50,12 @@ var Module = {
   postRun: [],
   _giacMessages: [],
   print: function(text) {
+    if (Module._giacCapture) { Module._giacMessages.push({ type: 'info', text: text }); return; }
     console.log('giac:', text);
-    if (Module._giacCapture) Module._giacMessages.push({ type: 'info', text: text });
   },
   printErr: function(text) {
+    if (Module._giacCapture) { Module._giacMessages.push({ type: 'warn', text: text }); return; }
     console.warn('giac:', text);
-    if (Module._giacCapture) Module._giacMessages.push({ type: 'warn', text: text });
   },
   setStatus: function(text) { if (text) console.log('giac status:', text); },
   totalDependencies: 0,
@@ -160,6 +160,7 @@ var UI = {
   Application JavaScript — order matters
   ═══════════════════════════════════════════════════ -->
 <script src="js/i18n.js"></script>
+<script src="js/giac-commands.js"></script>
 <script src="js/giac-init.js"></script>
 <script src="js/mathjson-giac.js"></script>
 <script src="js/state.js"></script>
