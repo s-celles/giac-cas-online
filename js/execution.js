@@ -66,6 +66,24 @@ function getGiacExpr(cellId) {
     // ?\ command in math mode: ?\frac → ?frac
     var qLatex = latex.match(/^\?\\(\w+)/);
     if (qLatex) return '?' + qLatex[1];
+
+    // Intercept discovery functions from math fields — MathLive mangles underscores
+    // and multi-word function names. Match \operatorname{fn}\left(...\right) or fn(...)
+    var discoveryFns = ['search_commands_by_description', 'search_commands', 'commands_in_category', 'command_info', 'suggest_commands', 'list_commands', 'help_count', 'list_categories'];
+    for (var di = 0; di < discoveryFns.length; di++) {
+      var dfn = discoveryFns[di];
+      // \operatorname{search_commands}\left("sin"\right) or \operatorname{search\_commands}(...)
+      var dfnEsc = dfn.replace(/_/g, '[_\\\\_ ]*');
+      var dre = new RegExp('^\\\\operatorname\\{' + dfnEsc + '\\}\\\\left\\((.*)\\\\right\\)$');
+      var dm = latex.match(dre);
+      if (!dm) { dre = new RegExp('^\\\\operatorname\\{' + dfnEsc + '\\}\\((.*)\\)$'); dm = latex.match(dre); }
+      if (!dm) { dre = new RegExp('^' + dfnEsc + '\\\\left\\((.*)\\\\right\\)$'); dm = latex.match(dre); }
+      if (!dm) { dre = new RegExp('^' + dfnEsc + '\\((.*)\\)$'); dm = latex.match(dre); }
+      if (dm) {
+        var darg = (dm[1] || '').replace(/\\text\{([^}]*)\}/g, '$1').replace(/^["'\s\\"]*(.*?)["'\s"]*$/, '$1').trim();
+        return darg ? dfn + '("' + darg + '")' : dfn + '()';
+      }
+    }
   }
   if (latex && /\\operatorname/.test(latex)) {
     return latexToGiac(latex);
