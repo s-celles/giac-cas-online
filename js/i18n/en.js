@@ -123,7 +123,7 @@ var I18N_EN = {
     hideCode: 'Hide code', showCode: 'Show code',
     disableCell: 'Disable cell', enableCell: 'Enable cell',
     lockCell: 'Lock cell', unlockCell: 'Unlock cell',
-    reportView: 'Report view', codeView: 'Code view',
+    reportView: '📄 Report view', codeView: '💻 Code view',
     cellDisabledSkipped: 'Cell disabled — skipped',
     cellLocked: 'Locked',
     dependencyInactive: 'Dependency inactive: upstream cell is disabled',
@@ -147,7 +147,7 @@ var I18N_EN = {
     shareToPc: 'Share to PC', displayQrForPc: 'Display QR for PC', importViaQr: 'Import via QR',
 
     // ── Command Menu ──
-    commandMenuBtn: 'Commands',
+    commandMenuBtn: '🧮 Commands',
     commandMenuSearch: 'Search commands\u2026',
     commandMenuNoResults: 'No matching commands',
     commandMenuCount: '{count} commands available',

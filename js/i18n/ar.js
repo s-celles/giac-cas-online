@@ -122,7 +122,7 @@ var I18N_AR = {
     hideCode: 'إخفاء الكود', showCode: 'إظهار الكود',
     disableCell: 'تعطيل الخلية', enableCell: 'تفعيل الخلية',
     lockCell: 'قفل الخلية', unlockCell: 'فتح الخلية',
-    reportView: 'عرض التقرير', codeView: 'عرض الكود',
+    reportView: '📄 عرض التقرير', codeView: '💻 عرض الكود',
     cellDisabledSkipped: 'الخلية معطلة — تم تجاوزها',
     cellLocked: 'مقفلة',
     dependencyInactive: 'تبعية غير نشطة: الخلية السابقة معطلة',
@@ -145,7 +145,7 @@ var I18N_AR = {
     cameraError: 'مطلوب الوصول إلى الكاميرا. يرجى تفعيل الأذونات والتأكد من HTTPS.',
     shareToPc: 'مشاركة إلى الحاسوب', displayQrForPc: 'عرض QR للحاسوب', importViaQr: 'استيراد عبر QR',
     // ── قائمة الأوامر ──
-    commandMenuBtn: 'أوامر', commandMenuSearch: 'البحث عن أوامر\u2026', commandMenuNoResults: 'لا توجد أوامر مطابقة', commandMenuCount: '{count} أمر متاح', commandMenuBack: 'رجوع',
+    commandMenuBtn: '🧮 أوامر', commandMenuSearch: 'البحث عن أوامر\u2026', commandMenuNoResults: 'لا توجد أوامر مطابقة', commandMenuCount: '{count} أمر متاح', commandMenuBack: 'رجوع',
     menuCmds: 'أوامر', menuPrg: 'برمجة', menuGraphic: 'رسومات', menuGeo: 'هندسة', menuPhys: 'فيزياء', menuTurtle: 'سلحفاة', menuHighschool: 'ثانوية', menuOther: 'أخرى',
     menuCmdsConstants: 'ثوابت', menuCmdsExpression: 'تعبير', menuCmdsExpressionMisc: 'متنوع', menuCmdsExpressionExplnPow: 'أسي وقوى', menuCmdsExpressionTrigo: 'مثلثات', menuCmdsExpressionTrigoExp: 'مثلثات \u2192 أسي', menuCmdsExpressionTrigoInv: 'مثلثات عكسية', menuCmdsExpressionRational: 'نسبي', menuCmdsExpressionReal: 'حقيقي',
     menuCmdsInteger: 'صحيح', menuCmdsIntegerCrypto: 'تشفير', menuCmdsReal: 'حقيقي', menuCmdsRealBase: 'أساسي', menuCmdsRealTranscendental: 'متسامي', menuCmdsRealTranscendentalExpln: 'أسي ولوغاريتم', menuCmdsRealTranscendentalHyp: 'زائدي', menuCmdsRealTranscendentalTrigo: 'مثلثي', menuCmdsRealSpecial: 'دوال خاصة',

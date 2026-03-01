@@ -122,7 +122,7 @@ var I18N_FR = {
     hideCode: 'Masquer le code', showCode: 'Afficher le code',
     disableCell: 'D\u00e9sactiver la cellule', enableCell: 'Activer la cellule',
     lockCell: 'Verrouiller la cellule', unlockCell: 'D\u00e9verrouiller la cellule',
-    reportView: 'Vue rapport', codeView: 'Vue code',
+    reportView: '📄 Vue rapport', codeView: '💻 Vue code',
     cellDisabledSkipped: 'Cellule d\u00e9sactiv\u00e9e \u2014 ignor\u00e9e',
     cellLocked: 'Verrouill\u00e9e',
     dependencyInactive: 'D\u00e9pendance inactive : la cellule amont est d\u00e9sactiv\u00e9e',
@@ -145,7 +145,7 @@ var I18N_FR = {
     cameraError: 'Acc\u00e8s cam\u00e9ra requis. Activez les permissions et v\u00e9rifiez HTTPS.',
     shareToPc: 'Partager vers PC', displayQrForPc: 'Afficher QR pour PC', importViaQr: 'Importer via QR',
     // ── Menu de commandes ──
-    commandMenuBtn: 'Commandes',
+    commandMenuBtn: '🧮 Commandes',
     commandMenuSearch: 'Rechercher des commandes\u2026',
     commandMenuNoResults: 'Aucune commande correspondante',
     commandMenuCount: '{count} commandes disponibles',

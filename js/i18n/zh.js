@@ -122,7 +122,7 @@ var I18N_ZH = {
     hideCode: '隐藏代码', showCode: '显示代码',
     disableCell: '禁用单元格', enableCell: '启用单元格',
     lockCell: '锁定单元格', unlockCell: '解锁单元格',
-    reportView: '报告视图', codeView: '代码视图',
+    reportView: '📄 报告视图', codeView: '💻 代码视图',
     cellDisabledSkipped: '单元格已禁用 — 已跳过',
     cellLocked: '已锁定',
     dependencyInactive: '依赖不活跃：上游单元格已禁用',
@@ -145,7 +145,7 @@ var I18N_ZH = {
     cameraError: '需要摄像头权限。请启用权限并确保使用 HTTPS。',
     shareToPc: '分享到电脑', displayQrForPc: '为电脑显示二维码', importViaQr: '通过二维码导入',
     // ── 命令菜单 ──
-    commandMenuBtn: '命令', commandMenuSearch: '搜索命令…', commandMenuNoResults: '未找到匹配命令', commandMenuCount: '{count} 个命令可用', commandMenuBack: '返回',
+    commandMenuBtn: '🧮 命令', commandMenuSearch: '搜索命令…', commandMenuNoResults: '未找到匹配命令', commandMenuCount: '{count} 个命令可用', commandMenuBack: '返回',
     menuCmds: '命令', menuPrg: '编程', menuGraphic: '图形', menuGeo: '几何', menuPhys: '物理', menuTurtle: '海龟', menuHighschool: '高中', menuOther: '其他',
     menuCmdsConstants: '常数', menuCmdsExpression: '表达式', menuCmdsExpressionMisc: '杂项', menuCmdsExpressionExplnPow: '指数与幂', menuCmdsExpressionTrigo: '三角函数', menuCmdsExpressionTrigoExp: '三角 → 指数', menuCmdsExpressionTrigoInv: '反三角', menuCmdsExpressionRational: '有理', menuCmdsExpressionReal: '实数',
     menuCmdsInteger: '整数', menuCmdsIntegerCrypto: '密码学', menuCmdsReal: '实数', menuCmdsRealBase: '基础', menuCmdsRealTranscendental: '超越', menuCmdsRealTranscendentalExpln: '指数与对数', menuCmdsRealTranscendentalHyp: '双曲', menuCmdsRealTranscendentalTrigo: '三角', menuCmdsRealSpecial: '特殊函数',

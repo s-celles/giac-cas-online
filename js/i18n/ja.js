@@ -122,7 +122,7 @@ var I18N_JA = {
     hideCode: 'コードを非表示', showCode: 'コードを表示',
     disableCell: 'セルを無効化', enableCell: 'セルを有効化',
     lockCell: 'セルをロック', unlockCell: 'セルのロックを解除',
-    reportView: 'レポート表示', codeView: 'コード表示',
+    reportView: '📄 レポート表示', codeView: '💻 コード表示',
     cellDisabledSkipped: 'セル無効 — スキップ',
     cellLocked: 'ロック中',
     dependencyInactive: '依存関係が無効：上流セルが無効化されています',
@@ -145,7 +145,7 @@ var I18N_JA = {
     cameraError: 'カメラへのアクセスが必要です。権限を有効にしてHTTPSを確認してください。',
     shareToPc: 'PCに共有', displayQrForPc: 'PC用QRを表示', importViaQr: 'QRからインポート',
     // ── コマンドメニュー ──
-    commandMenuBtn: 'コマンド', commandMenuSearch: 'コマンドを検索…', commandMenuNoResults: '一致するコマンドがありません', commandMenuCount: '{count} 個のコマンドが利用可能', commandMenuBack: '戻る',
+    commandMenuBtn: '🧮 コマンド', commandMenuSearch: 'コマンドを検索…', commandMenuNoResults: '一致するコマンドがありません', commandMenuCount: '{count} 個のコマンドが利用可能', commandMenuBack: '戻る',
     menuCmds: 'コマンド', menuPrg: 'プログラミング', menuGraphic: 'グラフィック', menuGeo: '幾何学', menuPhys: '物理学', menuTurtle: 'タートル', menuHighschool: '高校', menuOther: 'その他',
     menuCmdsConstants: '定数', menuCmdsExpression: '式', menuCmdsExpressionMisc: 'その他', menuCmdsExpressionExplnPow: '指数と冪', menuCmdsExpressionTrigo: '三角関数', menuCmdsExpressionTrigoExp: '三角 → 指数', menuCmdsExpressionTrigoInv: '逆三角', menuCmdsExpressionRational: '有理', menuCmdsExpressionReal: '実数',
     menuCmdsInteger: '整数', menuCmdsIntegerCrypto: '暗号', menuCmdsReal: '実数', menuCmdsRealBase: '基本', menuCmdsRealTranscendental: '超越', menuCmdsRealTranscendentalExpln: '指数と対数', menuCmdsRealTranscendentalHyp: '双曲線', menuCmdsRealTranscendentalTrigo: '三角', menuCmdsRealSpecial: '特殊関数',

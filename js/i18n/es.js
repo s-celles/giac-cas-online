@@ -122,7 +122,7 @@ var I18N_ES = {
     hideCode: 'Ocultar código', showCode: 'Mostrar código',
     disableCell: 'Desactivar celda', enableCell: 'Activar celda',
     lockCell: 'Bloquear celda', unlockCell: 'Desbloquear celda',
-    reportView: 'Vista informe', codeView: 'Vista código',
+    reportView: '📄 Vista informe', codeView: '💻 Vista código',
     cellDisabledSkipped: 'Celda desactivada — omitida',
     cellLocked: 'Bloqueada',
     dependencyInactive: 'Dependencia inactiva: la celda anterior está desactivada',
@@ -145,7 +145,7 @@ var I18N_ES = {
     cameraError: 'Se requiere acceso a la cámara. Active los permisos y verifique HTTPS.',
     shareToPc: 'Compartir con PC', displayQrForPc: 'Mostrar QR para PC', importViaQr: 'Importar vía QR',
     // ── Menú de comandos ──
-    commandMenuBtn: 'Comandos', commandMenuSearch: 'Buscar comandos\u2026', commandMenuNoResults: 'No se encontraron comandos', commandMenuCount: '{count} comandos disponibles', commandMenuBack: 'Volver',
+    commandMenuBtn: '🧮 Comandos', commandMenuSearch: 'Buscar comandos\u2026', commandMenuNoResults: 'No se encontraron comandos', commandMenuCount: '{count} comandos disponibles', commandMenuBack: 'Volver',
     menuCmds: 'Comandos', menuPrg: 'Programación', menuGraphic: 'Gráficos', menuGeo: 'Geometría', menuPhys: 'Física', menuTurtle: 'Tortuga', menuHighschool: 'Bachillerato', menuOther: 'Otros',
     menuCmdsConstants: 'Constantes', menuCmdsExpression: 'Expresión', menuCmdsExpressionMisc: 'Varios', menuCmdsExpressionExplnPow: 'Exponencial y potencias', menuCmdsExpressionTrigo: 'Trigonometría', menuCmdsExpressionTrigoExp: 'Trig \u2192 Exp', menuCmdsExpressionTrigoInv: 'Trig inversa', menuCmdsExpressionRational: 'Racional', menuCmdsExpressionReal: 'Real',
     menuCmdsInteger: 'Entero', menuCmdsIntegerCrypto: 'Criptografía', menuCmdsReal: 'Real', menuCmdsRealBase: 'Base', menuCmdsRealTranscendental: 'Trascendental', menuCmdsRealTranscendentalExpln: 'Exponencial y logaritmo', menuCmdsRealTranscendentalHyp: 'Hiperbólico', menuCmdsRealTranscendentalTrigo: 'Trigonométrico', menuCmdsRealSpecial: 'Funciones especiales',

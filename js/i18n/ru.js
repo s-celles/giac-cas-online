@@ -122,7 +122,7 @@ var I18N_RU = {
     hideCode: 'Скрыть код', showCode: 'Показать код',
     disableCell: 'Отключить ячейку', enableCell: 'Включить ячейку',
     lockCell: 'Заблокировать ячейку', unlockCell: 'Разблокировать ячейку',
-    reportView: 'Режим отчёта', codeView: 'Режим кода',
+    reportView: '📄 Режим отчёта', codeView: '💻 Режим кода',
     cellDisabledSkipped: 'Ячейка отключена — пропущена',
     cellLocked: 'Заблокирована',
     dependencyInactive: 'Неактивная зависимость: предшествующая ячейка отключена',
@@ -145,7 +145,7 @@ var I18N_RU = {
     cameraError: 'Требуется доступ к камере. Включите разрешения и убедитесь в HTTPS.',
     shareToPc: 'Отправить на ПК', displayQrForPc: 'Показать QR для ПК', importViaQr: 'Импорт через QR',
     // ── Меню команд ──
-    commandMenuBtn: 'Команды', commandMenuSearch: 'Поиск команд\u2026', commandMenuNoResults: 'Команды не найдены', commandMenuCount: '{count} команд доступно', commandMenuBack: 'Назад',
+    commandMenuBtn: '🧮 Команды', commandMenuSearch: 'Поиск команд\u2026', commandMenuNoResults: 'Команды не найдены', commandMenuCount: '{count} команд доступно', commandMenuBack: 'Назад',
     menuCmds: 'Команды', menuPrg: 'Программирование', menuGraphic: 'Графика', menuGeo: 'Геометрия', menuPhys: 'Физика', menuTurtle: 'Черепаха', menuHighschool: 'Школа', menuOther: 'Прочее',
     menuCmdsConstants: 'Константы', menuCmdsExpression: 'Выражение', menuCmdsExpressionMisc: 'Разное', menuCmdsExpressionExplnPow: 'Экспонента и степени', menuCmdsExpressionTrigo: 'Тригонометрия', menuCmdsExpressionTrigoExp: 'Триг \u2192 Эксп', menuCmdsExpressionTrigoInv: 'Обратная триг', menuCmdsExpressionRational: 'Рациональное', menuCmdsExpressionReal: 'Вещественное',
     menuCmdsInteger: 'Целое', menuCmdsIntegerCrypto: 'Криптография', menuCmdsReal: 'Вещественное', menuCmdsRealBase: 'Базовое', menuCmdsRealTranscendental: 'Трансцендентное', menuCmdsRealTranscendentalExpln: 'Экспонента и логарифм', menuCmdsRealTranscendentalHyp: 'Гиперболическое', menuCmdsRealTranscendentalTrigo: 'Тригонометрическое', menuCmdsRealSpecial: 'Специальные функции',
