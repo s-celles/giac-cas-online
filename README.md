@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/CAScad.jpeg" alt="CAScad logo" width="400">
+</p>
+
 # CAScad — Computer Algebra System Notebook
 
 An interactive, browser-based computer algebra notebook with multi-kernel support and reactive cell evaluation.
@@ -65,6 +69,8 @@ js/
   command-discovery.js  Command search, browse, and suggest functions
   actions.js            Global actions (run all, delete, move)
   boot.js               Startup sequence, virtual keyboard config, demo cells
+assets/
+  CAScad.jpeg           Visual identity / logo
 examples/
   giac-js/              Example notebooks for Giac/Xcas kernel
   compute-engine/       Example notebooks for CortexJS Compute Engine
