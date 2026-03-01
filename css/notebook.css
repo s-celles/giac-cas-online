@@ -212,7 +212,9 @@
   .cell-output{padding:.65rem .8rem;background:var(--output-bg);border-top:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);min-height:26px;overflow-x:auto}
   .cell-output:empty{display:none}
   .cell-output .err{color:var(--error);font-family:var(--mono);font-size:.78rem}
-  .cell-output .katex-display{margin:.2rem 0;text-align:start}
+  .katex{direction:ltr;unicode-bidi:isolate}
+  .katex-display{direction:ltr;unicode-bidi:isolate}
+  .cell-output .katex-display{margin:.2rem 0;text-align:center}
   .cell-output .raw-res{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);margin-top:.3rem;white-space:pre-wrap}
   .cell-output .md-out{font-family:var(--body);font-size:.93rem}
   .cell-output .md-out h1{font-size:1.35rem;margin:.35rem 0}
