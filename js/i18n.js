@@ -52,6 +52,13 @@ function applyI18n() {
       if (typeof renderTextCell === 'function') renderTextCell(cell.id);
     }
   });
+  // Refresh reactive banner if present
+  var reactiveBanner = document.getElementById('reactive-banner');
+  if (reactiveBanner) {
+    reactiveBanner.innerHTML = '<span>' + t('reactiveReady') + '</span>' +
+      '<button onclick="runAllReactive()">' + t('runAllReactive') + '</button>' +
+      '<button onclick="toggleReactiveMode(false)">' + t('cancelCascade') + '</button>';
+  }
   document.documentElement.lang = currentLocale;
   document.documentElement.dir = RTL_LOCALES.includes(currentLocale) ? 'rtl' : 'ltr';
 }
