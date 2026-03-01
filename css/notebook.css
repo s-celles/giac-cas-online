@@ -41,6 +41,41 @@
   .examples-menu button{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
   .examples-menu button:hover{background:var(--accent);color:#fff}
 
+  /* ═══════ Command Menu ═══════ */
+  .command-menu{position:absolute;top:100%;left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.12);min-width:280px;max-width:400px;max-height:60vh;display:flex;flex-direction:column}
+  .command-menu-search{padding:.4rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1}
+  .command-menu-search input{width:100%;box-sizing:border-box;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-family:var(--mono);font-size:.75rem;background:var(--bg);color:var(--text);outline:none}
+  .command-menu-search input:focus{border-color:var(--accent)}
+  .command-menu-breadcrumb{padding:4px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+  .command-menu-breadcrumb span{cursor:pointer;color:var(--accent);padding:1px 3px;border-radius:3px}
+  .command-menu-breadcrumb span:hover{background:var(--accent);color:#fff}
+  .command-menu-breadcrumb .sep{cursor:default;color:var(--muted);padding:0}
+  .command-menu-breadcrumb .sep:hover{background:transparent;color:var(--muted)}
+  .command-menu-breadcrumb .back-btn{margin-left:auto;cursor:pointer;padding:1px 5px;border-radius:3px}
+  .command-menu-breadcrumb .back-btn:hover{background:var(--accent);color:#fff}
+  .command-menu-list{overflow-y:auto;flex:1;padding:.3rem}
+  .command-menu-category{display:flex;align-items:center;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
+  .command-menu-category:hover{background:var(--accent);color:#fff}
+  .command-menu-category .icon{margin-right:6px;font-size:.85rem}
+  .command-menu-category .arrow{margin-left:auto;opacity:.5}
+  .command-menu-command{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
+  .command-menu-command:hover{background:var(--accent);color:#fff}
+  .command-menu-command .cat-hint{font-size:.65rem;color:var(--muted);margin-left:6px}
+  .command-menu-command:hover .cat-hint{color:rgba(255,255,255,.7)}
+  .command-menu-footer{padding:4px 10px;border-top:1px solid var(--border);font-size:.65rem;color:var(--muted);text-align:center}
+  .command-menu-no-results{padding:16px 10px;text-align:center;color:var(--muted);font-size:.8rem}
+  .command-menu-overlay{display:none}
+  .command-menu-close{display:none}
+  .command-menu-header{display:none}
+
+  @media(max-width:767px){
+    .command-menu{position:fixed;top:0;left:0;right:0;bottom:0;max-width:none;max-height:none;border-radius:0;z-index:1000}
+    .command-menu-overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999}
+    .command-menu-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.9rem;font-weight:600}
+    .command-menu-close{display:block;border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:var(--text);padding:2px 6px;border-radius:4px}
+    .command-menu-close:hover{background:var(--accent);color:#fff}
+  }
+
   /* ═══════ About Dialog ═══════ */
   .about-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:1rem}
   .about-dialog{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,.18);padding:2rem 2.2rem;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;font-family:var(--body);color:var(--text)}
