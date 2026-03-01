@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/CAScad.jpeg" alt="CAScad logo" width="400">
+  <img src="assets/CAScad.png" alt="CAScad logo" width="400">
 </p>
 
 # CAScad — Computer Algebra System Notebook
@@ -70,7 +70,7 @@ js/
   actions.js            Global actions (run all, delete, move)
   boot.js               Startup sequence, virtual keyboard config, demo cells
 assets/
-  CAScad.jpeg           Visual identity / logo
+  CAScad.png            Visual identity / logo
 examples/
   giac-js/              Example notebooks for Giac/Xcas kernel
   compute-engine/       Example notebooks for CortexJS Compute Engine

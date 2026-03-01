@@ -28,3 +28,5 @@
 !examples/compute-engine/*.json
 !scripts/
 !scripts/*.js
+!assets/
+!assets/*.png
