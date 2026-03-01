@@ -1,22 +1,33 @@
-# rnGIAC — Reactive Notebook GIAC
+# CAScad — Computer Algebra System Notebook
 
-An interactive, browser-based computer algebra notebook powered by [Giac/Xcas](https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html) with reactive cell evaluation.
+An interactive, browser-based computer algebra notebook with multi-kernel support and reactive cell evaluation.
 
-**[Live Demo](https://s-celles.github.io/giac-cas-online/)** (if deployed via GitHub Pages)
+**[Live Demo](https://s-celles.github.io/CAScad/)** (if deployed via GitHub Pages)
 
 ## Features
 
-- **Reactive DAG execution** — Cells automatically re-evaluate when their dependencies change, powered by [Observable Runtime](https://github.com/nicklockwood/runtime)
+- **Multi-kernel support** — Switch between [Giac/Xcas](https://www-fourier.univ-grenoble-alpes.fr/~parisse/giac.html) (default) and [CortexJS Compute Engine](https://cortexjs.io/compute-engine/) via a toolbar selector
+- **Reactive DAG execution** — Cells automatically re-evaluate when their dependencies change, powered by [Observable Runtime](https://github.com/observablehq/runtime)
 - **Visual math input** — LaTeX-style editing with [MathLive](https://mathlive.io/) and a custom virtual keyboard (fractions, integrals, sums, products, Greek letters)
-- **MathJSON-first pipeline** — Math cells use MathJSON internally: MathField -> MathJSON -> Xcas (Giac), LaTeX used only for display
+- **MathJSON-first pipeline** — Math cells use MathJSON internally: MathField -> MathJSON -> kernel, LaTeX used only for display
 - **Interactive 2D plots** — `plot(sin(x))`, `plotfunc`, `plotparam`, `plotpolar`, `plotimplicit`, `plotfield`, `plotcontour`, `plotode`, `plotseq` rendered with [JSXGraph](https://jsxgraph.org/) (zoom, pan, coordinates)
 - **3D surface plots** — `plotfunc(x^2+y^2,[x,y])` rendered with WebGL
 - **Statistical charts** — `histogram`, `barplot`, `camembert`, `boxwhisker`, `scatterplot`
 - **Geometry** — `circle`, `segment`, `point` and more
 - **LaTeX output** — Results rendered with [KaTeX](https://katex.org/)
-- **Internationalization** — 9 languages: English, French, Spanish, German, Arabic (RTL), Hindi, Russian, Chinese, Japanese
-- **Export/Import** — Save and reload notebooks as JSON (v3 format with MathJSON, backward-compatible with v2)
+- **Internationalization** — 10 languages: English, French, Spanish, German, Greek, Arabic (RTL), Hindi, Russian, Chinese, Japanese
+- **Export/Import** — Save and reload notebooks as JSON (v5 format with kernel field, backward-compatible with v1–v4)
 - **Reactive/Manual toggle** — Switch between automatic cascade and manual cell-by-cell execution
+- **Command discovery** — `search_commands()`, `list_categories()`, `suggest_commands()` and more for exploring available functions
+
+## Kernels
+
+| Kernel | Description | Status |
+|--------|-------------|--------|
+| **Giac/Xcas** | Full-featured CAS — algebra, calculus, plots, linear algebra, programming | Default, requires `giac.js` |
+| **CortexJS Compute Engine** | Symbolic computation — simplify, factor, differentiate, integrate | Loaded from CDN |
+
+The active kernel is selected via the toolbar dropdown. The choice is persisted in `localStorage` and saved in notebook files (v5 format).
 
 ## Getting Started
 
@@ -39,7 +50,10 @@ index.html              HTML shell (header, toolbar, notebook container)
 css/
   notebook.css          All styles
 js/
-  i18n.js               Internationalization (9 locales)
+  kernel-registry.js    Multi-kernel abstraction and registry
+  kernel-giac.js        Giac/Xcas kernel adapter
+  kernel-compute-engine.js  CortexJS Compute Engine kernel adapter
+  i18n.js               Internationalization (10 locales)
   giac-init.js          CortexJS Compute Engine + Giac initialization
   mathjson-xcas.js      MathJSON -> Xcas string converter
   state.js              Shared application state
@@ -48,8 +62,12 @@ js/
   reactive-dag.js       Reactive DAG with Observable Runtime
   cells.js              Cell management, debug panel, mode switching
   execution.js          Cell execution engine
+  command-discovery.js  Command search, browse, and suggest functions
   actions.js            Global actions (run all, delete, move)
   boot.js               Startup sequence, virtual keyboard config, demo cells
+examples/
+  giac-js/              Example notebooks for Giac/Xcas kernel
+  compute-engine/       Example notebooks for CortexJS Compute Engine
 giac.js                 Giac/Xcas engine (asm.js, not included — download separately)
 ```
 
@@ -79,11 +97,11 @@ The notebook comes pre-loaded with demo cells covering:
 
 ## Technology Stack
 
-- **Giac/Xcas** (asm.js) — Computer algebra engine
+- **Giac/Xcas** (asm.js) — Computer algebra engine (default kernel)
+- **CortexJS Compute Engine** — Symbolic computation engine (alternative kernel)
 - **MathLive** — Math input web component
-- **CortexJS Compute Engine** — LaTeX -> MathJSON parsing
 - **KaTeX** — LaTeX rendering
-- **JSXGraph** — Interactive 2D plots
+- **JSXGraph** — Interactive 2D/3D plots
 - **Observable Runtime** — Reactive dependency graph
 - No build step, no bundler — pure browser ES2020+
 
