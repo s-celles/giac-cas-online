@@ -400,6 +400,7 @@ function renderTextCell(cellId) {
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,     '<em>$1</em>')
     .replace(/`(.+?)`/g,       '<code>$1</code>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%">')
     .replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
   // Restore LaTeX blocks
   var phRe = new RegExp(PH + '(\\d+)' + PH, 'g');
