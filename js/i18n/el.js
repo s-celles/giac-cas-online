@@ -73,7 +73,7 @@ var I18N_EL = {
     aboutLibraries: 'Βιβλιοθήκες', aboutColLib: 'Βιβλιοθήκη', aboutColAuthor: 'Συγγραφέας', aboutColLicense: 'Άδεια',
     aboutCredits: 'Ευχαριστίες', aboutKeyboardCredit: 'Η διάταξη του εικονικού πληκτρολογίου εμπνεύστηκε από το math2d.html του B.\u00a0Parisse.',
     aboutLicense: 'Άδεια', aboutLicenseText: 'GPL-3.0 — Ελεύθερο λογισμικό. Πηγαίος κώδικας διαθέσιμος στο GitHub.',
-    aboutShareQR: 'Κοινοποίηση εφαρμογής', shareCopy: 'Αντιγραφή συνδέσμου', shareCopied: 'Αντιγράφηκε!', shareNative: 'Κοινοποίηση…',
+    aboutShareQR: 'Κοινοποίηση εφαρμογής', shareCopy: 'Αντιγραφή συνδέσμου', shareCopied: 'Αντιγράφηκε!', shareNative: 'Κοινοποίηση…', clickToEnlarge: 'Κλικ για μεγέθυνση',
     shortcutRun: 'Εκτέλεση', shortcutRunNew: 'Εκτέλεση + νέο κελί',
     showMathJSON: 'Εμφάνιση MathJSON',
     cellMath: 'Μαθηματικά', cellRaw: 'Ακατέργαστο', cellText: 'Κείμενο',

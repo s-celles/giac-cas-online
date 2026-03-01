@@ -27,7 +27,8 @@ var KernelRegistry = (function() {
       return _active;
     },
 
-    setActive: function(kernelId) {
+    setActive: function(kernelId, opts) {
+      opts = opts || {};
       var kernel = _kernels[kernelId];
       if (!kernel) {
         console.error('Kernel not found:', kernelId);
@@ -46,11 +47,18 @@ var KernelRegistry = (function() {
       localStorage.setItem('cascad-default-kernel', kernelId);
       defaultKernel = kernelId;
 
-      // Clear all cell outputs (FR-011)
-      document.querySelectorAll('.cell-output').forEach(function(out) {
-        out.innerHTML = '';
-        out.className = 'cell-output';
-      });
+      // Reset notebook to welcome cell unless called from loadNotebookData
+      if (!opts.silent) {
+        if (typeof clearNotebook === 'function') {
+          clearNotebook();
+        }
+        if (typeof addCell === 'function' && typeof t === 'function') {
+          addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody', { hidden: true });
+          if (typeof cells !== 'undefined') {
+            cells.forEach(function(c) { if (c.type === 'text' && typeof renderTextCell === 'function') renderTextCell(c.id); });
+          }
+        }
+      }
 
       // Update kernel selector UI if present
       var sel = document.getElementById('kernel-select');

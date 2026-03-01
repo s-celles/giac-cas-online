@@ -145,7 +145,7 @@ function showAboutDialog() {
       '<p class="about-author">' + t('aboutAuthor') + '</p>' +
       '<p>' + t('aboutDesc') + '</p>' +
       '<h3>' + t('aboutShareQR') + '</h3>' +
-      '<div class="about-qr"><div id="about-qr-container"></div><p class="about-qr-url">' + location.href + '</p></div>' +
+      '<div class="about-qr"><div id="about-qr-container" onclick="showQRFullscreen()" style="cursor:pointer" title="' + t('clickToEnlarge') + '"></div><p class="about-qr-url">' + location.href + '</p></div>' +
       '<div class="about-share-buttons">' +
         (navigator.share ? '<button class="share-primary" onclick="aboutNativeShare()" title="' + t('shareNative') + '">📤 ' + t('shareNative') + '</button>' : '') +
         '<button onclick="aboutCopyLink()" id="about-copy-btn" title="' + t('shareCopy') + '">📋 ' + t('shareCopy') + '</button>' +
@@ -191,6 +191,15 @@ function aboutCopyLink() {
 function aboutNativeShare() {
   navigator.share({ title: 'CAScad', url: location.href }).catch(function() {});
 }
+function showQRFullscreen() {
+  var src = document.getElementById('about-qr-container');
+  if (!src || !src.querySelector('svg')) return;
+  var overlay = document.createElement('div');
+  overlay.className = 'qr-fullscreen-overlay';
+  overlay.innerHTML = '<div class="qr-fullscreen-content">' + src.innerHTML + '</div>';
+  overlay.onclick = function() { overlay.remove(); };
+  document.body.appendChild(overlay);
+}
 function hideAboutDialog() {
   var el = document.getElementById('about-overlay');
   if (el) el.remove();
@@ -209,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set active kernel (if available, otherwise stays on first registered)
   var defKernel = KernelRegistry.get(defaultKernel);
   if (defKernel && defKernel.available) {
-    KernelRegistry.setActive(defaultKernel);
+    KernelRegistry.setActive(defaultKernel, { silent: true });
   }
 
   // Detect Compute Engine availability and update kernel selector
@@ -234,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // If user preferred CE and it's now available, activate it
       if (defaultKernel === 'compute-engine' && ceKernel.available) {
-        KernelRegistry.setActive('compute-engine');
+        KernelRegistry.setActive('compute-engine', { silent: true });
       }
     }
   })();

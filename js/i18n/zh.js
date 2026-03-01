@@ -72,7 +72,7 @@ var I18N_ZH = {
     aboutLibraries: '依赖库', aboutColLib: '库', aboutColAuthor: '作者', aboutColLicense: '许可证',
     aboutCredits: '致谢', aboutKeyboardCredit: '虚拟键盘布局灵感来自 B.\u00a0Parisse 的 math2d.html。',
     aboutLicense: '许可证', aboutLicenseText: 'GPL-3.0 — 自由软件。源代码可在 GitHub 上获取。',
-    aboutShareQR: '分享此应用', shareCopy: '复制链接', shareCopied: '已复制！', shareNative: '分享…',
+    aboutShareQR: '分享此应用', shareCopy: '复制链接', shareCopied: '已复制！', shareNative: '分享…', clickToEnlarge: '点击放大',
     shortcutRun: '运行', shortcutRunNew: '运行 + 新单元格',
     showMathJSON: '显示 MathJSON',
     cellMath: '数学', cellRaw: '原始', cellText: '文本',

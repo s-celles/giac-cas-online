@@ -72,7 +72,7 @@ var I18N_JA = {
     aboutLibraries: 'ライブラリ', aboutColLib: 'ライブラリ', aboutColAuthor: '著者', aboutColLicense: 'ライセンス',
     aboutCredits: 'クレジット', aboutKeyboardCredit: '仮想キーボードレイアウトは B.\u00a0Parisse の math2d.html に触発されました。',
     aboutLicense: 'ライセンス', aboutLicenseText: 'GPL-3.0 — 自由ソフトウェア。ソースコードは GitHub で公開。',
-    aboutShareQR: 'このアプリを共有', shareCopy: 'リンクをコピー', shareCopied: 'コピー済み！', shareNative: '共有…',
+    aboutShareQR: 'このアプリを共有', shareCopy: 'リンクをコピー', shareCopied: 'コピー済み！', shareNative: '共有…', clickToEnlarge: 'クリックで拡大',
     shortcutRun: '実行', shortcutRunNew: '実行 + 新しいセル',
     showMathJSON: 'MathJSON を表示',
     cellMath: '数学', cellRaw: '直接', cellText: 'テキスト',

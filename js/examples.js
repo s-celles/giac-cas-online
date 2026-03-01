@@ -44,7 +44,7 @@ function loadExample(id, kernel) {
 
   // Set the kernel before loading (FR-009)
   if (kernel && typeof KernelRegistry !== 'undefined') {
-    KernelRegistry.setActive(kernel);
+    KernelRegistry.setActive(kernel, { silent: true });
   }
 
   var dir = kernel || 'giac-js';

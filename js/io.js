@@ -76,17 +76,7 @@ function shareNotebook() {
   }
 }
 
-function loadNotebookData(data, opts) {
-  opts = opts || {};
-  // Restore kernel from notebook data (v5+), default to giac-js
-  var notebookKernel = data.kernel || 'giac-js';
-  if (typeof KernelRegistry !== 'undefined') {
-    var k = KernelRegistry.get(notebookKernel);
-    if (k && k.available) {
-      KernelRegistry.setActive(notebookKernel);
-    }
-  }
-  if (data.locale && LOCALES[data.locale]) setLocale(data.locale);
+function clearNotebook() {
   // Clear reactive graph
   cellVariableMap.forEach(function(info, cid) { unregisterCell(cid); });
   cellVariableMap.clear();
@@ -99,6 +89,20 @@ function loadNotebookData(data, opts) {
   if (empty) nb.appendChild(empty);
   if (footer) nb.appendChild(footer);
   cells = []; cellCounter = 0;
+}
+
+function loadNotebookData(data, opts) {
+  opts = opts || {};
+  // Restore kernel from notebook data (v5+), default to giac-js
+  var notebookKernel = data.kernel || 'giac-js';
+  if (typeof KernelRegistry !== 'undefined') {
+    var k = KernelRegistry.get(notebookKernel);
+    if (k && k.available) {
+      KernelRegistry.setActive(notebookKernel, { silent: true });
+    }
+  }
+  if (data.locale && LOCALES[data.locale]) setLocale(data.locale);
+  clearNotebook();
   if (!opts.keepReactiveMode && data.reactiveMode !== undefined) toggleReactiveMode(data.reactiveMode);
   var fileVersion = data.version || 1;
   var cellItems = Array.isArray(data) ? data : data.cells;

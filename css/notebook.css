@@ -149,8 +149,11 @@
   .about-close{position:absolute;top:.7rem;right:.9rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);line-height:1}
   .about-close:hover{color:var(--text)}
   .about-qr{text-align:center;margin-top:.8rem}
-  .about-qr svg{width:160px;height:160px;display:inline-block}
+  .about-qr svg{width:256px;height:256px;display:inline-block}
   .about-qr-url{font-family:var(--mono);font-size:.7rem;color:var(--text-muted);word-break:break-all;margin-top:.3rem}
+  .qr-fullscreen-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .qr-fullscreen-content{background:#fff;border-radius:12px;padding:2rem;display:flex;align-items:center;justify-content:center}
+  .qr-fullscreen-content svg{width:min(80vw,80vh);height:min(80vw,80vh)}
   .about-share-buttons{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.6rem 0}
   .about-share-buttons button,.about-share-buttons a{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:.78rem;cursor:pointer;text-decoration:none;transition:background .15s}
   .about-share-buttons button:hover,.about-share-buttons a:hover{background:var(--accent);color:#fff;border-color:var(--accent)}

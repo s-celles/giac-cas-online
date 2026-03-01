@@ -72,7 +72,7 @@ var I18N_RU = {
     aboutLibraries: 'Библиотеки', aboutColLib: 'Библиотека', aboutColAuthor: 'Автор', aboutColLicense: 'Лицензия',
     aboutCredits: 'Благодарности', aboutKeyboardCredit: 'Раскладка виртуальной клавиатуры вдохновлена math2d.html Б.\u00a0Парисса.',
     aboutLicense: 'Лицензия', aboutLicenseText: 'GPL-3.0 — Свободное ПО. Исходный код доступен на GitHub.',
-    aboutShareQR: 'Поделиться приложением', shareCopy: 'Копировать ссылку', shareCopied: 'Скопировано!', shareNative: 'Поделиться…',
+    aboutShareQR: 'Поделиться приложением', shareCopy: 'Копировать ссылку', shareCopied: 'Скопировано!', shareNative: 'Поделиться…', clickToEnlarge: 'Нажмите для увеличения',
     shortcutRun: 'Запустить', shortcutRunNew: 'Запустить + новая ячейка',
     showMathJSON: 'Показать MathJSON',
     cellMath: 'Математика', cellRaw: 'Прямой', cellText: 'Текст',

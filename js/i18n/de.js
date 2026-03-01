@@ -72,7 +72,7 @@ var I18N_DE = {
     aboutLibraries: 'Bibliotheken', aboutColLib: 'Bibliothek', aboutColAuthor: 'Autor', aboutColLicense: 'Lizenz',
     aboutCredits: 'Danksagungen', aboutKeyboardCredit: 'Layout der virtuellen Tastatur inspiriert von B.\u00a0Parisses math2d.html.',
     aboutLicense: 'Lizenz', aboutLicenseText: 'GPL-3.0 — Freie Software. Quellcode verfügbar auf GitHub.',
-    aboutShareQR: 'Diese App teilen', shareCopy: 'Link kopieren', shareCopied: 'Kopiert!', shareNative: 'Teilen…',
+    aboutShareQR: 'Diese App teilen', shareCopy: 'Link kopieren', shareCopied: 'Kopiert!', shareNative: 'Teilen…', clickToEnlarge: 'Klicken zum Vergrößern',
     shortcutRun: 'Ausführen', shortcutRunNew: 'Ausführen + neue Zelle',
     showMathJSON: 'MathJSON anzeigen',
     cellMath: 'Mathe', cellRaw: 'Direkt', cellText: 'Text',

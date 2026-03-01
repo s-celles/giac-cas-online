@@ -72,7 +72,7 @@ var I18N_AR = {
     aboutLibraries: 'المكتبات', aboutColLib: 'المكتبة', aboutColAuthor: 'المؤلف', aboutColLicense: 'الرخصة',
     aboutCredits: 'شكر وتقدير', aboutKeyboardCredit: 'تخطيط لوحة المفاتيح الافتراضية مستوحى من math2d.html لـ B.\u00a0Parisse.',
     aboutLicense: 'الرخصة', aboutLicenseText: 'GPL-3.0 — برنامج حر. الكود المصدري متاح على GitHub.',
-    aboutShareQR: 'مشاركة هذا التطبيق', shareCopy: 'نسخ الرابط', shareCopied: 'تم النسخ!', shareNative: 'مشاركة…',
+    aboutShareQR: 'مشاركة هذا التطبيق', shareCopy: 'نسخ الرابط', shareCopied: 'تم النسخ!', shareNative: 'مشاركة…', clickToEnlarge: 'انقر للتكبير',
     shortcutRun: 'تشغيل', shortcutRunNew: 'تشغيل + خلية جديدة',
     showMathJSON: 'إظهار MathJSON',
     cellMath: 'رياضيات', cellRaw: 'مباشر', cellText: 'نص',

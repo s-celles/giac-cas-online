@@ -73,7 +73,7 @@ var I18N_EN = {
     aboutLibraries: 'Libraries', aboutColLib: 'Library', aboutColAuthor: 'Author', aboutColLicense: 'License',
     aboutCredits: 'Credits', aboutKeyboardCredit: 'Virtual keyboard layout inspired by B.\u00a0Parisse\'s math2d.html.',
     aboutLicense: 'License', aboutLicenseText: 'GPL-3.0 — Free software. Source code available on GitHub.',
-    aboutShareQR: 'Share this app', shareCopy: 'Copy link', shareCopied: 'Copied!', shareNative: 'Share…',
+    aboutShareQR: 'Share this app', shareCopy: 'Copy link', shareCopied: 'Copied!', shareNative: 'Share…', clickToEnlarge: 'Click to enlarge',
     shortcutRun: 'Run', shortcutRunNew: 'Run + new cell',
     showMathJSON: 'Show MathJSON',
     cellMath: 'Math', cellRaw: 'Raw', cellText: 'Text',

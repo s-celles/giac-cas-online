@@ -72,7 +72,7 @@ var I18N_HI = {
     aboutLibraries: 'लाइब्रेरी', aboutColLib: 'लाइब्रेरी', aboutColAuthor: 'लेखक', aboutColLicense: 'लाइसेंस',
     aboutCredits: 'श्रेय', aboutKeyboardCredit: 'वर्चुअल कीबोर्ड लेआउट B.\u00a0Parisse के math2d.html से प्रेरित।',
     aboutLicense: 'लाइसेंस', aboutLicenseText: 'GPL-3.0 — मुक्त सॉफ़्टवेयर। स्रोत कोड GitHub पर उपलब्ध।',
-    aboutShareQR: 'इस ऐप को साझा करें', shareCopy: 'लिंक कॉपी करें', shareCopied: 'कॉपी हो गया!', shareNative: 'साझा करें…',
+    aboutShareQR: 'इस ऐप को साझा करें', shareCopy: 'लिंक कॉपी करें', shareCopied: 'कॉपी हो गया!', shareNative: 'साझा करें…', clickToEnlarge: 'बड़ा करने के लिए क्लिक करें',
     shortcutRun: 'चलाएँ', shortcutRunNew: 'चलाएँ + नई सेल',
     showMathJSON: 'MathJSON दिखाएँ',
     cellMath: 'गणित', cellRaw: 'कच्चा', cellText: 'पाठ',
