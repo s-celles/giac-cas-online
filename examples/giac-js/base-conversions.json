@@ -1,0 +1,176 @@
+{
+  "version": 4,
+  "reactiveMode": false,
+  "cells": [
+    {
+      "type": "text",
+      "i18n": "exBaseTitle",
+      "hidden": true
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseHelpers",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(n) := {\n  local L, s, k, pad;\n  L := convert(n, base, 2);\n  L := revlist(L);\n  pad := irem(4 - irem(size(L), 4), 4);\n  for (k := 1; k <= pad; k++) { L := prepend(L, 0); };\n  s := \"\";\n  for (k := 0; k < size(L); k++) {\n    if (k > 0 && irem(k, 4) == 0) s := s + \" \";\n    s := s + string(L[k]);\n  };\n  return s;\n}"
+    },
+    {
+      "type": "raw",
+      "content": "to_hex_str(n) := {\n  local L, s, k, d, pad, hex_digits;\n  hex_digits := \"0123456789ABCDEF\";\n  L := convert(n, base, 16);\n  L := revlist(L);\n  pad := irem(2 - irem(size(L), 2), 2);\n  for (k := 1; k <= pad; k++) { L := prepend(L, 0); };\n  s := \"\";\n  for (k := 0; k < size(L); k++) {\n    if (k > 0 && irem(k, 2) == 0) s := s + \" \";\n    d := L[k];\n    s := s + mid(hex_digits, d, 1);\n  };\n  return s;\n}"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseBinary",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(42)"
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(255)"
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(1024)"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseHex",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "to_hex_str(255)"
+    },
+    {
+      "type": "raw",
+      "content": "to_hex_str(48879)"
+    },
+    {
+      "type": "raw",
+      "content": "to_hex_str(16777215)"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseOctal",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "convert(42, base, 8)"
+    },
+    {
+      "type": "raw",
+      "content": "convert(255, base, 8)"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseAnyBase",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "convert(100, base, 3)"
+    },
+    {
+      "type": "raw",
+      "content": "convert(100, base, 5)"
+    },
+    {
+      "type": "raw",
+      "content": "convert(100, base, 7)"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseFromPrefix",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "0b101010"
+    },
+    {
+      "type": "raw",
+      "content": "0xff"
+    },
+    {
+      "type": "raw",
+      "content": "0o52"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseBitwise",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "bitand(0b1100, 0b1010)"
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(bitand(0b1100, 0b1010))"
+    },
+    {
+      "type": "raw",
+      "content": "bitor(0b1100, 0b1010)"
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(bitor(0b1100, 0b1010))"
+    },
+    {
+      "type": "raw",
+      "content": "bitxor(0b1100, 0b1010)"
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(bitxor(0b1100, 0b1010))"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseRGB",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "rgb_val := 0x3A7BFF"
+    },
+    {
+      "type": "raw",
+      "content": "to_hex_str(rgb_val)"
+    },
+    {
+      "type": "raw",
+      "content": "R := iquo(rgb_val, 256^2)"
+    },
+    {
+      "type": "raw",
+      "content": "G := irem(iquo(rgb_val, 256), 256)"
+    },
+    {
+      "type": "raw",
+      "content": "B := irem(rgb_val, 256)"
+    },
+    {
+      "type": "raw",
+      "content": "[R, G, B]"
+    },
+    {
+      "type": "text",
+      "i18n": "exBaseRGBVerify",
+      "hidden": true
+    },
+    {
+      "type": "raw",
+      "content": "to_hex_str(R) + \" \" + to_hex_str(G) + \" \" + to_hex_str(B)"
+    },
+    {
+      "type": "raw",
+      "content": "to_bin_str(R) + \" | \" + to_bin_str(G) + \" | \" + to_bin_str(B)"
+    }
+  ]
+}

@@ -30,6 +30,7 @@ var EXAMPLES = [
   { id: 'physics-mechanics',     i18nName: 'exampleMechanics',        kernel: 'giac-js' },
   { id: 'physics-waves',         i18nName: 'exampleWaves',            kernel: 'giac-js' },
   { id: 'signal-processing',     i18nName: 'exampleSignal',           kernel: 'giac-js' },
+  { id: 'base-conversions',       i18nName: 'exampleBaseConversions',  kernel: 'giac-js' },
   { id: 'programming',           i18nName: 'exampleProgramming',      kernel: 'giac-js' },
   { id: 'full-demo',             i18nName: 'exampleFullDemo',         kernel: 'giac-js' },
   // Compute Engine examples

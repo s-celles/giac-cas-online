@@ -182,16 +182,12 @@ function _dagScrollToCell(cellId) {
 
 /** Scroll diagram to show a specific node, opening the panel if needed */
 function _dagScrollToNode(cellId) {
-  console.log('[DAG] _dagScrollToNode called with:', cellId);
   var panel = document.getElementById('dag-diagram-panel');
-  if (!panel) { console.log('[DAG] no panel element'); return; }
-  // Always store pending highlight (will be consumed after render)
+  if (!panel) return;
   _dagPendingHighlight = cellId;
   if (!panel.classList.contains('visible')) {
-    console.log('[DAG] panel not visible, opening');
     toggleDagDiagram();
   } else {
-    console.log('[DAG] panel visible, refreshing');
     refreshDagDiagram();
   }
 }
@@ -244,13 +240,12 @@ function _dagHighlightNode(cellId) {
 
 async function refreshDagDiagram() {
   var container = document.getElementById('dag-diagram-container');
-  if (!container) { console.log('[DAG] no container'); return; }
+  if (!container) return;
 
   var panel = document.getElementById('dag-diagram-panel');
-  if (!panel || !panel.classList.contains('visible')) { console.log('[DAG] panel not visible'); return; }
+  if (!panel || !panel.classList.contains('visible')) return;
 
   var def = buildMermaidDefinition();
-  console.log('[DAG] definition:', def ? def.substring(0, 120) + '...' : '(empty)');
   if (!def) {
     container.innerHTML = '<div class="dag-empty">' + (typeof t === 'function' ? t('dagDiagramEmpty') : 'No cells in notebook') + '</div>';
     _dagPendingHighlight = null;
@@ -277,7 +272,6 @@ async function refreshDagDiagram() {
     if (_dagPendingHighlight) {
       var pendingId = _dagPendingHighlight;
       _dagPendingHighlight = null;
-      console.log('[DAG] highlighting pending node:', pendingId);
       _dagHighlightNode(pendingId);
     }
   } catch (e) {
