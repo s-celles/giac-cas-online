@@ -273,7 +273,12 @@ function setCellMode(cellId, mode) {
 
   if (mode === 'raw') {
     const mf = cell.querySelector('math-field');
-    const giacExpr = mf ? mathJsonToGiac(mf.expression.json) : '';
+    const giacExpr = (mf && mf.value && mf.value.trim()) ? mathJsonToGiac(mf.expression.json) : '';
+    // Save original LaTeX so we can restore it if user switches back without editing
+    if (mf && mf.value && mf.value.trim()) {
+      cell.dataset.savedLatex = mf.value;
+      cell.dataset.savedGiac = giacExpr;
+    }
     inp.innerHTML = '';
     const ta = mkTextarea(t('placeholderRaw'), giacExpr);
     ta.addEventListener('keydown', (e) => cellKey(e, cellId, 'raw'));
@@ -284,9 +289,37 @@ function setCellMode(cellId, mode) {
     if (cell.dataset.locked === 'true') ta.readOnly = true;
   } else {
     const ta = cell.querySelector('textarea');
+    const rawValue = ta ? ta.value.trim() : '';
     inp.innerHTML = '';
     const mf = document.createElement('math-field');
-    mf.value = ta ? ta.value : '';
+    // Convert raw Giac expression back to LaTeX for visual rendering
+    var latexValue = rawValue;
+    if (rawValue) {
+      if (cell.dataset.savedLatex && rawValue === (cell.dataset.savedGiac || '')) {
+        // Unmodified — restore original LaTeX exactly
+        latexValue = cell.dataset.savedLatex;
+      } else if (typeof caseval === 'function') {
+        // User edited the raw text — use Giac's latex(quote()) for proper rendering
+        try {
+          var stmts = rawValue.indexOf(';') !== -1
+            ? rawValue.split(';').map(function(s) { return s.trim(); }).filter(Boolean)
+            : [rawValue];
+          var latexParts = stmts.map(function(s) {
+            try {
+              var r = caseval('latex(quote(' + s + '))');
+              if (r && !(typeof isGiacError === 'function' && isGiacError(r))) {
+                return r.replace(/^"|"$/g, '');
+              }
+            } catch(e) {}
+            return s;
+          });
+          latexValue = latexParts.join('\\;');
+        } catch(e) { /* fall back to raw text */ }
+      }
+    }
+    delete cell.dataset.savedLatex;
+    delete cell.dataset.savedGiac;
+    mf.value = latexValue;
     mf.setAttribute('virtual-keyboard-mode', 'onfocus');
     mf.addEventListener('input', () => updateDebug(cellId));
     mf.addEventListener('keydown', (e) => cellKey(e, cellId, 'math'));

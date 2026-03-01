@@ -214,4 +214,8 @@ var I18N_RU = {
     p2pRetry: 'Повторить',
     p2pCancel: 'Отмена',
     p2pSourceLabel: 'P2P-передача',
+    // ── DAG Diagram ──
+    dagDiagramTitle: 'Поток ячеек',
+    dagDiagramToggle: '⛖ Поток',
+    dagDiagramEmpty: 'В блокноте нет ячеек',
 };

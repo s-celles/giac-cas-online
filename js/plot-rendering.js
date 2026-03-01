@@ -667,6 +667,18 @@ function tryDirectJSXGraph(expr, outputEl) {
       var fExpr = args[0].trim();
       var vl = parseVarList(args[1]);
       // 3D vector field: 3 variables + [f1, f2, f3] components
+      // If fExpr is a symbol (not bracket notation), try resolving it via caseval
+      if (vl.vars.length >= 3 && fExpr.charAt(0) !== '[' && typeof caseval === 'function') {
+        try {
+          var resolved = caseval('eval(' + fExpr + ')');
+          if (typeof resolved === 'string') {
+            resolved = resolved.replace(/^["']|["']$/g, '');
+            if (resolved.charAt(0) === '[' && resolved.charAt(resolved.length - 1) === ']') {
+              fExpr = resolved;
+            }
+          }
+        } catch(e) { /* ignore resolution failure */ }
+      }
       if (vl.vars.length >= 3 && fExpr.charAt(0) === '[' && fExpr.charAt(fExpr.length - 1) === ']') {
         var components = splitTopLevel(fExpr.slice(1, -1));
         if (components.length === 3 && jsxGraphAvailable()) {

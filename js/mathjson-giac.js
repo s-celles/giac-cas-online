@@ -25,7 +25,10 @@ const SYMBOL_MAP = {
 function mathJsonToGiac(expr) {
   if (expr == null) return '';
   if (typeof expr === 'number') return String(expr);
-  if (typeof expr === 'string') return SYMBOL_MAP[expr] ?? expr;
+  if (typeof expr === 'string') {
+    if (expr === 'Nothing') return '';
+    return SYMBOL_MAP[expr] ?? expr;
+  }
 
   // Object literal form: { num, sym, str, fn }
   if (typeof expr === 'object' && !Array.isArray(expr)) {
@@ -250,7 +253,8 @@ function mathJsonToGiac(expr) {
       return 'comb(' + c(0) + ',' + c(1) + ')';
 
     // ══════ CortexJS wrappers ══════
-    case 'Block':    return args.length >= 1 ? c(0) : '';
+    case 'Block':    return args.length >= 1 ? all().filter(Boolean).join('; ') : '';
+    case 'Declare':  return ''; // CortexJS type hint — skip for Giac
     case 'Function': return args.length >= 1 ? c(0) : '';
     case 'Limits':   return args.length >= 1 ? c(0) : '';
 

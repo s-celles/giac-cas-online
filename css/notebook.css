@@ -202,7 +202,8 @@
   .cell:focus-within{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
   .cell.running{border-color:var(--warning)}
   .cell-head{display:flex;align-items:center;padding:.3rem .7rem;border-bottom:1px solid var(--border);background:#fafaf7;border-radius:var(--radius) var(--radius) 0 0;gap:.45rem;min-height:30px}
-  .cell-idx{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);min-width:44px}
+  .cell-idx{font-family:var(--mono);font-size:.66rem;color:var(--text-muted);min-width:44px;cursor:pointer}
+  .cell-idx:hover{color:var(--border-focus);text-decoration:underline}
   .cell-badge{font-family:var(--mono);font-size:.6rem;padding:1px 7px;border-radius:4px;color:#fff;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
   .cell-badge:hover{opacity:.8}
   .cell-badge.math{background:#7c3aed}.cell-badge.text{background:#d97706}.cell-badge.raw{background:#64748b}
@@ -296,7 +297,8 @@
   /* ═══════ Reactive DAG ═══════ */
   .cell.dep-upstream{border-color:#7c3aed;box-shadow:0 0 0 2px rgba(124,58,237,.15)}
   .cell.dep-downstream{border-color:#059669;box-shadow:0 0 0 2px rgba(5,150,105,.15)}
-  .cell.cell-unevaluated{opacity:.7}
+  .cell.cell-unevaluated{opacity:.35;border-style:dashed;border-color:var(--border)}
+  .cell.cell-unevaluated:focus-within{opacity:1}
   .cell.cell-pending{border-color:var(--warning);opacity:.7}
   .cell.cell-pending::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--warning),transparent);animation:pendingPulse 1.5s ease-in-out infinite}
   @keyframes pendingPulse{0%,100%{opacity:.3}50%{opacity:1}}
@@ -416,3 +418,39 @@
     .p2p-dialog{padding:1rem;max-width:100%}
     .p2p-code{font-size:2rem;letter-spacing:.3rem}
   }
+
+  /* ── DAG Diagram Panel ── */
+  .dag-panel{
+    border-top:2px solid var(--border);background:var(--surface);
+    max-height:0;overflow:hidden;transition:max-height .3s ease;
+  }
+  .dag-panel.visible{max-height:50vh;overflow-y:auto}
+  .dag-panel-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:.5rem 1rem;border-bottom:1px solid var(--border);
+    font-weight:600;font-size:.9rem;position:sticky;top:0;
+    background:var(--surface);z-index:1;
+  }
+  .dag-panel-header button{
+    background:none;border:1px solid var(--border);border-radius:4px;
+    padding:.2rem .6rem;cursor:pointer;font-size:.8rem;
+  }
+  .dag-panel-header button:hover{background:var(--bg)}
+  .dag-container{
+    padding:1rem;overflow:auto;
+    min-height:60px;
+  }
+  .dag-container svg{height:auto}
+  .dag-container .dag-empty{
+    color:var(--text-muted);font-style:italic;
+    display:flex;align-items:center;justify-content:center;
+    min-height:60px;
+  }
+  .dag-container .node{cursor:pointer}
+  .dag-container .node:hover{filter:brightness(0.92)}
+  #dag-diagram-btn.active{background:var(--border-focus);color:#fff}
+  @keyframes dag-pulse{
+    0%,100%{box-shadow:none}
+    50%{box-shadow:0 0 0 4px var(--border-focus)}
+  }
+  .dag-highlight{animation:dag-pulse .5s ease 3}

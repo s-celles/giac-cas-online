@@ -273,6 +273,7 @@ function registerCell(cellId, expr) {
     references: deps.references,
     expr: expr
   });
+  if (typeof _dagScheduleRefresh === 'function') _dagScheduleRefresh();
 
   // When a new variable name is defined, re-register any existing cells
   // that reference it but didn't list it as an Observable input (because
@@ -353,6 +354,7 @@ function unregisterCell(cellId) {
     });
   }
   cellVariableMap.delete(cellId);
+  if (typeof _dagScheduleRefresh === 'function') _dagScheduleRefresh();
 }
 
 /** Update a cell's expression in the reactive graph */
@@ -426,7 +428,13 @@ function scheduleCellRender(cellId, expr, rawResult) {
       } else {
         // Text/LaTeX path
         var latex = '';
-        try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        // Multi-statement (;) — latex(a:=2; b:=3) is mis-parsed by Giac as
+        // latex(a:=2) then b:=3.  Use latex(raw) on the result instead.
+        if (expr.indexOf(';') !== -1) {
+          try { latex = caseval('latex(' + raw + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        } else {
+          try { latex = caseval('latex(' + expr + ')').replace(/^"|"$/g, ''); } catch(e) {}
+        }
         // GIAC wraps multi-line results (function defs, blocks) in \parbox — KaTeX can't render those
         if (latex && /\\parbox|\\symbol/.test(latex)) { latex = ''; }
         if (latex && typeof katex !== 'undefined') {

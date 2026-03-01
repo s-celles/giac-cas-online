@@ -29,6 +29,20 @@
     window._observableResolve(); // resolve anyway so boot continues
   });
 
+  // Mermaid.js — DAG diagram rendering (loaded as ES module)
+  window._mermaidReady = new Promise(function(resolve) {
+    window._mermaidResolve = resolve;
+  });
+  import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs').then(function(mod) {
+    window.mermaid = mod.default;
+    window.mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'strict' });
+    window._mermaidResolve();
+    console.log('Mermaid loaded');
+  }).catch(function(e) {
+    console.warn('Mermaid failed to load:', e);
+    window._mermaidResolve();
+  });
+
   // Lit.js — slider web components (loaded as ES module)
   window._litReady = new Promise(function(resolve) {
     window._litResolve = resolve;
@@ -140,6 +154,7 @@ var UI = {
   <label class="reactive-toggle"><input type="checkbox" id="reactive-toggle" checked onchange="toggleReactiveMode(this.checked)"><span class="reactive-label" data-i18n="reactiveToggle">Reactive</span></label>
   <div class="sep"></div>
   <button id="report-view-btn" onclick="toggleReportView()" data-i18n="reportView">📄 Report view</button>
+  <button id="dag-diagram-btn" onclick="toggleDagDiagram()" data-i18n="dagDiagramToggle" title="Cell flow diagram" aria-pressed="false">⛖ Flow</button>
   <div class="sep"></div>
   <button onclick="showAboutDialog()" data-i18n="aboutBtn">ℹ About</button>
 </div></div>
@@ -153,6 +168,13 @@ var UI = {
   <div id="notebook-footer" class="notebook-footer" style="display:none">
     <p class="empty-hint" data-i18n="addCellHint">Click the + zones between cells to add a cell.</p>
   </div>
+</div>
+<div id="dag-diagram-panel" class="dag-panel">
+  <div class="dag-panel-header">
+    <span data-i18n="dagDiagramTitle">Cell Flow</span>
+    <button onclick="toggleDagDiagram()" data-i18n="helpPanelClose">Close</button>
+  </div>
+  <div id="dag-diagram-container" class="dag-container"></div>
 </div>
 <div class="bottombar">
   <span><kbd>Shift</kbd>+<kbd>Enter</kbd> <span data-i18n="shortcutRun">Run</span></span>
@@ -187,6 +209,7 @@ var UI = {
 <script src="js/io.js"></script>
 <script src="js/plot-rendering.js"></script>
 <script src="js/reactive-dag.js"></script>
+<script src="js/dag-diagram.js"></script>
 <script src="js/cells.js"></script>
 <script src="js/execution.js"></script>
 <script src="js/actions.js"></script>

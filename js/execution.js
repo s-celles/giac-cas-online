@@ -89,6 +89,23 @@ function getGiacExpr(cellId) {
   if (latex && /\\operatorname/.test(latex)) {
     return latexToGiac(latex);
   }
+  // MathLive/CortexJS doesn't handle ; as statement separator —
+  // split, convert each part via MathJSON, then rejoin with ;
+  if (latex.indexOf(';') !== -1) {
+    var parts = latex.split(';');
+    var giacParts = [];
+    for (var si = 0; si < parts.length; si++) {
+      var part = parts[si].trim();
+      if (!part) continue;
+      try {
+        var partJson = ce.parse(part, { canonical: false }).json;
+        giacParts.push(mathJsonToGiac(partJson));
+      } catch(e) {
+        giacParts.push(part);
+      }
+    }
+    return giacParts.join('; ');
+  }
   const json = mf.expression.json;
   return mathJsonToGiac(json);
 }

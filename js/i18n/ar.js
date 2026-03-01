@@ -214,4 +214,8 @@ var I18N_AR = {
     p2pRetry: 'إعادة المحاولة',
     p2pCancel: 'إلغاء',
     p2pSourceLabel: 'نقل P2P',
+    // ── DAG Diagram ──
+    dagDiagramTitle: 'تدفق الخلايا',
+    dagDiagramToggle: '⛖ تدفق',
+    dagDiagramEmpty: 'لا توجد خلايا في الدفتر',
 };

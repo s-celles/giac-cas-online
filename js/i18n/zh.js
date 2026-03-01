@@ -214,4 +214,8 @@ var I18N_ZH = {
     p2pRetry: '重试',
     p2pCancel: '取消',
     p2pSourceLabel: 'P2P传输',
+    // ── DAG Diagram ──
+    dagDiagramTitle: '单元格流程',
+    dagDiagramToggle: '⛖ 流程',
+    dagDiagramEmpty: '笔记本中没有单元格',
 };

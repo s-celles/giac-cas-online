@@ -303,4 +303,9 @@ var I18N_EN = {
     p2pRetry: 'Retry',
     p2pCancel: 'Cancel',
     p2pSourceLabel: 'P2P Transfer',
+
+    // ── DAG Diagram ──
+    dagDiagramTitle: 'Cell Flow',
+    dagDiagramToggle: '⛖ Flow',
+    dagDiagramEmpty: 'No cells in notebook',
 };

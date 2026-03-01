@@ -302,4 +302,8 @@ var I18N_EL = {
     p2pRetry: 'Επανάληψη',
     p2pCancel: 'Ακύρωση',
     p2pSourceLabel: 'Μεταφορά P2P',
+    // ── DAG Diagram ──
+    dagDiagramTitle: 'Ροή κελιών',
+    dagDiagramToggle: '⛖ Ροή',
+    dagDiagramEmpty: 'Δεν υπάρχουν κελιά στο σημειωματάριο',
 };

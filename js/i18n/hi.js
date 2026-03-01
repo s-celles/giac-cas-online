@@ -214,4 +214,8 @@ var I18N_HI = {
     p2pRetry: 'पुनः प्रयास',
     p2pCancel: 'रद्द करें',
     p2pSourceLabel: 'P2P ट्रांसफर',
+    // ── DAG Diagram ──
+    dagDiagramTitle: 'सेल प्रवाह',
+    dagDiagramToggle: '⛖ प्रवाह',
+    dagDiagramEmpty: 'नोटबुक में कोई सेल नहीं',
 };

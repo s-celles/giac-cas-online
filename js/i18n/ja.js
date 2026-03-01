@@ -214,4 +214,8 @@ var I18N_JA = {
     p2pRetry: '再試行',
     p2pCancel: 'キャンセル',
     p2pSourceLabel: 'P2P転送',
+    // ── DAG Diagram ──
+    dagDiagramTitle: 'セルフロー',
+    dagDiagramToggle: '⛖ フロー',
+    dagDiagramEmpty: 'ノートブックにセルがありません',
 };

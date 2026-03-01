@@ -284,4 +284,9 @@ var I18N_FR = {
     p2pRetry: 'Réessayer',
     p2pCancel: 'Annuler',
     p2pSourceLabel: 'Transfert P2P',
+
+    // ── Diagramme DAG ──
+    dagDiagramTitle: 'Flux des cellules',
+    dagDiagramToggle: '⛖ Flux',
+    dagDiagramEmpty: 'Aucune cellule dans le notebook',
 };
