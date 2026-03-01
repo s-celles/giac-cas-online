@@ -47,6 +47,26 @@ function getGiacExpr(cellId) {
   // For CAS functions (\operatorname{...}), use LaTeX pipeline with normalization
   // because CortexJS may not parse them correctly from MathJSON
   const latex = mf.value;
+  // Intercept help queries from math fields — MathLive may not recognize help()
+  // as a function and could mangle it (e.g. h·e·l·p implicit multiplication,
+  // or frac → \frac{}{})
+  if (latex) {
+    var helpLatex = latex.match(/^\\operatorname\{help\}\\left\((.*)\\right\)$/);
+    if (!helpLatex) helpLatex = latex.match(/^help\\left\((.*)\\right\)$/);
+    if (!helpLatex) helpLatex = latex.match(/^help\((\w*)\)$/);
+    if (helpLatex) {
+      var helpArg = helpLatex[1] || '';
+      // Extract command name from LaTeX: \frac{}{} → frac, \sin → sin, plain word → word
+      if (helpArg.match(/^\\(\w+)/)) helpArg = helpArg.match(/^\\(\w+)/)[1];
+      // \operatorname{name}... → name
+      else if (helpArg.match(/^\\operatorname\{(\w+)\}/)) helpArg = helpArg.match(/^\\operatorname\{(\w+)\}/)[1];
+      return 'help(' + helpArg + ')';
+    }
+    if (/^\?(\w+)$/.test(latex)) return latex;
+    // ?\ command in math mode: ?\frac → ?frac
+    var qLatex = latex.match(/^\?\\(\w+)/);
+    if (qLatex) return '?' + qLatex[1];
+  }
   if (latex && /\\operatorname/.test(latex)) {
     return latexToGiac(latex);
   }
@@ -64,6 +84,17 @@ function runSingleCell(cellId, forceManual) {
   const expr = getGiacExpr(cellId);
   const out  = document.getElementById(cellId + '-output');
   if (!expr) { out.innerHTML = ''; return; }
+
+  // Intercept help queries before GIAC evaluation
+  if (typeof isHelpQuery === 'function') {
+    const helpCmd = isHelpQuery(expr);
+    if (helpCmd !== null) {
+      if (helpCmd === '') { showGeneralHelp(cellId); }
+      else { showHelpInCell(cellId, helpCmd); }
+      return;
+    }
+  }
+
   if (!giacReady) { out.innerHTML = '<span class="err">' + t('giacNotReady') + '</span>'; return; }
 
   // Reactive mode: register/update in Observable graph (unless forced manual)

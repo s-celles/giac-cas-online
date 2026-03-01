@@ -63,6 +63,7 @@ function setLocale(locale) {
   document.getElementById('lang-select').value = locale;
   applyI18n();
   if (typeof setupMathKeyboard === 'function') setupMathKeyboard();
+  if (typeof switchHelpLanguage === 'function') switchHelpLanguage(locale);
   try { localStorage.setItem('giac-nb-locale', locale); } catch(e) {}
 }
 

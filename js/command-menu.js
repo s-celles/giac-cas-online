@@ -334,9 +334,23 @@ function _cmdRenderCategoryList(list) {
       cat.commands.forEach(function(cmdName) {
         var btn = document.createElement('button');
         btn.className = 'command-menu-command';
-        btn.textContent = cmdName;
         btn.title = cmdName + ' \u2014 ' + _cmdCategoryPath(currentId);
         btn.onclick = function() { insertCommand(cmdName); };
+        var nameSpan = document.createElement('span');
+        nameSpan.textContent = cmdName;
+        btn.appendChild(nameSpan);
+        // Help icon
+        if (typeof showHelp === 'function') {
+          var helpIcon = document.createElement('span');
+          helpIcon.className = 'help-icon';
+          helpIcon.textContent = '?';
+          helpIcon.title = t('commandMenuHelp');
+          helpIcon.onclick = function(e) {
+            e.stopPropagation();
+            showHelp(cmdName);
+          };
+          btn.appendChild(helpIcon);
+        }
         list.appendChild(btn);
       });
     }
@@ -385,6 +399,17 @@ function _cmdRenderSearchResults(list) {
       btn.innerHTML = cmd + (pathLabel ? '<span class="cat-hint">' + pathLabel + '</span>' : '');
       btn.title = cmd + ' \u2014 ' + pathLabel;
       btn.onclick = function() { insertCommand(cmd); };
+      if (typeof showHelp === 'function') {
+        var helpIcon = document.createElement('span');
+        helpIcon.className = 'help-icon';
+        helpIcon.textContent = '?';
+        helpIcon.title = t('commandMenuHelp');
+        helpIcon.onclick = function(e) {
+          e.stopPropagation();
+          showHelp(cmd);
+        };
+        btn.appendChild(helpIcon);
+      }
       list.appendChild(btn);
       count++;
     });

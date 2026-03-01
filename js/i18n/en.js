@@ -247,4 +247,20 @@ var I18N_EN = {
     menuPrgPythonNumpy: 'NumPy', menuPrgPythonNumpyCreer: 'Create',
     menuPrgPythonTurtle: 'Turtle', menuPrgPythonMatplotl: 'Matplotlib',
     menuPrgPythonGraphic: 'Graphics', menuPrgPythonGraphicCouleur: 'Colors',
+
+    // ── Help Panel ──────────────────────────────────────────
+    helpPanelTitle: 'Help',
+    helpPanelSyntax: 'Syntax',
+    helpPanelExamples: 'Examples',
+    helpPanelRelated: 'See also',
+    helpPanelAliases: 'Also known as',
+    helpPanelInsert: 'Insert',
+    helpPanelRunExample: 'Run',
+    helpPanelRunAll: 'Run all',
+    helpPanelClose: 'Close',
+    helpPanelNoDoc: 'No documentation available for {command}',
+    helpPanelLoading: 'Loading help\u2026',
+    helpPanelFallbackLang: '(English)',
+    helpPanelGeneralHelp: 'Type help(command) or ?command to view documentation for any GIAC command.',
+    commandMenuHelp: 'Help',
 };

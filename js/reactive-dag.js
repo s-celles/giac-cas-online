@@ -149,6 +149,17 @@ function registerCell(cellId, expr) {
   var cell = document.getElementById(cellId);
   if (!cell) return null;
 
+  // Intercept help queries — render help panel instead of registering in DAG
+  if (typeof isHelpQuery === 'function') {
+    var helpCmd = isHelpQuery(expr);
+    if (helpCmd !== null) {
+      if (helpCmd === '') { showGeneralHelp(cellId); }
+      else { showHelpInCell(cellId, helpCmd); }
+      if (cell) cell.classList.remove('cell-unevaluated');
+      return null;
+    }
+  }
+
   var deps = extractCellDependencies(expr, cellId);
   var definedName = deps.defines.length > 0 ? deps.defines[0] : null;
 
