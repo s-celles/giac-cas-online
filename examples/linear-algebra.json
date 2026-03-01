@@ -21,8 +21,8 @@
       "content": "\\operatorname{tran}\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "[[1,2],[3,4]] * [[5,6],[7,8]]"
+      "type": "math",
+      "content": "\\begin{pmatrix}1 & 2\\\\ 3 & 4\\end{pmatrix}\\cdot\\begin{pmatrix}5 & 6\\\\ 7 & 8\\end{pmatrix}"
     },
     {
       "type": "math",

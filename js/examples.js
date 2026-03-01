@@ -37,7 +37,7 @@ function loadExample(id) {
   if (cells.length > 0 && !confirm(t('loadExampleConfirm'))) return;
   hideExamplesMenu();
 
-  fetch('examples/' + id + '.json')
+  fetch('examples/' + id + '.json?v=' + Date.now())
     .then(function(res) {
       if (!res.ok) throw new Error('Failed to load example: ' + res.status);
       return res.json();

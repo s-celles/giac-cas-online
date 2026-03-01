@@ -104,20 +104,20 @@
       "content": "\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "eigenvalues([[1,2],[3,4]])"
+      "type": "math",
+      "content": "\\operatorname{eigenvalues}\\begin{pmatrix}1 & 2\\\\ 3 & 4\\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "tran([[1,2],[3,4]])"
+      "type": "math",
+      "content": "\\operatorname{tran}\\begin{pmatrix}1 & 2\\\\ 3 & 4\\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "eigenvalues([[a,b],[c,d]])"
+      "type": "math",
+      "content": "\\operatorname{eigenvalues}\\begin{pmatrix}a & b\\\\ c & d\\end{pmatrix}"
     },
     {
-      "type": "raw",
-      "content": "solve(x^2 - 3*x + 2 = 0, x)"
+      "type": "math",
+      "content": "\\operatorname{solve}\\left(x^2-3x+2=0, x\\right)"
     },
     {
       "type": "raw",

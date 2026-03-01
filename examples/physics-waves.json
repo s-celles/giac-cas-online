@@ -84,7 +84,7 @@
     },
     {
       "type": "raw",
-      "content": "taylor(periodic(x,-pi,pi), x=0, 10)"
+      "content": "sum((-1)^(n+1)*2*sin(n*x)/n, n, 1, 10)"
     },
     {
       "type": "raw",

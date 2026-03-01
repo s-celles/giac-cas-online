@@ -23,8 +23,8 @@
       "hidden": true
     },
     {
-      "type": "raw",
-      "content": "solve(a*x^2 + b*x + c = 0, x)"
+      "type": "math",
+      "content": "\\operatorname{solve}\\left(ax^2+bx+c=0, x\\right)"
     },
     {
       "type": "text",
@@ -32,12 +32,12 @@
       "hidden": true
     },
     {
-      "type": "raw",
-      "content": "-b/(2*a)"
+      "type": "math",
+      "content": "-\\frac{b}{2a}"
     },
     {
-      "type": "raw",
-      "content": "a*(-b/(2*a))^2 + b*(-b/(2*a)) + c"
+      "type": "math",
+      "content": "a\\cdot\\left(-\\frac{b}{2a}\\right)^2+b\\cdot\\left(-\\frac{b}{2a}\\right)+c"
     },
     {
       "type": "text",
@@ -45,8 +45,8 @@
       "hidden": true
     },
     {
-      "type": "raw",
-      "content": "factor(a*x^2 + b*x + c)"
+      "type": "math",
+      "content": "\\operatorname{factor}\\left(ax^2+bx+c\\right)"
     },
     {
       "type": "text",
