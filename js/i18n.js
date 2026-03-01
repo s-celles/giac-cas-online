@@ -20,6 +20,7 @@ const LOCALES = {
   fr: I18N_FR,
   es: I18N_ES,
   de: I18N_DE,
+  el: I18N_EL,
   ar: I18N_AR,
   hi: I18N_HI,
   ru: I18N_RU,
