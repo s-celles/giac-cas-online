@@ -47,6 +47,7 @@ function getGiacExpr(cellId) {
   // For CAS functions (\operatorname{...}), use LaTeX pipeline with normalization
   // because CortexJS may not parse them correctly from MathJSON
   const latex = mf.value;
+  if (!latex || !latex.trim()) return '';
   // Intercept help queries from math fields — MathLive may not recognize help()
   // as a function and could mangle it (e.g. h·e·l·p implicit multiplication,
   // or frac → \frac{}{})
