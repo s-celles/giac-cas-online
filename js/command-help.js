@@ -20,8 +20,9 @@ var _helpRequestedLang = 'en'; // UI language requested (may differ from loaded)
 var _helpLangMap = {
   // Languages with native aide_cas translations:
   en: 'help-en', fr: 'help-fr', es: 'help-es',
-  el: 'help-el', de: 'help-de', zh: 'help-zh'
-  // ar, hi, ja, ru: not in giac source — falls back to English
+  el: 'help-el', de: 'help-de', zh: 'help-zh',
+  // Languages with English fallback (no aide_cas source):
+  ar: 'help-ar', hi: 'help-hi', ja: 'help-ja', ru: 'help-ru'
 };
 var _helpEnglishCache = {}; // cache English descriptions for fallback
 

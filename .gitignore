@@ -21,3 +21,5 @@
 !css/*.css
 !examples/
 !examples/*.json
+!scripts/
+!scripts/*.js
