@@ -3,7 +3,7 @@
 // SECTION 12 — BOOT
 // ─────────────────────────────────────────────────────────────
 
-var APP_VERSION = '0.1.1';
+var APP_VERSION = '0.1.2';
 
 /** Set up MathLive virtual keyboard layouts with localized tooltips */
 function setupMathKeyboard() {

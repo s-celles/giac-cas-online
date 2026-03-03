@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-03-03
+
+### Added
+- PWA splash screen with large logo and version number on app startup
+
 ## [0.1.1] - 2026-03-03
 
 ### Added
 - Progressive Web App (PWA) support: installable, offline-capable with service worker caching
-- Version number displayed on welcome screen with enlarged logo
+- Auto-update mechanism: service worker hash script ensures cache invalidation on code changes
 
 ## [0.1.0] - 2026-03-03
 
