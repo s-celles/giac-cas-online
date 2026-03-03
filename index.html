@@ -114,6 +114,13 @@ var UI = {
 </head>
 <body>
 
+<!-- PWA splash screen — dismissed by boot.js -->
+<div id="splash" style="position:fixed;inset:0;z-index:9999;background:#f4f2ed;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s">
+  <img src="assets/CAScad.png" alt="CAScad" style="max-width:min(90%,500px)">
+  <span id="splash-version" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#78716c;margin-top:.5rem"></span>
+</div>
+
+
 <div class="header"><div class="header-inner">
   <div class="header-left">
     <h1>📓 <span data-i18n="title">CAScad</span></h1>

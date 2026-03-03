@@ -307,8 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
   var loadedFromURL = (typeof loadFromURLHash === 'function') && loadFromURLHash();
 
   if (!loadedFromURL) {
-    // Minimal default notebook: logo + version + welcome cell
-    addCell('text', '', '<div style="text-align:center"><img src="assets/CAScad.png" alt="CAScad" style="max-width:min(90%,600px)"><br><span style="font-family:var(--mono);font-size:.85rem;color:var(--text-muted)">v' + APP_VERSION + '</span></div>', null, null, { hidden: true });
+    // Minimal default notebook: logo + welcome cell
+    addCell('text', '', '![CAScad](assets/CAScad.png)', null, null, { hidden: true });
     addCell('text', '', t('welcomeTitle') + '\n\n' + t('welcomeBody'), null, 'welcomeTitle,welcomeBody', { hidden: true });
     cells.forEach(function(c) { if (c.type === 'text') renderTextCell(c.id); });
   }
@@ -330,4 +330,15 @@ document.addEventListener('DOMContentLoaded', () => {
     '<button onclick="runAllReactive()">' + t('runAllReactive') + '</button>' +
     '<button onclick="toggleReactiveMode(false)">' + t('cancelCascade') + '</button>';
   notebook.parentNode.insertBefore(banner, notebook);
+
+  // Dismiss PWA splash screen
+  var splash = document.getElementById('splash');
+  if (splash) {
+    var sv = document.getElementById('splash-version');
+    if (sv) sv.textContent = 'v' + APP_VERSION;
+    setTimeout(function() {
+      splash.style.opacity = '0';
+      splash.addEventListener('transitionend', function() { splash.remove(); });
+    }, 600);
+  }
 });
