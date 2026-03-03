@@ -114,18 +114,6 @@ var UI = {
 </head>
 <body>
 
-<!-- PWA splash screen — dismissed by boot.js, failsafe at 5s -->
-<div id="splash" style="position:fixed;inset:0;z-index:9999;background:#f4f2ed;display:flex;flex-direction:column;align-items:center;justify-content:center">
-  <img src="assets/CAScad.png" alt="CAScad" style="width:90%;max-width:700px">
-  <span id="splash-version" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#78716c;margin-top:.5rem"></span>
-</div>
-<script>
-// Failsafe: always remove splash after 5s even if boot.js fails
-setTimeout(function() {
-  var s = document.getElementById('splash');
-  if (s) s.remove();
-}, 5000);
-</script>
 
 <div class="header"><div class="header-inner">
   <div class="header-left">

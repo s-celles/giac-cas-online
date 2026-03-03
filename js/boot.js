@@ -334,14 +334,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Show version in header
   var versionEl = document.getElementById('app-version');
   if (versionEl) versionEl.textContent = 'v' + APP_VERSION;
-
-  // Dismiss splash screen
-  var splash = document.getElementById('splash');
-  if (splash) {
-    var sv = document.getElementById('splash-version');
-    if (sv) sv.textContent = 'v' + APP_VERSION;
-    splash.style.transition = 'opacity .4s';
-    splash.style.opacity = '0';
-    setTimeout(function() { splash.remove(); }, 500);
-  }
 });
