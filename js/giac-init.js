@@ -131,13 +131,25 @@ if (typeof MathfieldElement !== 'undefined') {
     const self = this;
     // Try immediately (sync), then retry after paint in case _mathfield is async
     _applyCasShortcuts(self);
-    requestAnimationFrame(() => _applyCasShortcuts(self));
+    requestAnimationFrame(() => {
+      _applyCasShortcuts(self);
+      // Configure custom context menu (factor, simplify, etc.)
+      if (typeof configureMathfieldMenu === 'function') {
+        configureMathfieldMenu(self);
+      }
+    });
   };
 }
 
 // Fallback for manual configuration
 function configureMathField(mf) {
-  requestAnimationFrame(() => _applyCasShortcuts(mf));
+  requestAnimationFrame(() => {
+    _applyCasShortcuts(mf);
+    // Configure custom context menu (factor, simplify, etc.)
+    if (typeof configureMathfieldMenu === 'function') {
+      configureMathfieldMenu(mf);
+    }
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
