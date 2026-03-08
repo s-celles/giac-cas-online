@@ -178,6 +178,7 @@ function addCell(type = 'math', initialLatex = '', initialRaw = '', initialMathJ
     configureMathField(mf);
     mf.addEventListener('input', () => updateDebug(id));
     mf.addEventListener('keydown', (e) => cellKey(e, id, 'math'));
+    if (typeof attachAutocomplete === 'function') attachAutocomplete(mf, id);
     setTimeout(() => { mf.placeholder = t('placeholderMath'); updateDebug(id); }, 100);
   } else {
     const ph = type === 'raw' ? t('placeholderRaw') : t('placeholderText');
@@ -324,6 +325,7 @@ function setCellMode(cellId, mode) {
     mf.setAttribute('virtual-keyboard-mode', 'onfocus');
     mf.addEventListener('input', () => updateDebug(cellId));
     mf.addEventListener('keydown', (e) => cellKey(e, cellId, 'math'));
+    if (typeof attachAutocomplete === 'function') attachAutocomplete(mf, cellId);
     inp.appendChild(mf);
     configureMathField(mf);
     cell.dataset.mode = 'math';

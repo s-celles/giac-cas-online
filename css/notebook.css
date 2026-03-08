@@ -85,6 +85,15 @@
     .command-menu-close:hover{background:var(--accent);color:#fff}
   }
 
+  /* ═══════ Math Autocomplete ═══════ */
+  .math-autocomplete{position:absolute;top:100%;left:0;right:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.12);max-height:40vh;overflow-y:auto;padding:.3rem}
+  .math-autocomplete-item{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:.75rem;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);cursor:pointer;box-sizing:border-box}
+  .math-autocomplete-item:hover,.math-autocomplete-item.selected{background:var(--accent);color:#fff}
+  .math-autocomplete-empty{padding:8px 10px;font-size:.75rem;color:var(--muted);font-style:italic}
+  @media(max-width:767px){
+    .math-autocomplete{left:0;right:0;max-width:none;border-radius:0 0 var(--radius) var(--radius)}
+  }
+
   /* ═══════ Help Panel ═══════ */
   .help-panel{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:1rem;margin-top:.5rem;max-height:60vh;overflow-y:auto;font-family:var(--body);color:var(--text)}
   .help-panel-floating{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;width:90%;max-width:600px;max-height:80vh;box-shadow:0 8px 32px rgba(0,0,0,.18)}

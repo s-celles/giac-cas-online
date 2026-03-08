@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Help query support in math mode cells: `?commandname`, `help(commandname)`, `?`, and `help()` now work in visual (math2d) mode, producing identical output to raw mode cells
+- Command autocomplete in math mode cells: typing `?` shows a filterable dropdown of available CAS commands with keyboard navigation (Arrow keys, Tab/Shift+Tab cycling, Enter/Escape) and mouse selection; Tab also completes plain command names without `?` prefix (e.g. `solv` + Tab → `solve`)
 
 ## [0.1.3] - 2026-03-03
 
