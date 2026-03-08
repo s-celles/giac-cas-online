@@ -20,6 +20,7 @@ var _acSavedShortcuts = null;  // saved MathLive inline shortcuts while autocomp
 var _acMathField = null;       // reference to the active math-field
 var _acRawQuery = '';          // query tracked from keystrokes (bypasses MathLive LaTeX transforms)
 var _acSuppressUntil = 0;      // timestamp until which input events are suppressed
+var _acLastSetValue = '';      // last value written by _acSelectCommand (prevents re-open)
 var _acHelpMode = false;       // true when triggered via ?, false for plain command completion
 var _acRawBuffer = '';         // keystroke buffer for plain (non-?) command completion
 
@@ -198,8 +199,10 @@ function _acSelectCommand(commandName) {
 
   // Suppress input events for 300ms — setValue triggers multiple input events
   // from MathLive that would otherwise re-open autocomplete
+  var newVal = helpMode ? '?' + commandName : commandName;
   _acSuppressUntil = Date.now() + 300;
-  mf.setValue(helpMode ? '?' + commandName : commandName);
+  _acLastSetValue = newVal;
+  mf.setValue(newVal);
   _acRawBuffer = helpMode ? '' : commandName;
   mf.focus();
 }
@@ -236,8 +239,10 @@ function attachAutocomplete(mathField, cellId) {
     if (!_acVisible) {
       if (e.key === 'Backspace') {
         _acRawBuffer = _acRawBuffer.slice(0, -1);
+        _acLastSetValue = '';
       } else if (e.key.length === 1 && /[a-zA-Z0-9_]/.test(e.key)) {
         _acRawBuffer += e.key;
+        _acLastSetValue = '';
       } else if (e.key === '?' || e.key === '?') {
         // ? typed in empty field → help-mode autocomplete
         var val = mathField.value.trim();
@@ -346,6 +351,8 @@ function attachAutocomplete(mathField, cellId) {
       var query = _acExtractQuery(latex);
 
       if (query !== null && !_acVisible) {
+        // Don't re-open for a value that was just set by _acSelectCommand
+        if (_acLastSetValue && latex.trim() === _acLastSetValue) return;
         // Fallback activation (e.g. paste, mobile input)
         _acRawQuery = query;
         _acHelpMode = true;
