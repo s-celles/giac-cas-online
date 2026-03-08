@@ -57,13 +57,23 @@ function getGiacExpr(cellId) {
     if (!helpLatex) helpLatex = latex.match(/^help\((\w*)\)$/);
     if (helpLatex) {
       var helpArg = helpLatex[1] || '';
-      // Extract command name from LaTeX: \frac{}{} → frac, \sin → sin, plain word → word
-      if (helpArg.match(/^\\(\w+)/)) helpArg = helpArg.match(/^\\(\w+)/)[1];
+      // Extract command name from LaTeX argument:
+      // \operatorname{\mathrm{name}} → name (MathLive common output)
+      if (helpArg.match(/^\\operatorname\{\\mathrm\{(\w+)\}\}/)) helpArg = helpArg.match(/^\\operatorname\{\\mathrm\{(\w+)\}\}/)[1];
       // \operatorname{name}... → name
       else if (helpArg.match(/^\\operatorname\{(\w+)\}/)) helpArg = helpArg.match(/^\\operatorname\{(\w+)\}/)[1];
+      // \frac{}{} → frac, \sin → sin
+      else if (helpArg.match(/^\\(\w+)/)) helpArg = helpArg.match(/^\\(\w+)/)[1];
       return 'help(' + helpArg + ')';
     }
+    // Bare ? → general help
+    if (latex.trim() === '?') return 'help()';
     if (/^\?(\w+)$/.test(latex)) return latex;
+    // ?\operatorname{cmd} in math mode — MathLive may produce:
+    //   ?\operatorname{solve}  or  ?\operatorname{\mathrm{solve}}
+    // Must be checked BEFORE ?\command to avoid matching "operatorname" as the command
+    var qOpLatex = latex.match(/^\?\\operatorname\{(?:\\mathrm\{)?(\w+)\}?\}/);
+    if (qOpLatex) return '?' + qOpLatex[1];
     // ?\ command in math mode: ?\frac → ?frac
     var qLatex = latex.match(/^\?\\(\w+)/);
     if (qLatex) return '?' + qLatex[1];

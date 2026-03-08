@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 var APP_VERSION = '0.1.3';
-var APP_COMMIT = '855fca7';  // Updated by scripts/update-sw-hash.js
+var APP_COMMIT = '7b18d39';  // Updated by scripts/update-sw-hash.js
 
 /** Set up MathLive virtual keyboard layouts with localized tooltips */
 function setupMathKeyboard() {
