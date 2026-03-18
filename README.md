@@ -192,4 +192,4 @@ The service worker uses a content hash (`CACHE_HASH` in `sw.js`) to detect file 
 
 ## License
 
-GPL-3.0 — See [LICENSE.txt](LICENSE.txt)
+AGPL-3.0 — See [LICENSE.txt](LICENSE.txt)

@@ -81,7 +81,7 @@ var I18N_RU = {
     aboutBtn: 'ℹ О программе', aboutTitle: 'О CAScad', aboutAuthor: 'автор: S\u00e9bastien Celles', aboutDesc: 'CAScad — реактивный блокнот для компьютерной алгебры, работающий полностью в браузере. Сочетает визуальный ввод математики (MathJSON) с символьным движком Giac, скомпилированным в WebAssembly.',
     aboutLibraries: 'Библиотеки', aboutColLib: 'Библиотека', aboutColAuthor: 'Автор', aboutColLicense: 'Лицензия',
     aboutCredits: 'Благодарности', aboutKeyboardCredit: 'Раскладка виртуальной клавиатуры вдохновлена math2d.html Б.\u00a0Парисса.',
-    aboutLicense: 'Лицензия', aboutLicenseText: 'GPL-3.0 — Свободное ПО. Исходный код доступен на GitHub.',
+    aboutLicense: 'Лицензия', aboutLicenseText: 'AGPL-3.0 — Свободное ПО. Исходный код доступен на GitHub.',
     aboutShareQR: 'Поделиться приложением', shareCopy: 'Копировать ссылку', shareCopied: 'Скопировано!', shareNative: 'Поделиться…', clickToEnlarge: 'Нажмите для увеличения',
     shortcutRun: 'Запустить', shortcutRunNew: 'Запустить + новая ячейка',
     showMathJSON: 'Показать MathJSON',

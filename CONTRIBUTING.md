@@ -116,4 +116,4 @@ See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the [GPL-3.0](LICENSE.txt) license.
+By contributing, you agree that your contributions will be licensed under the [AGPL-3.0](LICENSE.txt) license.

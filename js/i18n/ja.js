@@ -81,7 +81,7 @@ var I18N_JA = {
     aboutBtn: 'ℹ 概要', aboutTitle: 'CAScad について', aboutAuthor: '作者: S\u00e9bastien Celles', aboutDesc: 'CAScad はブラウザ上で完全に動作するリアクティブなコンピュータ代数ノートブックです。ビジュアル数学入力（MathJSON）と WebAssembly にコンパイルされた Giac シンボリックエンジンを組み合わせています。',
     aboutLibraries: 'ライブラリ', aboutColLib: 'ライブラリ', aboutColAuthor: '著者', aboutColLicense: 'ライセンス',
     aboutCredits: 'クレジット', aboutKeyboardCredit: '仮想キーボードレイアウトは B.\u00a0Parisse の math2d.html に触発されました。',
-    aboutLicense: 'ライセンス', aboutLicenseText: 'GPL-3.0 — 自由ソフトウェア。ソースコードは GitHub で公開。',
+    aboutLicense: 'ライセンス', aboutLicenseText: 'AGPL-3.0 — 自由ソフトウェア。ソースコードは GitHub で公開。',
     aboutShareQR: 'このアプリを共有', shareCopy: 'リンクをコピー', shareCopied: 'コピー済み！', shareNative: '共有…', clickToEnlarge: 'クリックで拡大',
     shortcutRun: '実行', shortcutRunNew: '実行 + 新しいセル',
     showMathJSON: 'MathJSON を表示',

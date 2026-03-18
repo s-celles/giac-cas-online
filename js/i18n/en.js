@@ -82,7 +82,7 @@ var I18N_EN = {
     aboutBtn: 'ℹ About', aboutTitle: 'About CAScad', aboutAuthor: 'by S\u00e9bastien Celles', aboutDesc: 'CAScad is a reactive notebook for computer algebra, running entirely in the browser. It combines visual math input (MathJSON) with the Giac symbolic engine compiled to WebAssembly.',
     aboutLibraries: 'Libraries', aboutColLib: 'Library', aboutColAuthor: 'Author', aboutColLicense: 'License',
     aboutCredits: 'Credits', aboutKeyboardCredit: 'Virtual keyboard layout inspired by B.\u00a0Parisse\'s math2d.html.',
-    aboutLicense: 'License', aboutLicenseText: 'GPL-3.0 — Free software. Source code available on GitHub.',
+    aboutLicense: 'License', aboutLicenseText: 'AGPL-3.0 — Free software. Source code available on GitHub.',
     aboutShareQR: 'Share this app', shareCopy: 'Copy link', shareCopied: 'Copied!', shareNative: 'Share…', clickToEnlarge: 'Click to enlarge',
     shortcutRun: 'Run', shortcutRunNew: 'Run + new cell',
     showMathJSON: 'Show MathJSON',

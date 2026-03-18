@@ -82,7 +82,7 @@ var I18N_EL = {
     aboutBtn: 'ℹ Σχετικά', aboutTitle: 'Σχετικά με το CAScad', aboutAuthor: 'από Sébastien Celles', aboutDesc: 'Το CAScad είναι ένα αντιδραστικό τετράδιο για υπολογιστική άλγεβρα, που εκτελείται εξ ολοκλήρου στον περιηγητή. Συνδυάζει οπτική εισαγωγή μαθηματικών (MathJSON) με τη συμβολική μηχανή Giac μεταγλωττισμένη σε WebAssembly.',
     aboutLibraries: 'Βιβλιοθήκες', aboutColLib: 'Βιβλιοθήκη', aboutColAuthor: 'Συγγραφέας', aboutColLicense: 'Άδεια',
     aboutCredits: 'Ευχαριστίες', aboutKeyboardCredit: 'Η διάταξη του εικονικού πληκτρολογίου εμπνεύστηκε από το math2d.html του B.\u00a0Parisse.',
-    aboutLicense: 'Άδεια', aboutLicenseText: 'GPL-3.0 — Ελεύθερο λογισμικό. Πηγαίος κώδικας διαθέσιμος στο GitHub.',
+    aboutLicense: 'Άδεια', aboutLicenseText: 'AGPL-3.0 — Ελεύθερο λογισμικό. Πηγαίος κώδικας διαθέσιμος στο GitHub.',
     aboutShareQR: 'Κοινοποίηση εφαρμογής', shareCopy: 'Αντιγραφή συνδέσμου', shareCopied: 'Αντιγράφηκε!', shareNative: 'Κοινοποίηση…', clickToEnlarge: 'Κλικ για μεγέθυνση',
     shortcutRun: 'Εκτέλεση', shortcutRunNew: 'Εκτέλεση + νέο κελί',
     showMathJSON: 'Εμφάνιση MathJSON',

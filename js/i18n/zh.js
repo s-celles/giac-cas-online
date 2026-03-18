@@ -81,7 +81,7 @@ var I18N_ZH = {
     aboutBtn: 'ℹ 关于', aboutTitle: '关于 CAScad', aboutAuthor: '作者：S\u00e9bastien Celles', aboutDesc: 'CAScad 是一个完全在浏览器中运行的响应式计算机代数笔记本。它将可视化数学输入（MathJSON）与编译为 WebAssembly 的 Giac 符号引擎相结合。',
     aboutLibraries: '依赖库', aboutColLib: '库', aboutColAuthor: '作者', aboutColLicense: '许可证',
     aboutCredits: '致谢', aboutKeyboardCredit: '虚拟键盘布局灵感来自 B.\u00a0Parisse 的 math2d.html。',
-    aboutLicense: '许可证', aboutLicenseText: 'GPL-3.0 — 自由软件。源代码可在 GitHub 上获取。',
+    aboutLicense: '许可证', aboutLicenseText: 'AGPL-3.0 — 自由软件。源代码可在 GitHub 上获取。',
     aboutShareQR: '分享此应用', shareCopy: '复制链接', shareCopied: '已复制！', shareNative: '分享…', clickToEnlarge: '点击放大',
     shortcutRun: '运行', shortcutRunNew: '运行 + 新单元格',
     showMathJSON: '显示 MathJSON',

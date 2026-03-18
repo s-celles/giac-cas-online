@@ -81,7 +81,7 @@ var I18N_FR = {
     aboutBtn: '\u2139 \u00c0 propos', aboutTitle: '\u00c0 propos de CAScad', aboutAuthor: 'par S\u00e9bastien Celles', aboutDesc: 'CAScad est un notebook r\u00e9actif pour le calcul formel, fonctionnant enti\u00e8rement dans le navigateur. Il combine la saisie math\u00e9matique visuelle (MathJSON) avec le moteur symbolique Giac compil\u00e9 en WebAssembly.',
     aboutLibraries: 'Biblioth\u00e8ques', aboutColLib: 'Biblioth\u00e8que', aboutColAuthor: 'Auteur', aboutColLicense: 'Licence',
     aboutCredits: 'Cr\u00e9dits', aboutKeyboardCredit: 'Disposition du clavier virtuel inspir\u00e9e de math2d.html de B.\u00a0Parisse.',
-    aboutLicense: 'Licence', aboutLicenseText: 'GPL-3.0 \u2014 Logiciel libre. Code source disponible sur GitHub.',
+    aboutLicense: 'Licence', aboutLicenseText: 'AGPL-3.0 \u2014 Logiciel libre. Code source disponible sur GitHub.',
     aboutShareQR: 'Partager cette application', shareCopy: 'Copier le lien', shareCopied: 'Copi\u00e9 !', shareNative: 'Partager\u2026', clickToEnlarge: 'Cliquer pour agrandir',
     shortcutRun: 'Ex\u00e9cuter', shortcutRunNew: 'Ex\u00e9cuter + nouvelle cellule',
     showMathJSON: 'Afficher MathJSON',

@@ -81,7 +81,7 @@ var I18N_HI = {
     aboutBtn: 'ℹ परिचय', aboutTitle: 'CAScad के बारे में', aboutAuthor: 'S\u00e9bastien Celles द्वारा', aboutDesc: 'CAScad कंप्यूटर बीजगणित के लिए एक प्रतिक्रियाशील नोटबुक है, जो पूरी तरह ब्राउज़र में चलता है। यह विज़ुअल गणित इनपुट (MathJSON) को WebAssembly में संकलित Giac सांकेतिक इंजन के साथ जोड़ता है।',
     aboutLibraries: 'लाइब्रेरी', aboutColLib: 'लाइब्रेरी', aboutColAuthor: 'लेखक', aboutColLicense: 'लाइसेंस',
     aboutCredits: 'श्रेय', aboutKeyboardCredit: 'वर्चुअल कीबोर्ड लेआउट B.\u00a0Parisse के math2d.html से प्रेरित।',
-    aboutLicense: 'लाइसेंस', aboutLicenseText: 'GPL-3.0 — मुक्त सॉफ़्टवेयर। स्रोत कोड GitHub पर उपलब्ध।',
+    aboutLicense: 'लाइसेंस', aboutLicenseText: 'AGPL-3.0 — मुक्त सॉफ़्टवेयर। स्रोत कोड GitHub पर उपलब्ध।',
     aboutShareQR: 'इस ऐप को साझा करें', shareCopy: 'लिंक कॉपी करें', shareCopied: 'कॉपी हो गया!', shareNative: 'साझा करें…', clickToEnlarge: 'बड़ा करने के लिए क्लिक करें',
     shortcutRun: 'चलाएँ', shortcutRunNew: 'चलाएँ + नई सेल',
     showMathJSON: 'MathJSON दिखाएँ',
